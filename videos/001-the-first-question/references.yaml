@@ -1,0 +1,40 @@
+# References for video 001 · The First Question
+# Rule: nothing ships until every source is checked and reviewer.approved is true.
+
+video: 001-the-first-question
+sources:
+  - id: tirmidhi-413
+    type: hadith
+    collection: Jami` at-Tirmidhi
+    number: 413
+    in_book_reference: Book 2, Hadith 266
+    english_reference: Vol. 1, Book 2, Hadith 413
+    narrator: Abu Hurairah (reported by Huraith bin Qabisah)
+    grade: Sahih
+    graded_by: Darussalam
+    link: https://sunnah.com/tirmidhi:413
+    translation_used: sunnah.com English (Darussalam)
+    quoted_exactly: >-
+      Indeed the first deed by which a servant will be called to account on the
+      Day of Resurrection is his Salat.
+    paraphrased_in_script:
+      - section 5 (succeeded / failed and lost)
+      - section 6 (voluntary prayers completing the obligatory)
+    arabic_text: TODO, copy verbatim from the same sunnah.com page
+    checked_on: 2026-11-18
+    checked_by: Claude (sunnah.com page read; English opening sentence and grade confirmed)
+
+  - id: quran-20-14
+    type: quran
+    reference: Surah Ta-Ha 20:14
+    status: OPTIONAL, only if the closing ayah is used
+    translation_used: TODO, name it (e.g. Sahih International on Quran.com)
+    english_text: TODO, copy verbatim from Quran.com
+    arabic_text: TODO, copy verbatim from Tanzil (Uthmani), credit Tanzil (CC BY 3.0)
+    checked_on: null
+
+reviewer:
+  name: TODO
+  role: TODO (e.g. local imam / qualified student of knowledge)
+  approved: false
+  notes: ""
