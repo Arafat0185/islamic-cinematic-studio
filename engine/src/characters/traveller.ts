@@ -13,34 +13,39 @@
 //     head-height below the chin, a small narrow gap where a mouth would be, in exactly the face's own tone
 //   - 30 % thinner ink on the head, beard and kufi; snug, slightly smaller kufi; slightly narrower shoulders
 //   Body, arms, neck and shawl as version 4-6. Backups of earlier versions: ../reference/scratch-render/backup/
+// The front view's head is split into frontHeadShape / frontBeard / frontKufi so the back view and the prayer poses
+// (travellerPoses.ts) reuse exactly the same pieces. The default front view draws exactly as before.
 import { Pen, FrontOpts, INK, mul, mix, blobPts, Blob, thickAngle } from "../draw/toon";
 
-type P2 = [number, number];
+export type P2 = [number, number];
 
 // ---- palette (from the brief) ----
-const SKIN_T = "#C08A5E";
-const THOBE = "#CDB58C";
-const SHAWL = "#363C58";   // deep dusty indigo (v2): greyer than #24346A on purpose, because the card light + grade push saturation up
-const KUFI = "#F2EEE3";
-const SANDAL = "#6b4a33";
-const BEARD = "#1A1416";   // near-black
-const BEARD_STRAND = "#3A3236"; // subtle lighter strands so the beard doesn't merge with the ink outline
+export const SKIN_T = "#C08A5E";
+export const THOBE = "#CDB58C";
+export const SHAWL = "#363C58";   // deep dusty indigo (v2): greyer than #24346A on purpose, because the card light + grade push saturation up
+export const KUFI = "#F2EEE3";
+export const SANDAL = "#6b4a33";
+export const BEARD = "#1A1416";   // near-black
+export const BEARD_STRAND = "#3A3236"; // subtle lighter strands so the beard doesn't merge with the ink outline
 // shadow ratios, same values as toon.ts uses for skin and cloth
-const SH_SKIN: [number, number, number] = [0.96, 0.86, 0.84];
-const SH_CLOTH: [number, number, number] = [0.64, 0.66, 0.74];
-const SH_SHAWL: [number, number, number] = [0.72, 0.72, 0.76]; // shawl shade: darker, not bluer (dusty)
+export const SH_SKIN: [number, number, number] = [0.96, 0.86, 0.84];
+export const SH_CLOTH: [number, number, number] = [0.64, 0.66, 0.74];
+export const SH_SHAWL: [number, number, number] = [0.72, 0.72, 0.76]; // shawl shade: darker, not bluer (dusty)
 
 // ---- proportions (design units) ----
-const SOLE = 975;
-const TALL = 870;            // sole to crown: ~1.88 m (1000 units = 2.16 m)
-const HH = TALL / 6;         // one head-height: 6 heads tall
-const OW = 11.8;             // body outline width, same as the soldiers' (5 u at their head width)
-const OW_HEAD = OW * 0.7;    // head, beard and kufi outlines: 30 % thinner (v7)
-const HEAD_RATIO = 0.75;     // head width / head height (v7, head option B)
-const BEARD_LEN = HH / 4;    // chin beard length below the chin (v7, beard option B)
+export const SOLE = 975;
+export const TALL = 870;            // sole to crown: ~1.88 m (1000 units = 2.16 m)
+export const HH = TALL / 6;         // one head-height: 6 heads tall
+export const OW = 11.8;             // body outline width, same as the soldiers' (5 u at their head width)
+export const OW_HEAD = OW * 0.7;    // head, beard and kufi outlines: 30 % thinner (v7)
+export const HEAD_RATIO = 0.75;     // head width / head height (v7, head option B)
+export const BEARD_LEN = HH / 4;    // chin beard length below the chin (v7, beard option B)
+/** sleeve colour and width (sleeves are loose thobe cloth: a thick line with an ink rim, like the soldiers' arms) */
+export const SLEEVE = mul(THOBE, [0.9, 0.9, 0.94]);
+export const SLEEVE_W = 26;
 
 /** quadratic curve a -> (near) k -> b as a polyline (same idea as toon.ts `curve`) */
-const qc = (a: P2, k: P2, b: P2, n = 12): P2[] => {
+export const qc = (a: P2, k: P2, b: P2, n = 12): P2[] => {
   const c: P2 = [2 * k[0] - (a[0] + b[0]) / 2, 2 * k[1] - (a[1] + b[1]) / 2], out: P2[] = [];
   for (let i = 0; i <= n; i++) {
     const t = i / n, s = 1 - t;
@@ -49,14 +54,140 @@ const qc = (a: P2, k: P2, b: P2, n = 12): P2[] => {
   return out;
 };
 /** join polylines without repeating the shared end points */
-const join = (...parts: P2[][]): P2[] => parts.reduce<P2[]>((acc, p, i) => acc.concat(i ? p.slice(1) : p), []);
+export const join = (...parts: P2[][]): P2[] => parts.reduce<P2[]>((acc, p, i) => acc.concat(i ? p.slice(1) : p), []);
+
+// ---- the front-view head, in pieces ----
+/** head outline of the front view (also the back view), centred on x = 300, head centre at y = hc */
+export const frontHeadShape = (hc: number, seed = 1) => {
+  const headB = 0.5 * HH, headA = HEAD_RATIO * headB; // half height / half width
+  // blank (no eyes, nose, mouth or brows); a less full lower half (nBot 1.75) narrowing toward the chin
+  // (egg -0.16) = slimmer, longer jaw
+  const H: Blob = { a: headA, b: headB, nTop: 2.0, nBot: 1.75, egg: -0.16, asym: 0, rot: 0, noise: 0, seed };
+  const hp = blobPts(300, hc, H);
+  /** x of the head outline on the right side at height y (interpolated along the head contour), from x = 300 */
+  const edgeX = (y: number) => {
+    const r = hp.filter(([x]) => x > 300).sort((a, b) => a[1] - b[1]);
+    for (let i = 1; i < r.length; i++) if (r[i][1] >= y) {
+      const [x0, y0] = r[i - 1], [x1, y1] = r[i], t = (y - y0) / Math.max(1e-6, y1 - y0);
+      return x0 + (x1 - x0) * t - 300;
+    }
+    return r[r.length - 1][0] - 300;
+  };
+  return { hp, edgeX, headA, headB };
+};
+
+/** facial hair of the front view: near-black, one shape, one ink outline, plus the mouth gap in the face's tone.
+ *  Sideburns: thin strips (1/20 of the head width) on the very edge of the jaw, from ear level; cheeks bare.
+ *  Moustache: medium (twice the sideburn width), slightly angular; its ends drop to the beard as thin strips.
+ *  Chin beard: tapers from the jaw and ends 1/4 head-height below the chin in a smooth rounded bottom. */
+export const frontBeard = (p: Pen, h: ReturnType<typeof frontHeadShape>, hc: number, light: number, faceFill: () => void) => {
+  const { hp, edgeX, headA, headB } = h, thick = thickAngle(light);
+  const u = headA, v = headB, chin = hc + headB;
+  const SB = (2 * headA) / 20;               // sideburn width: 1/20 of the head width
+  const yEar = hc + 0.02 * v;                // ear level: about halfway down the head
+  const ySide = [yEar, hc + 0.25 * v, hc + 0.5 * v, hc + 0.72 * v]; // sideburn samples down the jaw edge
+  const yJ = hc + 0.7 * v;                   // the sideburn's inner edge turns in toward the chin beard here
+  const mT = hc + 0.3 * v;                   // moustache top (well below where eyes would be)
+  const mB = mT + 2 * SB;                    // moustache: medium = twice the sideburn width
+  const gapH = 0.14 * v, cb = mB + gapH;     // the space for the mouth gap, then the chin beard starts
+  const gx = 0.3 * u;                        // half width of the space between the moustache ends
+  const dx = gx + 0.9 * SB;                  // outer x of the moustache ends: thin strips down to the beard
+  const L = BEARD_LEN;
+  // smooth rounded bottom (half ellipse, right -> lowest point -> left); the beard tapers to half width w first
+  const w = 0.34 * u, yB = chin + 0.35 * L, bottom: P2[] = [];
+  for (let i = 0; i <= 16; i++) { const a = (Math.PI * i) / 16; bottom.push([300 + w * Math.cos(a), yB + (chin + L - yB) * Math.sin(a)]); }
+  // jaw corner where the beard leaves the head and tapers, on the slim jaw
+  const yJc = hc + 0.86 * v, jaw: P2 = [edgeX(yJc) + 2, yJc];
+  const beard: P2[] = [
+    ...ySide.map((y): P2 => [300 + edgeX(y) + 2, y]),                   // right sideburn, on the jaw edge
+    [300 + jaw[0], jaw[1]],                                             // jaw corner, then the beard tapers
+    ...bottom,
+    [300 - jaw[0], jaw[1]],
+    ...ySide.slice().reverse().map((y): P2 => [300 - edgeX(y) - 2, y]), // left sideburn, up the jaw edge
+    [300 - (edgeX(yEar) - SB), yEar],                                   // sideburn top (thin)
+    [300 - (edgeX(hc + 0.25 * v) - SB), hc + 0.25 * v], [300 - (edgeX(hc + 0.5 * v) - SB), hc + 0.5 * v], [300 - (edgeX(yJ) - SB), yJ],
+    [300 - dx, cb + 0.12 * v], [300 - dx, mT + 0.06 * v],               // in under the cheek, up the moustache end
+    [300 - 0.12 * u, mT], [300, mT + 0.02 * v], [300 + 0.12 * u, mT],   // moustache top: slightly angular
+    [300 + dx, mT + 0.06 * v], [300 + dx, cb + 0.12 * v],
+    [300 + (edgeX(yJ) - SB), yJ], [300 + (edgeX(hc + 0.5 * v) - SB), hc + 0.5 * v], [300 + (edgeX(hc + 0.25 * v) - SB), hc + 0.25 * v],
+    [300 + (edgeX(yEar) - SB), yEar],
+  ];
+  const beardDark = mul(BEARD, [0.72, 0.72, 0.76]);
+  p.gradFill(beard, BEARD, beardDark, light, 0.35);
+  p.clip(beard, () => { // 3 subtle lighter strands on the chin
+    for (const s of [-1, 0, 1]) p.stroke([[300 + s * 0.2 * u, cb + 0.14 * v], [300 + s * 0.08 * u, chin + 0.75 * L]], 2.5, BEARD_STRAND);
+  });
+  p.inkRing(beard, OW_HEAD * 0.55, thick); // thinner than the head outline so the thin sideburns still show as hair
+  // the mouth gap: a small, narrow, flat opening in the beard, painted with the head's own shading (clipped to the
+  // gap) so it is exactly the face's tone there; no outline, no mouth, lips or teeth - reads as a gap, not a mouth
+  const gap: P2[] = [];
+  const gapRx = 0.8 * (gx + 2), gapRy = 0.32 * gapH;
+  for (let i = 0; i < 32; i++) { const a = (2 * Math.PI * i) / 32; gap.push([300 + gapRx * Math.cos(a), (mB + cb) / 2 + gapRy * Math.sin(a)]); }
+  p.clip(gap, faceFill);
+  void hp;
+};
+
+/** kufi seen from the front or the back: a small white skull cap, snug on the crown: its base sits on the head
+ *  outline and the dome rises only ~7 units above the crown */
+export const frontKufi = (p: Pen, h: ReturnType<typeof frontHeadShape>, crown: number, light: number) => {
+  const thick = thickAngle(light);
+  const kBase = crown + 0.13 * HH;
+  const kRx = h.edgeX(kBase) + 2.5, kRy = kBase - crown + 7;
+  const kufi: P2[] = [];
+  for (let i = 0; i <= 16; i++) { const t = i / 16; kufi.push([300 + kRx - 2 * kRx * t, kBase + 3 * Math.sin(Math.PI * t)]); } // base edge, right -> left
+  for (let i = 1; i < 32; i++) { const a = Math.PI + (Math.PI * i) / 32; kufi.push([300 + kRx * Math.cos(a), kBase + kRy * Math.sin(a)]); } // dome, left -> top -> right
+  p.gradFill(kufi, KUFI, mul(KUFI, [0.86, 0.86, 0.9]), light);
+  p.clip(kufi, () => p.stroke(qc([300 - kRx, kBase - 6], [300, kBase], [300 + kRx, kBase - 6]), 3, mix(KUFI, INK, 0.2))); // stitched band
+  p.inkRing(kufi, OW_HEAD * 0.85, thick);
+};
+
+/** What the arms are doing in a front view. "down" is the original standing / walking pose. */
+export type FrontArms = "down" | "takbir" | "qiyam";
+export type TravellerOpts = FrontOpts & { arms?: FrontArms };
+
+/** Ink "mitten" hand for poses where the hand's shape matters (takbir, qiyam, ruku, sujood, sitting). Same ink as
+ *  the round ink-dot hands, a little larger, fingers together and the thumb apart, so palm direction can be read
+ *  from the thumb side. (x, y) = centre of the palm, ang = direction the fingers point (canvas radians, 0 = right),
+ *  thumb = +1 / -1: which side of the fingers the thumb sits on (looking along the fingers, +1 = left of them). */
+export const inkHand = (p: Pen, x: number, y: number, ang: number, thumb: 1 | -1, s = 1) => {
+  // local: fingers toward +x, palm centre at the origin, thumb on the -y side for thumb = +1
+  const loc: P2[] = [[-24, -13], [-6, -15], [14, -14], [26, -11], [33, -5], [34, 2], [30, 9], [14, 13], [-6, 14], [-22, 13], [-28, 6], [-28, -6]];
+  const th: P2[] = [[-14, -13], [-2, -24], [8, -28], [12, -24], [6, -16], [0, -10]];
+  const c = Math.cos(ang), sn = Math.sin(ang);
+  const tr = ([lx, ly]: P2): P2 => { const yy = ly * thumb; return [x + s * (lx * c - yy * sn), y + s * (lx * sn + yy * c)]; };
+  p.poly(loc.map(tr), INK, 0);
+  p.poly(th.map(tr), INK, 0);
+};
+
+/** Open hand in skin tone, palm toward the viewer: fingers together, thumb apart, a soft palm crease, the same
+ *  thinner head ink. Used where an open palm must read (takbir). (x, y) = palm centre, ang = direction the fingers
+ *  point (canvas radians), thumb = +1 / -1: which side of the fingers the thumb is on (as for inkHand), s = scale. */
+export const skinHand = (p: Pen, x: number, y: number, ang: number, thumb: 1 | -1, light: number, s = 1) => {
+  // local: fingers toward +x, wrist at -x, thumb on the -y side for thumb = +1
+  const loc: P2[] = [
+    [-26, 13], [-6, 16], [14, 16], [32, 15], [42, 11], [46, 4], [45, -4], [41, -11], [30, -14], [16, -14],
+    [8, -17], [14, -25], [18, -33], [14, -38], [6, -35], [-6, -25], [-16, -16], [-26, -12],
+  ];
+  const c = Math.cos(ang), sn = Math.sin(ang);
+  const tr = ([lx, ly]: P2): P2 => { const yy = ly * thumb; return [x + s * (lx * c - yy * sn), y + s * (lx * sn + yy * c)]; };
+  let pts = loc.map(tr);
+  const a2 = pts.reduce((acc, q, i) => { const r = pts[(i + 1) % pts.length]; return acc + q[0] * r[1] - r[0] * q[1]; }, 0);
+  if (a2 < 0) pts = pts.reverse(); // clockwise on screen for inkRing
+  p.gradFill(pts, SKIN_T, mul(SKIN_T, SH_SKIN), light, 0.3);
+  const line = mix(SKIN_T, INK, 0.45);
+  p.clip(pts, () => {
+    for (const fy of [-6.5, 0.5, 7.5]) p.stroke([tr([24, fy]), tr([44, fy])], 2.2, line); // fingers together
+    p.stroke(qc(tr([-14, -8]), tr([-2, 0]), tr([4, 10]), 8), 2.2, line);                    // palm crease
+  });
+  p.inkRing(pts, OW_HEAD * 0.8, thickAngle(light));
+};
 
 /** Front view of the Traveller. Reads the same FrontOpts as bodyFront (phase = walk cycle, light = key light angle);
- *  expression / blink are ignored on purpose: the face is blank. */
-export const traveller = (p: Pen, opts: FrontOpts) => {
-  const { phase = 0, mode = "march", light = -2.094, seed = 1 } = opts;
+ *  expression / blink are ignored on purpose: the face is blank. `arms` picks the arm pose (default "down"). */
+export const traveller = (p: Pen, opts: TravellerOpts) => {
+  const { phase = 0, mode = "march", light = -2.094, seed = 1, arms = "down" } = opts;
   p.rot = null;
-  const two = Math.PI * 2, walking = mode === "march" || mode === "stroll";
+  const two = Math.PI * 2, walking = arms === "down" && (mode === "march" || mode === "stroll");
   const thick = thickAngle(light);
   // calm walk: small bob (1.2 % of the height, vs 5 % for the marching soldiers) and a gentle arm swing
   const bob = walking ? 0.012 * TALL * Math.cos(2 * two * phase) : 0;
@@ -98,13 +229,14 @@ export const traveller = (p: Pen, opts: FrontOpts) => {
   p.stroke([[314, chin - 6], [315, neckY + 10]], 5);
 
   // ---- sleeves (behind the body, like the soldiers' arms), long and loose, ink-dot hands ----
-  const sleeveCol = mul(THOBE, [0.9, 0.9, 0.94]);
-  for (const side of [-1, 1]) {
-    const S: P2 = [300 + side * (shX - 10), shY + 4];
-    const E: P2 = [300 + side * (shX + 12), shY + 1.1 * HH];
-    const H: P2 = [300 + side * (shX + 16) + side * 2 * sw, crown + 3.55 * HH - 8 * Math.abs(sw) + 10 * side * sw];
-    p.line(qc(S, E, H), sleeveCol, 26);
-    p.dot(H[0], H[1] + 6, 12.5);
+  if (arms === "down") {
+    for (const side of [-1, 1]) {
+      const S: P2 = [300 + side * (shX - 10), shY + 4];
+      const E: P2 = [300 + side * (shX + 12), shY + 1.1 * HH];
+      const H: P2 = [300 + side * (shX + 16) + side * 2 * sw, crown + 3.55 * HH - 8 * Math.abs(sw) + 10 * side * sw];
+      p.line(qc(S, E, H), SLEEVE, SLEEVE_W);
+      p.dot(H[0], H[1] + 6, 12.5);
+    }
   }
 
   // ---- thobe: one long shape, clockwise on screen (right side down, hem, left side up, neckline) ----
@@ -147,78 +279,35 @@ export const traveller = (p: Pen, opts: FrontOpts) => {
     p.stroke([[x, y], [x + 1, y + 13]], 3.2);
   }
 
-  // ---- head: blank (no eyes, nose, mouth or brows); a less full lower half (nBot 1.75) narrowing toward the chin
-  //      (egg -0.16) = slimmer, longer jaw ----
-  const H: Blob = { a: headA, b: headB, nTop: 2.0, nBot: 1.75, egg: -0.16, asym: 0, rot: 0, noise: 0, seed };
-  const hp = blobPts(300, hc, H);
-  const faceFill = () => p.shadedFill(hp, SKIN_T, mul(SKIN_T, SH_SKIN), light, headA);
+  // ---- qiyam: forearms across the chest, right hand over the left (his right = screen left) ----
+  if (arms === "qiyam") {
+    const yC = shY + 0.95 * HH; // where the hands rest on the chest
+    // left arm (screen right) first: its hand lies under the right hand
+    p.line(qc([300 + shX - 6, shY + 6], [300 + shX + 14, shY + 0.9 * HH], [300 + 14, yC + 8]), SLEEVE, SLEEVE_W);
+    inkHand(p, 300 - 8, yC + 6, Math.PI, -1, 0.95);
+    p.line(qc([300 - shX + 6, shY + 6], [300 - shX - 14, shY + 0.9 * HH], [300 - 22, yC - 2]), SLEEVE, SLEEVE_W);
+    inkHand(p, 300 + 4, yC - 6, 0, 1, 1.0);
+  }
+
+  // ---- head: blank face, beard, kufi ----
+  const h = frontHeadShape(hc, seed);
+  const faceFill = () => p.shadedFill(h.hp, SKIN_T, mul(SKIN_T, SH_SKIN), light, headA);
   faceFill();
-  p.inkRing(hp, OW_HEAD, thick);
+  p.inkRing(h.hp, OW_HEAD, thick);
+  frontBeard(p, h, hc, light, faceFill);
+  frontKufi(p, h, crown, light);
 
-  // ---- facial hair: near-black, one shape, one ink outline.
-  //      Sideburns: thin strips (1/20 of the head width) on the very edge of the jaw, from ear level; cheeks bare.
-  //      Moustache: medium (twice the sideburn width), slightly angular; its ends drop to the beard as thin strips.
-  //      Chin beard: tapers from the jaw and ends 1/4 head-height below the chin in a smooth rounded bottom. ----
-  const u = headA, v = headB;
-  /** x of the head outline on the right side at height y (interpolated along the head contour) */
-  const edgeX = (y: number) => {
-    const r = hp.filter(([x]) => x > 300).sort((a, b) => a[1] - b[1]);
-    for (let i = 1; i < r.length; i++) if (r[i][1] >= y) {
-      const [x0, y0] = r[i - 1], [x1, y1] = r[i], t = (y - y0) / Math.max(1e-6, y1 - y0);
-      return x0 + (x1 - x0) * t - 300;
+  // ---- takbir: hands raised to ear level, open palms facing forward (thumbs toward the head, by the ear lobes) ----
+  if (arms === "takbir") {
+    for (const side of [-1, 1] as const) {
+      const S: P2 = [300 + side * (shX - 8), shY + 6];
+      const E: P2 = [300 + side * (shX + 40), shY + 0.8 * HH];
+      const W: P2 = [300 + side * (headA + 34), hc + 0.5 * HH];
+      p.line(qc(S, [300 + side * (shX + 44), shY + 0.55 * HH], E), SLEEVE, SLEEVE_W + 4);
+      p.line(qc(E, [300 + side * (shX + 30), hc + 0.75 * HH], W), SLEEVE, SLEEVE_W);
+      // fingers up; palms toward the viewer, so each thumb points in toward the head
+      // open hands in skin tone, palms toward the viewer, thumbs by the ear lobes
+      skinHand(p, 300 + side * (headA + 40), hc + 0.16 * HH, -Math.PI / 2, side === -1 ? -1 : 1, light, 1.15);
     }
-    return r[r.length - 1][0] - 300;
-  };
-  const SB = (2 * headA) / 20;               // sideburn width: 1/20 of the head width
-  const yEar = hc + 0.02 * v;                // ear level: about halfway down the head
-  const ySide = [yEar, hc + 0.25 * v, hc + 0.5 * v, hc + 0.72 * v]; // sideburn samples down the jaw edge
-  const yJ = hc + 0.7 * v;                   // the sideburn's inner edge turns in toward the chin beard here
-  const mT = hc + 0.3 * v;                   // moustache top (well below where eyes would be)
-  const mB = mT + 2 * SB;                    // moustache: medium = twice the sideburn width
-  const gapH = 0.14 * v, cb = mB + gapH;     // the space for the mouth gap, then the chin beard starts
-  const gx = 0.3 * u;                        // half width of the space between the moustache ends
-  const dx = gx + 0.9 * SB;                  // outer x of the moustache ends: thin strips down to the beard
-  const L = BEARD_LEN;
-  // smooth rounded bottom (half ellipse, right -> lowest point -> left); the beard tapers to half width w first
-  const w = 0.34 * u, yB = chin + 0.35 * L, bottom: P2[] = [];
-  for (let i = 0; i <= 16; i++) { const a = (Math.PI * i) / 16; bottom.push([300 + w * Math.cos(a), yB + (chin + L - yB) * Math.sin(a)]); }
-  // jaw corner where the beard leaves the head and tapers, on the slim jaw
-  const yJc = hc + 0.86 * v, jaw: P2 = [edgeX(yJc) + 2, yJc];
-  const beard: P2[] = [
-    ...ySide.map((y): P2 => [300 + edgeX(y) + 2, y]),                   // right sideburn, on the jaw edge
-    [300 + jaw[0], jaw[1]],                                             // jaw corner, then the beard tapers
-    ...bottom,
-    [300 - jaw[0], jaw[1]],
-    ...ySide.slice().reverse().map((y): P2 => [300 - edgeX(y) - 2, y]), // left sideburn, up the jaw edge
-    [300 - (edgeX(yEar) - SB), yEar],                                   // sideburn top (thin)
-    [300 - (edgeX(hc + 0.25 * v) - SB), hc + 0.25 * v], [300 - (edgeX(hc + 0.5 * v) - SB), hc + 0.5 * v], [300 - (edgeX(yJ) - SB), yJ],
-    [300 - dx, cb + 0.12 * v], [300 - dx, mT + 0.06 * v],               // in under the cheek, up the moustache end
-    [300 - 0.12 * u, mT], [300, mT + 0.02 * v], [300 + 0.12 * u, mT],   // moustache top: slightly angular
-    [300 + dx, mT + 0.06 * v], [300 + dx, cb + 0.12 * v],
-    [300 + (edgeX(yJ) - SB), yJ], [300 + (edgeX(hc + 0.5 * v) - SB), hc + 0.5 * v], [300 + (edgeX(hc + 0.25 * v) - SB), hc + 0.25 * v],
-    [300 + (edgeX(yEar) - SB), yEar],
-  ];
-  const beardDark = mul(BEARD, [0.72, 0.72, 0.76]);
-  p.gradFill(beard, BEARD, beardDark, light, 0.35);
-  p.clip(beard, () => { // 3 subtle lighter strands on the chin
-    for (const s of [-1, 0, 1]) p.stroke([[300 + s * 0.2 * u, cb + 0.14 * v], [300 + s * 0.08 * u, chin + 0.75 * L]], 2.5, BEARD_STRAND);
-  });
-  p.inkRing(beard, OW_HEAD * 0.55, thick); // thinner than the head outline so the thin sideburns still show as hair
-  // the mouth gap: a small, narrow, flat opening in the beard, painted with the head's own shading (clipped to the
-  // gap) so it is exactly the face's tone there; no outline, no mouth, lips or teeth - reads as a gap, not a mouth
-  const gap: P2[] = [];
-  const gapRx = 0.8 * (gx + 2), gapRy = 0.32 * gapH;
-  for (let i = 0; i < 32; i++) { const a = (2 * Math.PI * i) / 32; gap.push([300 + gapRx * Math.cos(a), (mB + cb) / 2 + gapRy * Math.sin(a)]); }
-  p.clip(gap, faceFill);
-
-  // ---- kufi: a small white skull cap, snug on the crown: its base sits on the head outline and the dome rises
-  //      only ~7 units above the crown ----
-  const kBase = crown + 0.13 * HH;
-  const kRx = edgeX(kBase) + 2.5, kRy = kBase - crown + 7;
-  const kufi: P2[] = [];
-  for (let i = 0; i <= 16; i++) { const t = i / 16; kufi.push([300 + kRx - 2 * kRx * t, kBase + 3 * Math.sin(Math.PI * t)]); } // base edge, right -> left
-  for (let i = 1; i < 32; i++) { const a = Math.PI + (Math.PI * i) / 32; kufi.push([300 + kRx * Math.cos(a), kBase + kRy * Math.sin(a)]); } // dome, left -> top -> right
-  p.gradFill(kufi, KUFI, mul(KUFI, [0.86, 0.86, 0.9]), light);
-  p.clip(kufi, () => p.stroke(qc([300 - kRx, kBase - 6], [300, kBase], [300 + kRx, kBase - 6]), 3, mix(KUFI, INK, 0.2))); // stitched band
-  p.inkRing(kufi, OW_HEAD * 0.85, thick);
+  }
 };
