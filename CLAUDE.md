@@ -34,7 +34,7 @@ Read this first. Full detail lives in `docs/phase-1-plan.md` and `characters/tra
   - Skin `#C08A5E`, sand thobe `#CDB58C`, indigo shawl `#363C58`, off-white kufi `#F2EEE3`,
     near-black beard `#1A1416`, sandals `#6B4A33`, ink outlines `#241726`.
   - Head width 0.75 × height, slim jaw, rounded chin beard ("beard B"), snug kufi that never crosses the face.
-  - Code: `characters/traveller/traveller.ts`. Any redraw must match `DESIGN.md` exactly.
+  - Code: `engine/src/characters/traveller.ts`. Any redraw must match `characters/traveller/DESIGN.md` exactly.
 
 ## Machine notes (from the scratch project, Windows, Radeon 760M integrated GPU)
 - **1 browser tab:** `Config.setConcurrency(1)`. 6 tabs was ~3× slower; 2 tabs crashed Chrome ("Target closed").

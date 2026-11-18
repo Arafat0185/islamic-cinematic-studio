@@ -1,4 +1,6 @@
-// "The Traveller": a faceless character drawn with the same toon.ts tools as the soldiers.
+// "The Traveller": our signature faceless character. His look is locked: characters/traveller/DESIGN.md is the source
+// of truth; match it exactly if you change anything here. Drawn with the toon.ts tools (Pen) from the original
+// project's bridge short, so he matches its cast ("the soldiers" below).
 // Same design space as every card (600 x 1000 units, soles at y = 975, centre x = 300), same plum ink, same
 // thick-thin outline (Pen.inkRing) and the same light-driven shading (gradFill / shadedFill).
 // Proportions: about 6 head-heights tall (the soldiers are ~3.5), ankle-length sand thobe, dusty indigo shawl over
@@ -10,8 +12,8 @@
 //     moustache whose ends drop to the beard as thin strips, chin beard tapering to a rounded bottom 1/4
 //     head-height below the chin, a small narrow gap where a mouth would be, in exactly the face's own tone
 //   - 30 % thinner ink on the head, beard and kufi; snug, slightly smaller kufi; slightly narrower shoulders
-//   Body, arms, neck and shawl as version 4-6. Backups of earlier versions: backup/traveller_v*.ts.txt
-import { Pen, Outfit, FrontOpts, INK, mul, mix, blobPts, Blob, thickAngle } from "./toon";
+//   Body, arms, neck and shawl as version 4-6. Backups of earlier versions: ../reference/scratch-render/backup/
+import { Pen, FrontOpts, INK, mul, mix, blobPts, Blob, thickAngle } from "../draw/toon";
 
 type P2 = [number, number];
 
@@ -27,11 +29,6 @@ const BEARD_STRAND = "#3A3236"; // subtle lighter strands so the beard doesn't m
 const SH_SKIN: [number, number, number] = [0.96, 0.86, 0.84];
 const SH_CLOTH: [number, number, number] = [0.64, 0.66, 0.74];
 const SH_SHAWL: [number, number, number] = [0.72, 0.72, 0.76]; // shawl shade: darker, not bluer (dusty)
-
-/** Outfit stand-in so cast.ts can tell the Traveller apart from the soldiers (checked by identity). */
-export const TRAVELLER: Outfit = { jacket: THOBE, pants: THOBE, boots: SANDAL, hat: null, skin: SKIN_T };
-/** which soldier of the marching column becomes the Traveller (2 = front row, nearest the lens in shot 3) */
-export const TRAVELLER_I = 2;
 
 // ---- proportions (design units) ----
 const SOLE = 975;
@@ -87,7 +84,7 @@ export const traveller = (p: Pen, opts: FrontOpts) => {
   p.gradFill(back, shawlDark, mul(shawlDark, [0.85, 0.85, 0.88]), light);
   p.inkRing(back, OW * 0.85, thick);
 
-  // ---- sandals (not bobbing: planted on the deck), alternate small lift with the walk ----
+  // ---- sandals (not bobbing: planted on the ground), alternate small lift with the walk ----
   for (const side of [-1, 1]) {
     const lift = walking ? 7 * Math.max(0, side * Math.sin(two * phase)) : 0;
     const x = 300 + side * 26, y = SOLE - 6 - lift;

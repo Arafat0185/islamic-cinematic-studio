@@ -3,7 +3,8 @@
 The Traveller is our signature character: a calm, faceless man in a sand-coloured thobe, an indigo shawl and a small
 white kufi. This page describes his **official, locked** look. If you draw him again, in any tool, match this page.
 
-- Code: [`traveller.ts`](traveller.ts) (draws him; it needs `toon.ts`, see [NOTICE.md](../../NOTICE.md))
+- Code: [`engine/src/characters/traveller.ts`](../../engine/src/characters/traveller.ts) (draws him with the Pen tools in
+  `engine/src/draw/toon.ts`, see [NOTICE.md](../../NOTICE.md))
 - Reference images: [`traveller_v7_head.png`](traveller_v7_head.png) (close-up) and
   [`traveller_v7.png`](traveller_v7.png) (standing on the bridge, frame 300 of the test scene)
 

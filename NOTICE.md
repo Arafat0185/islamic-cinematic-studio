@@ -10,11 +10,14 @@ This project is MIT-licensed (see [LICENSE](LICENSE)). It builds on the open-sou
 
 How this repo uses it:
 
-- [`characters/traveller/traveller.ts`](characters/traveller/traveller.ts) (The Traveller) is our own character
-  design, but it is drawn with that project's cartoon drawing toolkit: it imports `Pen`, `blobPts`, `thickAngle`,
-  `mul`, `mix`, `INK` and its types from **`toon.ts`** (`templates/bridge/toon.ts` in that project).
-- **`toon.ts` is not copied into this repo yet**, so `traveller.ts` cannot run on its own here. When it is copied in,
-  keep its copyright line and include the licence text below with it.
+- **`engine/src/`** reuses parts of that project's `templates/bridge/` engine. Each copied file starts with a comment
+  naming its source file, this copyright line, and what was changed:
+  - `draw/toon.ts` (the Pen drawing tool and colour helpers) and `draw/paint.ts` (canvas-texture helpers)
+  - `render/shade.ts`, `render/cardshade.ts`, `render/card.ts` (from `cast.ts`), `render/ink.ts`,
+    `render/lensblur.ts`, `render/grade.ts`
+  - `camera/ease.ts` (easing and camera helpers from `story.ts`)
+- [`engine/src/characters/traveller.ts`](engine/src/characters/traveller.ts) (The Traveller) is our own character
+  design, drawn with that project's `Pen` toolkit (`engine/src/draw/toon.ts`).
 - The reference images [`traveller_v7.png`](characters/traveller/traveller_v7.png) and
   [`traveller_v7_head.png`](characters/traveller/traveller_v7_head.png) were rendered with that project's bridge-short
   template (Remotion + three.js). `traveller_v7.png` shows its bridge scene, town and soldier characters around The
