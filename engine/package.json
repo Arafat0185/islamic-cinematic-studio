@@ -7,6 +7,7 @@
     "typecheck": "tsc --noEmit",
     "stills": "remotion still src/index.ts CourtyardTest out/frame000.png --frame=0 --scale=0.5 --props=preview-props.json && remotion still src/index.ts CourtyardTest out/frame150.png --frame=150 --scale=0.5 --props=preview-props.json && remotion still src/index.ts CourtyardTest out/frame299.png --frame=299 --scale=0.5 --props=preview-props.json",
     "preview": "remotion render src/index.ts CourtyardTest out/preview.mp4 --codec=h264 --muted --scale=0.5 --props=preview-props.json",
+    "fullsize-test": "remotion render src/index.ts CourtyardTest out/fullsize_test.mp4 --frames=150-210 --codec=h264 --muted",
     "final": "remotion render src/index.ts CourtyardTest out/final.mp4 --codec=h264 --crf=16 --muted"
   },
   "dependencies": {

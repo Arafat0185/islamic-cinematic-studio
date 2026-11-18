@@ -20,12 +20,13 @@ import { traveller } from "../../characters/traveller";
 import { buildCourtyard, ARCH_X, APEX, WALL_Z } from "./courtyard";
 import { buildLamp } from "./lamp";
 import { applyLook, moonDir, NIGHT, PALETTE } from "./look";
-import { camAt, dofAt, TRAVELLER_AT } from "./shot";
+import { camAt, dofAt, LENS, TRAVELLER_AT } from "./shot";
 
 export { FRAMES as COURTYARD_FRAMES, FPS as COURTYARD_FPS } from "./shot";
 
 /** A/B switches for test stills (Remotion inputProps `{ post: { ink: false, ... } }`); everything is on by default */
-type PostToggles = { ink: boolean; lens: boolean; bloom: boolean; grade: boolean; grain: boolean; dpr?: number };
+/** inkDebug: 1 = show only the ink-line mask, 2 = show the world normals the ink pass sees */
+type PostToggles = { ink: boolean; lens: boolean; bloom: boolean; grade: boolean; grain: boolean; dpr?: number; inkDebug?: number };
 const toggles = (): PostToggles => ({ ink: true, lens: true, bloom: true, grade: true, grain: false, ...((getInputProps() as { post?: Partial<PostToggles> }).post ?? {}) });
 
 /** Bloom for emissive sources only. Its MIP chain always starts at 540x960 (half of 1080x1920), whatever the output
@@ -54,13 +55,14 @@ const Inner: React.FC = () => {
   }, []);
   const fx = useMemo(() => ({
     ink: new InkPass(scene, camera as THREE.PerspectiveCamera),
-    lens: new LensBlur({ maxCoC: 24, nearScale: 1.2 }),
+    lens: new LensBlur({ maxCoC: LENS.maxCoC, nearScale: LENS.nearScale }),
     bloom: makeBloom(),
     tone: new ToneMappingEffect({ mode: ToneMappingMode.NEUTRAL }),
     grade: new GradeEffect(GRADE_NIGHT, 1),
     grain: new GrainEffect({ amount: 0.02, cellPx: 1.5 }),
   }), [camera, scene]);
   useEffect(() => () => fx.ink.dispose(), [fx]);
+  fx.ink.debug = on.inkDebug ?? 0;
   const post = useMemo(() => (
     <EffectComposer multisampling={4}>
       {on.ink ? <primitive object={fx.ink} dispose={null} /> : <></>}
@@ -81,7 +83,7 @@ const Inner: React.FC = () => {
   const light = light2D(moonDir(), right);
   const [tx, ty, tz] = TRAVELLER_AT;
   world.cast.pose(cam, [{
-    key: `traveller|${light.toFixed(3)}`, x: tx, y: ty, z: tz, blob: NIGHT.blob,
+    key: `traveller|${light.toFixed(3)}`, x: tx, y: ty, z: tz, blob: NIGHT.blob, castShadow: true,
     draw: (p) => traveller(p, { mode: "stand", light, seed: 1 }),
   }]);
   noInkFallback(world.root);

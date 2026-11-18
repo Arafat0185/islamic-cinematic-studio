@@ -14,6 +14,7 @@ Run these from this `engine/` folder. Do the first one once; it downloads the pa
 | `npm run typecheck` | Check the TypeScript code for mistakes without rendering anything |
 | `npm run stills` | Render frames 0, 150 and 299 at half size to `out/frame000.png` and so on (about 10 s each) |
 | `npm run preview` | Render the whole 10 s test at half size to `out/preview.mp4` |
+| `npm run fullsize-test` | Render frames 150-210 (2 s) at full size to `out/fullsize_test.mp4`, to judge fine detail such as floor shimmer |
 | `npm run final` | Render it at full size (1080 x 1920) to `out/final.mp4` |
 
 Render settings for this PC (1 browser tab, installed Chrome, the "angle" GL setting, temp files in
@@ -40,5 +41,9 @@ see `../NOTICE.md`.
 
 - To tune the mood (moonlight, lamp strength, how bright the Traveller is), edit `scenes/courtyard-test/look.ts`.
 - A test still can switch effects off: `--props='{"post":{"ink":false}}'` (also `lens`, `bloom`, `grade`, `grain`).
+- Floor textures and shimmer: use power-of-two canvases (1024 x 1024), keep mipmaps on with
+  `LinearMipmapLinearFilter` and `anisotropy = 16`, make every painted mark wrap across the tile edges (no seam
+  lines), and keep fine high-contrast detail out of the pattern. Half-size previews exaggerate shimmer; judge it with
+  `npm run fullsize-test`.
 - three.js 0.175 bug: `ExtrudeGeometry` with `bevelEnabled: false` builds no front or back faces. Use a zero-size
   bevel instead (see `courtyard.ts`).

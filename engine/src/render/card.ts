@@ -1,6 +1,7 @@
 // Adapted from Claude Animated Shorts (templates/bridge/cast.ts), https://github.com/mromidev/claude-animated-shorts
 // Copyright (c) 2026 Mr omi. MIT License; full licence text in NOTICE.md at the repo root.
-// Changes in this copy: kept the canvas Pool, the lit character card (Actor), drawing-size tiers, the 2D light angle
+// Changes in this copy: kept the canvas Pool (now mipmapped, max anisotropy), the lit character card (Actor),
+// drawing-size tiers (re-sized for wider lenses and steadier pushes), the 2D light angle
 // and the contact-shadow blob. Removed the bridge crowd, soldiers, blinks, story timing and effects. Added the Cast
 // class, which places any list of drawings in the scene each frame.
 
@@ -20,7 +21,9 @@ const makeEntry = (w: number, h: number): Entry => {
   const cv = document.createElement("canvas");
   cv.width = w; cv.height = h;
   const tex = new THREE.CanvasTexture(cv);
-  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 16; // three clamps to the GPU maximum
+  // mipmaps + trilinear: the drawing is always larger than it appears on screen and shrinks smoothly (no shimmer)
+  tex.generateMipmaps = true; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.magFilter = THREE.LinearFilter;
   return { cv, tex, w, h };
 };
 export class Pool {
@@ -65,7 +68,10 @@ export class Actor {
   mesh: THREE.Mesh; mat: THREE.MeshLambertMaterial; dmat: THREE.MeshDepthMaterial; r: Req | null = null;
   constructor(parent: THREE.Object3D, geo: THREE.BufferGeometry = BODY) {
     this.mat = cardShade(new THREE.MeshLambertMaterial({ map: blank, alphaTest: 0.5, side: THREE.DoubleSide }));
-    this.mat.alphaToCoverage = false; // A2C + MSAA left 1 px sky-depth seams on blurred far cards
+    // alpha-to-coverage: with the composer's 4x MSAA the cut-out edge gets 4 coverage levels instead of a hard
+    // on/off step, so the drawn outline does not stair-step and shimmer as the card grows on screen. (The original
+    // turned this off: it left 1 px sky-depth seams on far, heavily blurred cards. Turn it off per card if that returns.)
+    this.mat.alphaToCoverage = true;
     this.dmat = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: blank, alphaTest: 0.5, side: THREE.DoubleSide });
     this.mesh = new THREE.Mesh(geo, this.mat);
     this.mesh.customDepthMaterial = this.dmat;
@@ -97,9 +103,12 @@ export class Blob {
 }
 
 // ---------------- placement ----------------
-/** drawing resolution by distance: [canvas w, h, scale from the 600 x 1000 design]; sized for a 1440 x 2560 final */
+/** drawing resolution by distance: [canvas w, h, scale from the 600 x 1000 design].
+ *  Sized so the canvas is always at least ~2x the card's height on screen at a 1440 x 2560 final with our wide lenses
+ *  (fov 50): a 2.16 m card at 12 m is ~770 px tall there, its 1800 px canvas 2.3x that. Mipmaps shrink it smoothly.
+ *  The bands are wide so a character does not switch drawings during a normal push-in (a switch can pop). */
 export const tier = (d: number): [number, number, number] =>
-  d < 3.2 ? [1800, 3000, 3.0] : d < 6.5 ? [1080, 1800, 1.8] : d < 16 ? [480, 800, 0.8] : [240, 400, 0.4];
+  d < 12 ? [1800, 3000, 3.0] : d < 24 ? [1080, 1800, 1.8] : d < 48 ? [480, 800, 0.8] : [240, 400, 0.4];
 
 /** canvas angle the key light comes FROM on an upright card facing the camera, in 45-degree steps (small texture
  *  cache). `toLight` = world direction toward the light, `right` = the camera's right vector. */
@@ -114,6 +123,9 @@ export type Place = {
   scale?: number; mirror?: boolean; yaw?: number;
   /** contact shadow colour (multiply, sRGB hex); null = no blob */
   blob?: string | null;
+  /** cast a real shadow (its drawn silhouette) from the scene's shadow-casting lights. A casting card does not also
+   *  receive shadows, so it can never shadow itself (no striped self-shadow on the flat card). */
+  castShadow?: boolean;
 };
 
 /** Owns the cards, blobs and canvas pool of one scene. Call pose() once per frame with everyone who is on screen. */
@@ -136,6 +148,7 @@ export class Cast {
       a.mesh.position.set(p.x, p.y, p.z);
       a.mesh.rotation.set(0, p.yaw ?? Math.atan2(cam.position.x - p.x, cam.position.z - p.z), 0);
       a.mesh.scale.set(p.mirror ? -sc : sc, sc, sc);
+      a.mesh.castShadow = !!p.castShadow; a.mesh.receiveShadow = !p.castShadow;
       if (p.blob !== null) {
         const col = p.blob ?? "#3a3550";
         const b = this.blobs[bi] ?? (this.blobs[bi] = new Blob(this.root));

@@ -43,10 +43,22 @@ export const buildLamp = (x: number, top: number, z: number) => {
   halo.scale.set(1.1, 1.1, 1); halo.position.y = glass.position.y - 0.13; halo.layers.set(NOINK);
   root.add(halo);
 
-  // the light itself, at the flame
+  // the light itself, at the flame: a point light for the glow on the stone around the lamp ...
+  const flameY = glass.position.y - 0.13;
   const light = new THREE.PointLight(NIGHT.lampCol, NIGHT.lampI, 0, 2);
-  light.position.y = glass.position.y - 0.13;
+  light.position.y = flameY;
   root.add(light);
+  // ... and a wide spot light aimed down and forward: the warm pool on the floor, with soft shadows
+  const pool = new THREE.SpotLight(NIGHT.lampCol, NIGHT.poolI, 0, NIGHT.poolAngle, NIGHT.poolPenumbra, 2);
+  pool.position.y = flameY;
+  pool.castShadow = true;
+  pool.shadow.mapSize.set(1024, 1024); // modest resolution + PCF soft filtering = soft-edged shadows
+  pool.shadow.camera.near = 0.1; pool.shadow.camera.far = 20;
+  pool.shadow.bias = -0.0008; pool.shadow.normalBias = 0.02;
+  root.add(pool);
+  // the target is a world point; the lamp group sits at (x, top, z), so convert
+  pool.target.position.set(NIGHT.poolTarget[0] - x, NIGHT.poolTarget[1] - top, NIGHT.poolTarget[2] - z);
+  root.add(pool.target);
 
   return root;
 };

@@ -18,5 +18,9 @@ export const camAt = (f: number): Cam => {
   return { pos: [s.pos[0], s.pos[1] + rise, s.pos[2]], look: [LOOK[0], LOOK[1] + rise * 0.5, LOOK[2]], fov: 50, roll: 0 };
 };
 
-/** depth of field: focus on the Traveller's chest; cInf = blur (px at 1080x1920) of things at infinity */
-export const dofAt = () => ({ focus: [TRAVELLER_AT[0], 1.3, TRAVELLER_AT[2]] as V3, cInf: 10 });
+/** lens (depth of field) settings for the whole shot. Blur radius in px at 1080x1920:
+ *  cInf x |1 - focus / depth|, x nearScale for things in front of the focus, capped at maxCoC.
+ *  Gentle on the far wall (~2 px), strong on the foreground floor (the lens "sees past" it to the Traveller). */
+export const LENS = { cInf: 5, nearScale: 2.6, maxCoC: 28 };
+/** depth of field: focus on the Traveller's chest */
+export const dofAt = () => ({ focus: [TRAVELLER_AT[0], 1.3, TRAVELLER_AT[2]] as V3, cInf: LENS.cInf });

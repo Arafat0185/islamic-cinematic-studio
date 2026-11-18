@@ -1,10 +1,10 @@
 // Adapted from Claude Animated Shorts (templates/bridge/cardshade.ts), https://github.com/mromidev/claude-animated-shorts
 // Copyright (c) 2026 Mr omi. MIT License; full licence text in NOTICE.md at the repo root.
-// Changes in this copy: cards also take point-light (lamp) light (uCardPointK); imports LFB_PRE from shade.ts.
+// Changes in this copy: cards also take point- and spot-light (lamp) light (uCardPointK); imports LFB_PRE from shade.ts.
 
 // Character card shading. Replaces the flat emissive "pasted-on" look: the card takes the scene light colour as a
 // tint, keeps a bright floor where a cast shadow falls on it (charShade ~.86), and gets a soft side gradient toward the
-// real sun / moon (head ~charGrad, torso ~bodyGrad) with a cooler far side. Lamps (point lights) add on top, x uCardPointK.
+// real sun / moon (head ~charGrad, torso ~bodyGrad) with a cooler far side. Lamps (point / spot lights) add on top, x uCardPointK.
 // Contract with the scene: LFB / LFB_PRE (sun shadow visibility + lamp light inside three's light loop) and CHAR
 // (uniforms the scene sets from its light preset) come from shade.ts; the sun is three's directional light 0.
 // The drawing already carries a painted crescent (toon.ts shadedFill / gradFill), so the shader adds GRAD_K of the
@@ -77,7 +77,7 @@ export function cardShade(m: THREE.MeshLambertMaterial) {
       .replace("#include <lights_fragment_begin>", LFB_PRE + LFB)
       .replace("vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + totalEmissiveRadiance;", CARD);
   };
-  m.customProgramCacheKey = () => "card10";
+  m.customProgramCacheKey = () => "card11";
   return m;
 }
 

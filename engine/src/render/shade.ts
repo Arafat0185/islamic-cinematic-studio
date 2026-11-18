@@ -1,12 +1,13 @@
 // Adapted from Claude Animated Shorts (templates/bridge/shade.ts), https://github.com/mromidev/claude-animated-shorts
 // Copyright (c) 2026 Mr omi. MIT License; full licence text in NOTICE.md at the repo root.
-// Changes in this copy: point lights (lamps) now add their light on top of the two-tone sun/moon term (pointDiffuse,
-// uPointK); before, the two-tone pass threw point lights away. Bridge-specific notes removed.
+// Changes in this copy: point and spot lights (lamps) now add their light on top of the two-tone sun/moon term
+// (pointDiffuse, uPointK); before, the two-tone pass threw them away. Bridge-specific notes removed.
 
 // Stylised two-tone lighting for every world material: albedo x mix(shadeCol, litCol, sunTerm), sunTerm = real
 // shadow-map visibility x a soft N.L terminator. "Sun" means directional light 0, the scene's only shadow caster
 // (the moon in a night scene). The sun visibility is captured inside three's own light loop (LFB), so nothing is
-// computed twice. Point lights (lamps) are collected separately (pointDiffuse) and added on top, x uPointK.
+// computed twice. Point and spot lights (lamps, with their own shadows) are collected separately (pointDiffuse) and
+// added on top, x uPointK.
 // Character cards (cardshade.ts) import LFB / LFB_PRE / CHAR from here. A scene sets the uniforms below from its
 // light preset (see scenes/*/look.ts).
 import * as THREE from "three";
@@ -16,7 +17,7 @@ export const TONE = {
   uShadeLift: { value: new THREE.Vector3() }, uLambert: { value: 0.35 }, uSideK: { value: 0.84 }, uTerm: { value: 0.2 },
   uBounce: { value: new THREE.Vector3() }, // warm bounce on shaded faces turned to the camera
   uSat: { value: 1 }, // world albedo saturation around its luminance (characters are not twoTone, so unaffected)
-  uPointK: { value: 1 }, // strength of point lights (lamps) on world materials
+  uPointK: { value: 1 }, // strength of point + spot lights (lamps) on world materials
 };
 /** character-card uniforms for cardshade.ts; a scene keeps them in sync with its light preset */
 export const CHAR = {
@@ -30,8 +31,9 @@ export const LFB = THREE.ShaderChunk.lights_fragment_begin
   .replace("directLight.color *= ( directLight.visible && receiveShadow ) ? getShadow( directionalShadowMap[ i ]",
     "sunVis = ( directLight.visible && receiveShadow ) ? getShadow( directionalShadowMap[ i ]")
   .replace("vDirectionalShadowCoord[ i ] ) : 1.0;", "vDirectionalShadowCoord[ i ] ) : 1.0;\n\t\tdirectLight.color *= sunVis;")
-  // three runs the point-light loop first: keep its share of the diffuse light before spot and directional lights add theirs
-  .replace("#if ( NUM_SPOT_LIGHTS > 0 ) && defined( RE_Direct )", "pointDiffuse = reflectedLight.directDiffuse;\n#if ( NUM_SPOT_LIGHTS > 0 ) && defined( RE_Direct )");
+  // three runs the point and spot loops before the directional one: keep their share of the diffuse light (lamps,
+  // spot shadows included) before the sun / moon adds its own
+  .replace("#if ( NUM_DIR_LIGHTS > 0 ) && defined( RE_Direct )", "pointDiffuse = reflectedLight.directDiffuse;\n#if ( NUM_DIR_LIGHTS > 0 ) && defined( RE_Direct )");
 if (!LFB.includes("directLight.color *= sunVis") || !LFB.includes("pointDiffuse = reflectedLight"))
   throw new Error("shade.ts: three lights_fragment_begin changed");
 /** declarations that must come right before LFB in a patched shader */
@@ -66,7 +68,7 @@ export function twoTone<T extends THREE.MeshLambertMaterial | THREE.MeshPhongMat
       .replace("#include <lights_fragment_begin>", LFB_PRE + LFB)
       .replace("#include <lights_fragment_end>", "#include <lights_fragment_end>\n" + TWO_TONE);
   };
-  m.customProgramCacheKey = () => "twoTone6_" + liftK.toFixed(3);
+  m.customProgramCacheKey = () => "twoTone7_" + liftK.toFixed(3);
   return m;
 }
 

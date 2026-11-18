@@ -1,6 +1,8 @@
 // Adapted from Claude Animated Shorts (templates/bridge/ink.ts), https://github.com/mromidev/claude-animated-shorts
 // Copyright (c) 2026 Mr omi. MIT License; full licence text in NOTICE.md at the repo root.
-// Changes in this copy: none (verbatim apart from this header).
+// Changes in this copy: supersampled edge mask for temporal stability. The world normals/depth and the edge mask are
+// computed at SS x the output resolution (default 2) and filtered down in the composite, so lines move in sub-pixel
+// steps as the camera glides instead of snapping a whole pixel (less jitter frame to frame). RMAX raised to match.
 
 // Ink outlines for the 3D world, matched to the reference measurements (references/reports/outlines.md recipe,
 // post-agent changes: widths scale with the output height (pxScale = height / 1920, so 5.1 px at 1080x1920 is
@@ -127,7 +129,7 @@ varying vec2 vUv;
 // pixel steps along x, y and both diagonals, and their length in px
 const vec2 STEP[4] = vec2[4](vec2(1.0, 0.0), vec2(0.0, 1.0), vec2(1.0, 1.0), vec2(1.0, -1.0));
 const float SLEN[4] = float[4](1.0, 1.0, 1.41421, 1.41421);
-#define RMAX 9   // covers 5.1 px x pxScale 1.333 = 6.8 px at 1440x2560 (+0.5 AA ramp)
+#define RMAX 18  // covers 5.1 px x pxScale 1.333 x SS 2 = 13.6 mask px at 1440x2560 (+0.5 AA ramp)
 
 // textureLod: explicit LOD inside loops (nearest-filtered targets, no derivatives needed)
 float dist(sampler2D t, vec2 uv) { return -perspectiveDepthToViewZ(textureLod(t, uv, 0.0).x, cNear, cFar); }
@@ -225,6 +227,8 @@ void main() {
 export class InkPass extends Pass {
   /** 0 = normal, 1 = show the ink mask, 2 = show the world normal buffer */
   debug = 0;
+  /** supersampling factor of the normal/depth buffers and the edge mask (1 = original behaviour) */
+  readonly ss: number;
   private world: THREE.Scene;
   private cam: THREE.PerspectiveCamera;
   private rt: THREE.WebGLRenderTarget;
@@ -239,9 +243,10 @@ export class InkPass extends Pass {
   private quad: THREE.Mesh;
   private clearCol = new THREE.Color();
 
-  constructor(scene: THREE.Scene, camera: THREE.PerspectiveCamera, options: InkOptions = {}) {
+  constructor(scene: THREE.Scene, camera: THREE.PerspectiveCamera, options: InkOptions = {}, supersample = 2) {
     super("InkPass");
     const o = { ...DEF, ...options };
+    this.ss = Math.max(1, Math.round(supersample));
     this.world = scene;
     this.cam = camera;
     this.cam.layers.enable(NOINK); // the main render still shows the NOINK layer (and its shadows)
@@ -253,8 +258,8 @@ export class InkPass extends Pass {
       generateMipmaps: false, depthBuffer: true, samples: 0,
       depthTexture: new THREE.DepthTexture(1, 1, THREE.UnsignedIntType),
     });
-    this.maskRT = new THREE.WebGLRenderTarget(1, 1, {
-      type: THREE.UnsignedByteType, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter,
+    this.maskRT = new THREE.WebGLRenderTarget(1, 1, { // bilinear: the composite reads it at the (lower) output size
+      type: THREE.UnsignedByteType, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
       generateMipmaps: false, depthBuffer: false,
     });
     this.tmpRT = new THREE.WebGLRenderTarget(1, 1, {
@@ -291,7 +296,7 @@ export class InkPass extends Pass {
     });
     this.compMat = fs(COMP_FRAG, {
       inputBuffer: { value: null }, tMask: { value: this.maskRT.texture }, tNormal: { value: this.rt.texture },
-      texel: { value: texel }, inkColor: { value: new THREE.Color(o.color) }, debug: { value: 0 },
+      texel: { value: new THREE.Vector2(1, 1) }, inkColor: { value: new THREE.Color(o.color) }, debug: { value: 0 },
       fogColor: { value: new THREE.Color() }, fogInk: { value: 0.3 },
     });
     this.copyMat = fs(COPY_FRAG, { tSrc: { value: this.tmpRT.texture } });
@@ -318,11 +323,15 @@ export class InkPass extends Pass {
   }
 
   override setSize(width: number, height: number) {
-    this.rt.setSize(width, height);
-    this.maskRT.setSize(width, height);
+    const W = width * this.ss, H = height * this.ss; // supersampled buffers
+    this.rt.setSize(W, H);
+    this.maskRT.setSize(W, H);
     this.tmpRT.setSize(width, height);
-    (this.maskMat.uniforms.texel.value as THREE.Vector2).set(1 / width, 1 / height);
-    this.maskMat.uniforms.pxScale.value = height / 1920; // widths are specified at 1080x1920
+    (this.maskMat.uniforms.texel.value as THREE.Vector2).set(1 / W, 1 / H);
+    this.maskMat.uniforms.pxScale.value = H / 1920; // widths are specified at 1080x1920, in mask pixels here
+    // composite: the 1-2-1 tent steps one OUTPUT pixel; each bilinear tap already averages 2x2 mask texels, so the
+    // whole filter is a smooth ~2 px wide kernel over the supersampled mask
+    (this.compMat.uniforms.texel.value as THREE.Vector2).set(1 / width, 1 / height);
   }
 
   override render(renderer: THREE.WebGLRenderer, inputBuffer: THREE.WebGLRenderTarget) {
