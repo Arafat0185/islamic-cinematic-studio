@@ -63,8 +63,8 @@ Renders (in `engine/out`):
 - `toolkit_ending.png`: camera above the courtyard, the star mark tracing itself, "stand up" in green
 - `toolkit_sources.png`: the sources card
 - `pose_sheet.png`: includes tonight's softer sleeves and back-of-head hair band
-- `toolkit_low` view of the polished pool: see `toolkit_warning.png` (the pool is in the foreground); the `beauty_*.png`
-  stills are older, see above
+- To see tonight's polished pool now: `toolkit_warning.png` has it in the foreground. (The `beauty_*.png` stills are
+  older, see above.)
 
 Code:
 - `engine/src/text/`: Captions, ArabicLine, SourceTag, SourcesCard, fonts
