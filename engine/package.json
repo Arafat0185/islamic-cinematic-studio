@@ -13,7 +13,8 @@
     "motion-test": "remotion render src/index.ts TravellerMotionTest out/motion_test.mp4 --codec=h264 --crf=16 --muted",
     "beauty": "remotion still src/index.ts BeautyWide out/beauty_wide.png && remotion still src/index.ts BeautyLow out/beauty_low.png && remotion still src/index.ts BeautyClose out/beauty_close.png",
     "toolkit-stills": "remotion still src/index.ts BrandToolkitDemo out/toolkit_opening.png --frame=24 && remotion still src/index.ts BrandToolkitDemo out/toolkit_grooves.png --frame=44 && remotion still src/index.ts BrandToolkitDemo out/toolkit_captions.png --frame=120 && remotion still src/index.ts BrandToolkitDemo out/toolkit_wipe.png --frame=189 && remotion still src/index.ts BrandToolkitDemo out/toolkit_hadith.png --frame=330 && remotion still src/index.ts BrandToolkitDemo out/toolkit_warning.png --frame=500 && remotion still src/index.ts BrandToolkitDemo out/toolkit_mercy.png --frame=580 && remotion still src/index.ts BrandToolkitDemo out/toolkit_ending.png --frame=700 && remotion still src/index.ts BrandToolkitDemo out/toolkit_sources.png --frame=742",
-    "toolkit": "remotion render src/index.ts BrandToolkitDemo out/toolkit_demo.mp4 --codec=h264 --crf=16 --muted"
+    "toolkit": "remotion render src/index.ts BrandToolkitDemo out/toolkit_demo.mp4 --codec=h264 --crf=16 --muted",
+    "toolkit-v2": "remotion render src/index.ts BrandToolkitDemo out/toolkit_demo_v2.mp4 --codec=h264 --crf=16 --muted"
   },
   "dependencies": {
     "@fontsource/amiri": "5.3.0",

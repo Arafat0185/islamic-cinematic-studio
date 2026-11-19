@@ -223,11 +223,11 @@ const sideShawl = (p: Pen, S: P2, B: P2, F: P2, light: number, frontLen: number)
  *  the shoulder line; the back end shows only as a short tail behind the shoulder. (sx, sy) = the body axis at the
  *  shoulder line. Two pieces so the near arm can sit between them: draw `panel` before the arm and `cap` (the part
  *  lying over the top of the shoulder and the upper arm) after it. */
-const drapeShawl = (sx: number, sy: number, frontLen: number, light: number) => {
+const drapeShawl = (sx: number, sy: number, frontLen: number, light: number, wind = 0) => {
   const thick = thickAngle(light), dark = mul(SHAWL, SH_SHAWL), fold = mix(dark, INK, 0.35);
   const fy = sy + frontLen;
   const panel = (p: Pen) => {
-    const pts = cw(join(
+    const raw = join(
       qc([sx + 10, sy - 36], [sx + 42, sy - 32], [sx + 60, sy - 6]),                 // over the shoulder toward the chest
       qc([sx + 60, sy - 6], [sx + 71, sy + 0.6 * HH], [sx + 66, fy]),                // front edge, falling straight down
       qc([sx + 66, fy], [sx + 52, fy + 12], [sx + 36, fy + 4]),                       // loose bottom edge
@@ -236,14 +236,16 @@ const drapeShawl = (sx: number, sy: number, frontLen: number, light: number) => 
       qc([sx - 22, sy + 20], [sx - 30, sy + 0.45 * HH], [sx - 40, sy + 0.62 * HH]),   // short tail down the back
       qc([sx - 40, sy + 0.62 * HH], [sx - 54, sy + 0.3 * HH], [sx - 48, sy]),
       qc([sx - 48, sy], [sx - 34, sy - 28], [sx + 10, sy - 36]),                      // back of the shoulder, to the neck
-    ));
+    );
+    // the breeze moves the hanging end more the further down it is
+    const pts = cw(wind ? raw.map(([x, y]): P2 => [x + wind * 6 * Math.max(0, Math.min(1, (y - sy) / frontLen)) ** 1.5, y]) : raw);
     p.gradFill(pts, SHAWL, dark, light, 0.3);
     p.clip(pts, () => {
       p.stroke(qc([sx + 52, sy + 10], [sx + 58, sy + 0.6 * HH], [sx + 52, fy + 2]), 3.5, fold);
       p.stroke(qc([sx + 44, sy + 30], [sx + 49, sy + 0.7 * HH], [sx + 44, fy]), 2.5, mix(SHAWL, "#b8b4a8", 0.14));
     });
     p.inkRing(pts, OW, thick);
-    for (let k = 0; k < 6; k++) { const x = sx + 38 + k * 5.2, y = fy + 8 - 3 * Math.abs(k - 2.5) / 2.5; p.stroke([[x, y], [x + 1, y + 13]], 3.2); } // fringe
+    for (let k = 0; k < 6; k++) { const x = sx + 38 + k * 5.2 + wind * 6, y = fy + 8 - 3 * Math.abs(k - 2.5) / 2.5; p.stroke([[x, y], [x + 1, y + 13]], 3.2); } // fringe
   };
   const cap = (p: Pen) => {
     const pts = cw(join(
@@ -262,7 +264,7 @@ const drapeShawl = (sx: number, sy: number, frontLen: number, light: number) => 
 // ---------------- standing and walking, side view ----------------
 type Foot = { heel: P2; ang: number };
 /** raise: 0 = arms down, 1 = takbir (hands at ear level, open palms facing forward) */
-type UprightCfg = { near: Foot; far: Foot; armNear: number; armFar: number; bob: number; light: number; seed: number; raise?: number; shawlNear?: boolean };
+type UprightCfg = { near: Foot; far: Foot; armNear: number; armFar: number; bob: number; light: number; seed: number; raise?: number; shawlNear?: boolean; wind?: number };
 
 /** upright body from the side (standing and walking). Feet given as sandals; the thobe skirt spans the feet. */
 const uprightSide = (p: Pen, c: UprightCfg) => {
@@ -302,7 +304,7 @@ const uprightSide = (p: Pen, c: UprightCfg) => {
   sandal(p, c.far.heel, c.far.ang);
   sandal(p, c.near.heel, c.near.ang);
   // shawl on the far shoulder: drawn behind the body (the front end shows along the chest)
-  const shawl = drapeShawl(300, shY, waistY - shY, light);
+  const shawl = drapeShawl(300, shY, waistY - shY, light, c.wind ?? 0);
   if (!c.shawlNear) { shawl.panel(p); shawl.cap(p); }
 
   neck(p, [302, neckY + 14], [308, chin - 18], light);
@@ -367,7 +369,7 @@ export const travellerWalkSide = (p: Pen, key: number, o: PoseOpts = {}) => {
  *  planted foot stays still on the floor. Heel strike pivots on the heel, toe-off on the toe. phase 0.25 + n/2 =
  *  feet together. */
 /** o.bob: extra body drop in design units (+ = down), e.g. a settle after a turn */
-export const travellerWalkPhase = (p: Pen, phase: number, k: number, stride: number, o: PoseOpts & { raise?: number; bob?: number } = {}) => {
+export const travellerWalkPhase = (p: Pen, phase: number, k: number, stride: number, o: PoseOpts & { raise?: number; bob?: number; wind?: number } = {}) => {
   const light = o.light ?? DEF_LIGHT, A = stride, LEN = 104, LIFT = 30 * k;
   const sm = (x: number) => { const t = Math.max(0, Math.min(1, x)); return t * t * (3 - 2 * t); };
   const foot = (u0: number): Foot => {
@@ -392,7 +394,7 @@ export const travellerWalkPhase = (p: Pen, phase: number, k: number, stride: num
   uprightSide(p, {
     near: foot(un), far: foot(uf),
     armNear: -0.26 * k * Math.cos(2 * Math.PI * un), armFar: 0.26 * k * Math.cos(2 * Math.PI * un),
-    bob: 0.006 * TALL * k * Math.cos(4 * Math.PI * phase) + (o.bob ?? 0), light, seed: o.seed ?? 1, raise: o.raise, shawlNear: o.shawlNear,
+    bob: 0.006 * TALL * k * Math.cos(4 * Math.PI * phase) + (o.bob ?? 0), light, seed: o.seed ?? 1, raise: o.raise, shawlNear: o.shawlNear, wind: o.wind,
   });
 };
 
