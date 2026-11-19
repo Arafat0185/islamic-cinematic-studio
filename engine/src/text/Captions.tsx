@@ -37,13 +37,15 @@ const layout = (toks: Tok[], weight: number) => {
     for (let i = 1; i < toks.length; i++) { const w = Math.max(wd(0, i), wd(i, toks.length)); if (w < bestW) { bestW = w; best = i; } }
     if (bestW <= CAPTION.maxWidth) return { size, lines: [toks.slice(0, best), toks.slice(best)] };
   }
-  // still too long at the smallest size: the phrase should be split into two phrases in the script
+  // still too long at the smallest size: split it into two phrases (shown one after the other) instead. Lines never
+  // wrap (white-space: nowrap), so this can never become a third line; it would run past the edges instead.
+  console.warn(`Captions: phrase too long for 2 lines, split it: "${toks.map((t) => t.word).join(" ")}"`);
   const mid = Math.ceil(toks.length / 2);
   return { size: CAPTION.minSize, lines: [toks.slice(0, mid), toks.slice(mid)] };
 };
 
 const Line: React.FC<{ toks: Tok[] }> = ({ toks }) => (
-  <div>
+  <div style={{ whiteSpace: "nowrap" }}>
     {toks.map((t, i) => (
       <React.Fragment key={i}>
         <span style={{ color: t.kind ? KEY_COLOR[t.kind] : "#FBF6EC" }}>{t.word}</span>{i < toks.length - 1 ? " " : ""}

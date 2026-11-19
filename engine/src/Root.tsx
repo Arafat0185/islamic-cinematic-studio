@@ -27,8 +27,10 @@ export const RemotionRoot: React.FC = () => (
       width={1080}
       height={1920}
     />
-    {/* Still: the caption component on a plain background, with the 62-70 % band shown */}
-    <Composition id="TextSample" component={TextSample} durationInFrames={60} fps={30} width={1080} height={1920} />
+    {/* Stills: the text components on a plain background (captions with the 62-70 % band, quote, sources card) */}
+    <Composition id="TextSampleCaptions" component={TextSample} defaultProps={{ variant: "captions" as const }} durationInFrames={60} fps={30} width={1080} height={1920} />
+    <Composition id="TextSampleQuote" component={TextSample} defaultProps={{ variant: "quote" as const }} durationInFrames={60} fps={30} width={1080} height={1920} />
+    <Composition id="TextSampleCard" component={TextSample} defaultProps={{ variant: "card" as const }} durationInFrames={60} fps={30} width={1080} height={1920} />
     {/* Still images: the rich courtyard, three beauty shots (wide establishing, low angle by the fountain, close-up) */}
     <Composition id="BeautyWide" component={CourtyardBeauty} defaultProps={{ shot: "wide" as const }} durationInFrames={1} fps={30} width={1080} height={1920} />
     <Composition id="BeautyLow" component={CourtyardBeauty} defaultProps={{ shot: "low" as const }} durationInFrames={1} fps={30} width={1080} height={1920} />

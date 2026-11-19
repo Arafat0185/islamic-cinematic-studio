@@ -30,6 +30,11 @@ export const NARRATION = {
 export const HADITH = {
   text: "“Indeed the first deed by which a servant will be called to account on the Day of Resurrection is his Salat.”",
   keys: { "his Salat": "gold" } as Record<string, KeyKind>,
+  /** the same text as two caption phrases (too long for 2 lines in one): joined with a space they equal `text` */
+  parts: [
+    "“Indeed the first deed by which a servant will be called to account",
+    "on the Day of Resurrection is his Salat.”",
+  ],
   /** the source tag, exactly as the script asks for it */
   tag: "JAMI' AT-TIRMIDHI 413 · SAHIH (DARUSSALAM)",
   /** for the sources card: collection, number, grade and grader from references.yaml */
@@ -38,3 +43,9 @@ export const HADITH = {
 
 /** the only Arabic in the demo */
 export const ARABIC_DEMO = ["الصلاة"]; // الصلاة
+
+/** the review line on the sources card: references.yaml says reviewer.approved is false, so the card says so */
+export const REVIEW_NOTE = "DRAFT · NOT YET REVIEWED";
+
+// guard: the two parts must be exactly the quote
+if (HADITH.parts.join(" ") !== HADITH.text) throw new Error("content.ts: HADITH.parts no longer match the exact quote");
