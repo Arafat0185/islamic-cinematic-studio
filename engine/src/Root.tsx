@@ -6,6 +6,7 @@ import { PoseSheet, POSE_SHEET_W, POSE_SHEET_H } from "./scenes/pose-sheet/PoseS
 import { TravellerMotionTest, MOTION_FRAMES, MOTION_FPS } from "./scenes/motion-test/TravellerMotionTest";
 import { CourtyardBeauty } from "./scenes/courtyard-beauty/CourtyardBeauty";
 import { TextSample } from "./scenes/toolkit/TextSample";
+import { BrandToolkitDemo, TOOLKIT_FRAMES, TOOLKIT_FPS } from "./scenes/toolkit/BrandToolkitDemo";
 
 export const RemotionRoot: React.FC = () => (
   <>
@@ -27,6 +28,9 @@ export const RemotionRoot: React.FC = () => (
       width={1080}
       height={1920}
     />
+    {/* 25 s: every brand piece in the rich courtyard with the Traveller (opening, captions, Arabic line, source tag,
+        star wipes, mercy effect, ending, sources card) */}
+    <Composition id="BrandToolkitDemo" component={BrandToolkitDemo} durationInFrames={TOOLKIT_FRAMES} fps={TOOLKIT_FPS} width={1080} height={1920} />
     {/* Stills: the text components on a plain background (captions with the 62-70 % band, quote, sources card) */}
     <Composition id="TextSampleCaptions" component={TextSample} defaultProps={{ variant: "captions" as const }} durationInFrames={60} fps={30} width={1080} height={1920} />
     <Composition id="TextSampleQuote" component={TextSample} defaultProps={{ variant: "quote" as const }} durationInFrames={60} fps={30} width={1080} height={1920} />
