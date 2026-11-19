@@ -79,6 +79,7 @@ export const skyline = () => {
   const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.06, 0.8, 6), sil); tip.position.set(mx, 18.7, mz);
   g.add(shaft, balcony, upper, cap, tip);
   const win = new THREE.MeshBasicMaterial({ color: new THREE.Color(2.4, 1.5, 0.6), fog: false });
+  win.name = "skyWindow";
   for (const [y, w, h] of [[9.0, 0.22, 0.5], [14.9, 0.2, 0.45]] as [number, number, number][]) {
     const wm = new THREE.Mesh(new THREE.PlaneGeometry(w, h), win); wm.position.set(mx, y, mz + 0.7); g.add(wm);
   }
@@ -103,7 +104,7 @@ export const moonDisc = (dir: THREE.Vector3, size = 34) => {
   const t = moonTex(); t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
   const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, color: new THREE.Color(1.25, 1.28, 1.35), transparent: true, depthWrite: false, fog: false }));
   s.position.copy(dir.clone().normalize().multiplyScalar(180)); s.scale.set(size, size, 1);
-  s.renderOrder = -0.5; s.layers.set(NOINK); s.frustumCulled = false;
+  s.renderOrder = -0.5; s.layers.set(NOINK); s.frustumCulled = false; s.name = "moonDisc";
   return s;
 };
 

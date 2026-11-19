@@ -35,6 +35,7 @@ export const buildLamp = (x: number, top: number, z: number, opts: LampOpts = {}
   const glassMat = lit
     ? new THREE.MeshBasicMaterial({ color: new THREE.Color(...NIGHT.glass), fog: false })
     : twoTone(new THREE.MeshLambertMaterial({ color: "#4a3a2a" })); // unlit: dark amber glass
+  glassMat.name = lit ? "lampGlass" : "lampGlassUnlit"; // names let brand/levels.ts find them (no effect on drawing)
   const glass = new THREE.Mesh(new THREE.LatheGeometry(prof, 24), glassMat);
   glass.position.y = -chainLen - 0.1;
   root.add(glass);
@@ -49,6 +50,7 @@ export const buildLamp = (x: number, top: number, z: number, opts: LampOpts = {}
 
   // soft halo card around the glass (additive, camera-facing, not outlined)
   const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTex(), color: new THREE.Color(1.0, 0.62, 0.25), blending: THREE.AdditiveBlending, depthWrite: false, fog: false, transparent: true }));
+  halo.name = "lampHalo";
   halo.scale.set(1.1, 1.1, 1); halo.position.y = glass.position.y - 0.13; halo.layers.set(NOINK);
   if (lit) root.add(halo);
 

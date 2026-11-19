@@ -227,6 +227,7 @@ const sky = (dense = false) => {
         gl_FragColor = vec4(c, 1.0);
       }`,
   });
+  mat.name = "sky";
   const m = new THREE.Mesh(new THREE.SphereGeometry(200, 48, 24), mat);
   m.renderOrder = -1; m.frustumCulled = false; m.layers.set(NOINK);
   return m;
