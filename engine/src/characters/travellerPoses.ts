@@ -264,7 +264,8 @@ const drapeShawl = (sx: number, sy: number, frontLen: number, light: number, win
 // ---------------- standing and walking, side view ----------------
 type Foot = { heel: P2; ang: number };
 /** raise: 0 = arms down, 1 = takbir (hands at ear level, open palms facing forward) */
-type UprightCfg = { near: Foot; far: Foot; armNear: number; armFar: number; bob: number; light: number; seed: number; raise?: number; shawlNear?: boolean; wind?: number };
+/** phone: 0..1 the near hand comes up holding a phone in front of his chest and his head bows to it */
+type UprightCfg = { near: Foot; far: Foot; armNear: number; armFar: number; bob: number; light: number; seed: number; raise?: number; shawlNear?: boolean; wind?: number; phone?: number };
 
 /** upright body from the side (standing and walking). Feet given as sandals; the thobe skirt spans the feet. */
 const uprightSide = (p: Pen, c: UprightCfg) => {
@@ -331,11 +332,18 @@ const uprightSide = (p: Pen, c: UprightCfg) => {
 
   // near shoulder: shawl front end (falls down the chest), near arm, shawl over the shoulder; then the head
   if (c.shawlNear) shawl.panel(p);
-  const na = arm(c.armNear, 0);
+  const ph = Math.max(0, Math.min(1, c.phone ?? 0)), pe = ph * ph * (3 - 2 * ph);
+  let na = arm(c.armNear, 0);
+  if (pe > 0) { // the near forearm comes up: elbow by the waist, hand in front of the chest
+    const E: P2 = [lerp(na.E, [318, shY + 0.95 * HH], pe)[0], lerp(na.E, [318, shY + 0.95 * HH], pe)[1]];
+    const W = lerp(na.W, [392, shY + 0.62 * HH], pe);
+    na = { S: na.S, E, W };
+  }
   sleeve(p, na.S, na.E, na.W);
   if (c.shawlNear) shawl.cap(p);
-  profileHead(p, 312, hc, 0, light, c.seed);
-  hand(na.W); // after the head: the near hand is in front of the ear
+  profileHead(p, 312 + 6 * pe, hc + 4 * pe, 0.34 * pe, light, c.seed);
+  if (pe > 0.5) phoneInHand(p, na.W[0] + 8, na.W[1] - 22, -0.35, light);
+  else hand(na.W); // after the head: the near hand is in front of the ear
 };
 
 /** standing, side view (facing screen right) */
@@ -369,7 +377,8 @@ export const travellerWalkSide = (p: Pen, key: number, o: PoseOpts = {}) => {
  *  planted foot stays still on the floor. Heel strike pivots on the heel, toe-off on the toe. phase 0.25 + n/2 =
  *  feet together. */
 /** o.bob: extra body drop in design units (+ = down), e.g. a settle after a turn */
-export const travellerWalkPhase = (p: Pen, phase: number, k: number, stride: number, o: PoseOpts & { raise?: number; bob?: number; wind?: number } = {}) => {
+/** o.swing: arm swing multiplier (rushing ~1.8); o.phone: 0..1 phone in the near hand (see UprightCfg) */
+export const travellerWalkPhase = (p: Pen, phase: number, k: number, stride: number, o: PoseOpts & { raise?: number; bob?: number; wind?: number; swing?: number; phone?: number } = {}) => {
   const light = o.light ?? DEF_LIGHT, A = stride, LEN = 104, LIFT = 30 * k;
   const sm = (x: number) => { const t = Math.max(0, Math.min(1, x)); return t * t * (3 - 2 * t); };
   const foot = (u0: number): Foot => {
@@ -393,8 +402,8 @@ export const travellerWalkPhase = (p: Pen, phase: number, k: number, stride: num
   const un = phase, uf = phase + 0.5;
   uprightSide(p, {
     near: foot(un), far: foot(uf),
-    armNear: -0.26 * k * Math.cos(2 * Math.PI * un), armFar: 0.26 * k * Math.cos(2 * Math.PI * un),
-    bob: 0.006 * TALL * k * Math.cos(4 * Math.PI * phase) + (o.bob ?? 0), light, seed: o.seed ?? 1, raise: o.raise, shawlNear: o.shawlNear, wind: o.wind,
+    armNear: -0.26 * (o.swing ?? 1) * k * Math.cos(2 * Math.PI * un), armFar: 0.26 * (o.swing ?? 1) * k * Math.cos(2 * Math.PI * un),
+    bob: 0.006 * TALL * k * Math.cos(4 * Math.PI * phase) + (o.bob ?? 0), light, seed: o.seed ?? 1, raise: o.raise, shawlNear: o.shawlNear, wind: o.wind, phone: o.phone,
   });
 };
 
@@ -672,4 +681,72 @@ export const travellerJalsa = (p: Pen, o: PoseOpts = {}) => {
   flatHand(p, [364, 884], 0.3, 60);
   if (o.shawlNear) shawl.cap(p);
   profileHead(p, 266, 548, 0.06, light, o.seed ?? 1);
+};
+
+// ---------------- daily life, side view (facing screen right) ----------------
+/** a phone held in the hand: a dark rounded slab with a bright screen, the hand's ink fingers around its edge.
+ *  (x, y) = its centre, ang = its tilt (radians) */
+export const phoneInHand = (p: Pen, x: number, y: number, ang: number, light: number, dark = false) => {
+  const g = p.g;
+  g.save(); g.translate(x, y); g.rotate(ang);
+  const body = cw([[-17, -32], [17, -32], [19, -28], [19, 28], [17, 32], [-17, 32], [-19, 28], [-19, -28]] as P2[]);
+  p.poly(body, "#1b1d24", 0);
+  p.inkRing(body, OW_HEAD * 0.7, thickAngle(light));
+  p.poly([[-14, -27], [14, -27], [14, 26], [-14, 26]], dark ? "#2a3040" : "#dff0ff", 0);
+  if (!dark) p.poly([[-14, -27], [14, -27], [14, -16], [-14, -16]], "#9cc9f2", 0); // a header bar, so it reads as a screen
+  g.restore();
+  // fingers wrapped round the near edge
+  p.poly(cw([[x - 22, y + 8], [x - 12, y + 6], [x - 10, y + 30], [x - 20, y + 32]] as P2[]), INK, 0);
+};
+
+/** Sitting on a chair at a desk, side view. arms "type": both hands forward on a keyboard at desk height;
+ *  "wave": the near hand raised beside his head, palm out, waggling (wave = phase 0..1 of the waggle) - "not now".
+ *  tilt: head (-1 down .. 1 up). Seat height 0.46 m; his soles on the floor (y = 975). */
+export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave"; wave?: number; tilt?: number; wind?: number } = {}) => {
+  const light = o.light ?? DEF_LIGHT, arms = o.arms ?? "type";
+  const hip: P2 = [272, 742], knee: P2 = [445, 748], ankle: P2 = [455, 952], sh: P2 = [292, 545];
+  const hc = 404;
+  sandal(p, [436, SOLE], 0); sandal(p, [446, SOLE - 3], 0);
+  // far arm: forward to the keyboard
+  sleeve(p, [290, 560], [342, 682], [528, 640]);
+  p.dot(534, 644, 12);
+  neck(p, [298, 552], [305, hc + 50], light);
+  const shawl = drapeShawl(300, 540, 190, light, o.wind ?? 0);
+  if (!o.shawlNear) { shawl.panel(p); shawl.cap(p); }
+  const parts = [cap(hip, sh, 64, 52), cap(hip, knee, 54, 42), cap(knee, ankle, 38, 28)];
+  unionFill(p, parts, THOBE, thobeDark, light);
+  if (o.shawlNear) shawl.panel(p);
+  const tilt = o.tilt ?? 0;
+  if (arms === "type") {
+    sleeve(p, [300, 562], [352, 690], [548, 650]);
+    p.dot(556, 654, 12.5);
+    if (o.shawlNear) shawl.cap(p);
+    profileHead(p, 314, hc, -0.28 * tilt + 0.12, light, o.seed ?? 1);
+  } else {
+    if (o.shawlNear) shawl.cap(p);
+    profileHead(p, 314, hc, -0.28 * tilt, light, o.seed ?? 1);
+    const wv = Math.sin((o.wave ?? 0) * Math.PI * 2) * 0.32;
+    sleeve(p, [300, 562], [400, 650], [436, 492]);
+    skinHand(p, 444 + 30 * Math.sin(wv), 462 - 30 * Math.cos(wv), -Math.PI / 2 + wv, 1, light, 0.95, 0.75);
+  }
+};
+
+/** Sitting up in bed against the headboard, legs straight under the blanket, scrolling a phone held in both hands in
+ *  front of his chest, head bowed to it. The card's pivot (soles, y = 975) sits on the mattress. scroll = 0..1 thumb */
+/** o.dark: the phone is switched off */
+export const travellerBedPhone = (p: Pen, o: PoseOpts & { scroll?: number; dark?: boolean } = {}) => {
+  const light = o.light ?? DEF_LIGHT;
+  const hip: P2 = [262, 930], knee: P2 = [450, 920], ankle: P2 = [650, 935], sh: P2 = [252, 728];
+  const hc = 600;
+  sleeve(p, [250, 742], [300, 860], [372, 772]);           // far arm, up to the phone
+  neck(p, [256, 735], [266, hc + 50], light);
+  const shawl = drapeShawl(254, 724, 170, light);
+  if (!o.shawlNear) { shawl.panel(p); shawl.cap(p); }
+  unionFill(p, [cap(hip, sh, 64, 52), cap(hip, knee, 54, 44), cap(knee, ankle, 44, 34)], THOBE, thobeDark, light);
+  if (o.shawlNear) { shawl.panel(p); shawl.cap(p); }
+  profileHead(p, 280, hc, 0.42, light, o.seed ?? 1);       // head bowed to the screen
+  sleeve(p, [262, 746], [318, 868], [384, 790]);           // near arm
+  phoneInHand(p, 392, 752, -0.55, light, !!o.dark);
+  const th = o.scroll ?? 0;                                 // the thumb moving on the screen
+  p.dot(388 + 4 * Math.sin(th * Math.PI * 2), 740 - 10 * th, 7);
 };

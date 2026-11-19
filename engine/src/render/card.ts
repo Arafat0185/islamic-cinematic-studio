@@ -121,6 +121,8 @@ export const light2D = (toLight: THREE.Vector3, right: THREE.Vector3, mirror = f
 export type Place = {
   key: string; x: number; y: number; z: number; draw: (p: Pen) => void;
   scale?: number; mirror?: boolean; yaw?: number;
+  /** turn the card in its own plane (radians, + = counter-clockwise on screen) about the pivot: lying down, leaning */
+  roll?: number;
   /** contact shadow colour (multiply, sRGB hex); null = no blob */
   blob?: string | null;
   /** cast a real shadow (its drawn silhouette) from the scene's shadow-casting lights. A casting card does not also
@@ -146,7 +148,7 @@ export class Cast {
       a.r = this.pool.req(p.key, w, h, k, p.draw);
       a.mesh.visible = true;
       a.mesh.position.set(p.x, p.y, p.z);
-      a.mesh.rotation.set(0, p.yaw ?? Math.atan2(cam.position.x - p.x, cam.position.z - p.z), 0);
+      a.mesh.rotation.set(0, p.yaw ?? Math.atan2(cam.position.x - p.x, cam.position.z - p.z), p.roll ?? 0);
       a.mesh.scale.set(p.mirror ? -sc : sc, sc, sc);
       a.mesh.castShadow = !!p.castShadow; a.mesh.receiveShadow = !p.castShadow;
       if (p.blob !== null) {

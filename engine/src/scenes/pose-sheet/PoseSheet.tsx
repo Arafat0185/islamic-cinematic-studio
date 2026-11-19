@@ -6,7 +6,7 @@ import { Pen } from "../../draw/toon";
 import { traveller } from "../../characters/traveller";
 import {
   travellerSide, travellerBack, travellerWalkSide, travellerRuku, travellerSujood, travellerJalsa,
-  travellerThreeQuarterFront, travellerThreeQuarterBack,
+  travellerThreeQuarterFront, travellerThreeQuarterBack, travellerWalkPhase, travellerChair, travellerBedPhone,
 } from "../../characters/travellerPoses";
 
 const BG = "#DADADA";
@@ -32,6 +32,11 @@ const PANELS: Panel[] = [
   { label: "7  Ruku", note: "back flat and level, hands on knees", draw: (p) => travellerRuku(p, { light: LIGHT }) },
   { label: "8  Sujood", note: "forehead and nose down, elbows raised", draw: (p) => travellerSujood(p, { light: LIGHT }) },
   { label: "9  Sitting", note: "between the prostrations", draw: (p) => travellerJalsa(p, { light: LIGHT }) },
+  { label: "10  Rushing", note: "fast walk, big arm swing", draw: (p) => travellerWalkPhase(p, 0.05, 1, 150, { light: LIGHT, swing: 1.8 }) },
+  { label: "11  On his phone", note: "walking, head bowed to it", draw: (p) => travellerWalkPhase(p, 0.1, 0.7, 90, { light: LIGHT, phone: 1 }) },
+  { label: "12  At his desk", note: "typing", draw: (p) => travellerChair(p, { light: LIGHT, arms: "type" }) },
+  { label: "13  Not now", note: "waves the reminder away", draw: (p) => travellerChair(p, { light: LIGHT, arms: "wave", wave: 0.2 }) },
+  { label: "14  Scrolling in bed", note: "sitting up, phone in both hands", draw: (p) => travellerBedPhone(p, { light: LIGHT, scroll: 0.4 }) },
 ];
 const ROWS = Math.ceil(PANELS.length / COLS);
 export const POSE_SHEET_W = COLS * PANEL_W, POSE_SHEET_H = ROWS * ROW_H;
