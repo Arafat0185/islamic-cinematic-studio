@@ -12,7 +12,8 @@ import { InkPass, noInkFallback, NOINK } from "../../render/ink";
 import { LensBlur } from "../../render/lensblur";
 import { GradeEffect, GRADE_NIGHT } from "../../render/grade";
 import { light2D } from "../../render/card";
-import { Cam, applyCam } from "../../camera/ease";
+import { applyCam, smooth } from "../../camera/ease";
+import { safeCam } from "../../camera/collision";
 import { Pen } from "../../draw/toon";
 import { traveller } from "../../characters/traveller";
 import { travellerWalkPhase, travellerThreeQuarterFront } from "../../characters/travellerPoses";
@@ -24,19 +25,21 @@ import { Levels } from "../../brand/levels";
 import { openingAt, endingAt } from "../../brand/sequences";
 import { Mercy } from "../../brand/mercy";
 import { irisAt, irisClip, IrisRim, whipAt, WhipBlurDefs } from "../../brand/transitions";
-import { Captions } from "../../text/Captions";
+import { Captions, Backdrop } from "../../text/Captions";
 import { ArabicLine } from "../../text/ArabicLine";
 import { SourceTag } from "../../text/SourceTag";
 import { SourcesCard } from "../../text/SourcesCard";
 import {
-  FPS, PHRASES, ARABIC, TAG, CARD, WHIP, MARK_CENTRE, MERCY_CENTRE, P2, STRIDE_UNITS, ENDING,
-  beatAt, irisOut, travellerAt, handheld, accentAt, BEATS, Beat,
+  FPS, FRAMES, PHRASES, ARABIC, TAG, CARD, WHIP, MARK_CENTRE, MERCY_CENTRE, P2, STRIDE_UNITS, IRIS, ENDING_TOP,
+  irisOut, travellerAt, accentAt, planAt, BEATS, Beat,
 } from "./timeline";
+import { placeText, bodyBox, CAPTION_BLOCK, QUOTE_BLOCK } from "./layout";
 import { HADITH, ARABIC_DEMO, REVIEW_NOTE } from "./content";
 
 export { FRAMES as TOOLKIT_FRAMES, FPS as TOOLKIT_FPS } from "./timeline";
 
-type PostToggles = { ink: boolean; lens: boolean; bloom: boolean; grade: boolean; dpr?: number };
+/** camReport: log a frame-by-frame camera check (collision corrections, closest surface, angle down to him) */
+type PostToggles = { ink: boolean; lens: boolean; bloom: boolean; grade: boolean; dpr?: number; camReport?: boolean };
 const toggles = (): PostToggles => ({ ink: true, lens: true, bloom: true, grade: true, ...((getInputProps() as { post?: Partial<PostToggles> }).post ?? {}) });
 const makeBloom = () => {
   const b = new BloomEffect({ blendFunction: BlendFunction.ADD, intensity: 0.75, luminanceThreshold: 1.0, luminanceSmoothing: 0.25, mipmapBlur: true, levels: 6, radius: 0.7 });
@@ -49,11 +52,23 @@ const q = (v: number, n: number) => Math.round(v * n) / n;
 const fwd = new THREE.Vector3(), fpt = new THREE.Vector3(), right = new THREE.Vector3();
 const GROOVE_FROM: [number, number] = [MAIN, WALL_Z + 0.5];
 
-/** turn a camera's view sideways (whip pan): rotate its look point around the camera by `yaw` radians */
-const yawed = (c: Cam, yaw: number): Cam => {
-  if (!yaw) return c;
-  const dx = c.look[0] - c.pos[0], dz = c.look[2] - c.pos[2], cs = Math.cos(yaw), sn = Math.sin(yaw);
-  return { ...c, look: [c.pos[0] + dx * cs + dz * sn, c.look[1], c.pos[2] - dx * sn + dz * cs] };
+/** check every frame's camera against the scene: collision corrections, the closest surface, and how steeply it looks
+ *  down at the Traveller (should stay under ~45 deg). Logged to the console (render a still with --log=verbose). */
+const cameraReport = (root: THREE.Object3D) => {
+  const rows: string[] = [];
+  let worstPitch = 0, minClear = Infinity, moved = 0;
+  const check = (f: number, out?: Beat, tag = "") => {
+    const pl = planAt(f, out), r = safeCam(root, pl.cam);
+    const [x, , z] = travellerAt(f).pos, [cx, cy, cz] = pl.cam.pos;
+    const pitch = (Math.atan2(cy - 1.35, Math.hypot(cx - x, cz - z)) * 180) / Math.PI;
+    worstPitch = Math.max(worstPitch, pitch); minClear = Math.min(minClear, r.clearance);
+    if (r.moved > 0.001) { moved++; rows.push(`frame ${f}${tag}: moved ${r.moved.toFixed(2)} m (occluded at ${r.occluded.toFixed(2)} m, clearance ${r.clearance.toFixed(2)} m)`); }
+    if (pitch > 45) rows.push(`frame ${f}${tag}: looks down at him at ${pitch.toFixed(0)} deg`);
+  };
+  for (let f = 0; f < FRAMES; f++) check(f);
+  for (const ir of IRIS) for (let f = ir.from; f < ir.from + ir.len; f++) check(f, irisOut(f)!.beat, " (iris, outgoing)");
+  console.log(`CAMERA REPORT: ${FRAMES} frames, ${moved} corrected, closest surface ${minClear === Infinity ? "> margin" : minClear.toFixed(2) + " m"}, steepest look down at him ${worstPitch.toFixed(0)} deg`);
+  for (const r of rows.slice(0, 40)) console.log("CAMERA REPORT: " + r);
 };
 
 /** the 3D world for frame f; `outgoing` = draw the outgoing shot of a running star iris instead of the main one */
@@ -89,11 +104,11 @@ const Inner: React.FC<{ outgoing?: Beat }> = ({ outgoing }) => {
     </EffectComposer>
   ), [post, on]);
 
-  // ---- camera: the beat's move (+ whip pan, strong-word accents, handheld drift) ----
-  const beat = outgoing ?? beatAt(f);
-  let c = beat.cam(f), focus = beat.focus(f), cInf = beat.cInf;
-  const whip = outgoing ? null : whipAt(f, WHIP.from, WHIP.len);
-  if (whip) { const b = whip.side === "out" ? BEATS.quote : BEATS.weight; c = yawed(b.cam(f), whip.yaw); focus = b.focus(f); cInf = b.cInf; }
+  // ---- camera: the planned move (beat, whip pan, ending, accents, handheld), then the collision check ----
+  const plan = planAt(f, outgoing);
+  const safe = safeCam(world.root, plan.cam);
+  if (safe.moved > 0.001) console.warn(`camera collision: frame ${f} moved ${safe.moved.toFixed(2)} m`);
+  const c = safe.cam, focus = plan.focus;
   // ---- light levels and floor effects ----
   let lv = { main: 1, lanterns: 1, night: 1 };
   world.fx.grooves(0, 0, 0, 0); world.fx.mark(0, 0, 1, 0, 0);
@@ -102,27 +117,20 @@ const Inner: React.FC<{ outgoing?: Beat }> = ({ outgoing }) => {
     lv = { main: o.main, lanterns: o.lanterns, night: o.night };
     world.fx.grooves(GROOVE_FROM[0], GROOVE_FROM[1], o.grooveRadius, o.grooveIntensity);
   }
-  let hand = 1;
-  if (!outgoing && f >= ENDING.from) {
-    const e = endingAt((f - ENDING.from) / ENDING.len, BEATS.endLow.cam(ENDING.from), MARK_CENTRE);
-    c = e.cam; cInf = 2; focus = [MARK_CENTRE[0], 0, MARK_CENTRE[2]]; hand = 1 - Math.min(1, (f - ENDING.from) / 40);
+  if (plan.endingU !== null) {
+    const e = endingAt(plan.endingU, BEATS.endLow.cam(676), MARK_CENTRE, ENDING_TOP);
+    // the glowing star dims as the sources card comes up, so no bright line runs behind its text
+    const dim = 1 - 0.85 * smooth((f - CARD.from + 6) / 14);
     lv = { main: e.main, lanterns: e.lanterns, night: e.night };
-    world.fx.grooves(MARK_CENTRE[0], MARK_CENTRE[2], e.grooveRadius, e.grooveIntensity, 0.15);
-    world.fx.mark(MARK_CENTRE[0], MARK_CENTRE[2], 1.9, e.markProgress, e.markIntensity);
+    world.fx.grooves(MARK_CENTRE[0], MARK_CENTRE[2], e.grooveRadius, e.grooveIntensity * dim, 0.15);
+    world.fx.mark(MARK_CENTRE[0], MARK_CENTRE[2], 1.9, e.markProgress, e.markIntensity * dim);
   }
   world.mercy.update(f);
   applyLook({ ...LOOK, ...world.levels.set(lv, LOOK) });
-  const acc = accentAt(f), hh = handheld(f, hand);
-  const sh = acc.shake * 0.012;
-  c = {
-    ...c,
-    pos: [c.pos[0] + hh.pos[0] + sh * Math.sin(f * 2.7), c.pos[1] + hh.pos[1] + sh * Math.sin(f * 3.9 + 1), c.pos[2] + hh.pos[2]],
-    look: [c.look[0] + hh.look[0], c.look[1] + hh.look[1], c.look[2] + hh.look[2]],
-    fov: c.fov * (1 - 0.05 * acc.punch),
-  };
   const cam = camera as THREE.PerspectiveCamera;
   cam.layers.enable(NOINK);
   applyCam(cam, c);
+  useMemo(() => { if (on.camReport && !outgoing) cameraReport(world.root); }, [on, outgoing, world]);
 
   // ---- the Traveller ----
   right.setFromMatrixColumn(cam.matrixWorld, 0);
@@ -149,7 +157,8 @@ const Inner: React.FC<{ outgoing?: Beat }> = ({ outgoing }) => {
   cam.getWorldDirection(fwd);
   fpt.set(...focus);
   post.lens.focus = Math.max(0.3, fpt.sub(cam.position).dot(fwd));
-  post.lens.cInf = cInf;
+  post.lens.cInf = plan.cInf;
+  post.lens.nearScale = plan.nearScale;
   return (
     <>
       <primitive object={world.root} dispose={null} />
@@ -171,8 +180,20 @@ const View: React.FC<{ outgoing?: Beat; style?: React.CSSProperties }> = ({ outg
   );
 };
 
+/** where each piece of text sits (computed once): clear of his head and upper body in every shot */
+const useTextLayout = () => useMemo(() => {
+  const quote = placeText(ARABIC.from, ARABIC.to, QUOTE_BLOCK);
+  const phrases = PHRASES.map((ph) => (ph.from >= ARABIC.from && ph.to <= ARABIC.to ? { ...ph, centreY: quote } : { ...ph, centreY: placeText(ph.from, ph.to, CAPTION_BLOCK) }));
+  if (toggles().camReport) {
+    console.log(`TEXT LAYOUT: quote group at ${quote.toFixed(2)}, his box ${JSON.stringify(bodyBox(ARABIC.from, ARABIC.to), (_k, v) => (typeof v === "number" ? +v.toFixed(3) : v))}`);
+    for (const ph of phrases) console.log(`TEXT LAYOUT: ${ph.from}-${ph.to} at ${ph.centreY?.toFixed(2)} box ${JSON.stringify(bodyBox(ph.from, ph.to), (_k, v) => (typeof v === "number" ? +v.toFixed(3) : v))}`);
+  }
+  return { phrases, arabicY: quote - 0.085, tagY: quote + 0.115, quoteY: quote };
+}, []);
+
 export const BrandToolkitDemo: React.FC = () => {
   const f = useCurrentFrame(), { width: w, height: h } = useVideoConfig();
+  const text = useTextLayout();
   const whip = whipAt(f, WHIP.from, WHIP.len);
   const out = irisOut(f);
   const iris = out ? irisAt(f, out.iris.from, out.iris.len, w, h) : null;
@@ -192,9 +213,11 @@ export const BrandToolkitDemo: React.FC = () => {
             : "radial-gradient(circle at 50% 50%, rgba(220,226,255,1), rgba(160,170,220,0.3) 50%, rgba(0,0,0,0) 80%)",
         }} />
       ) : null}
-      <ArabicLine words={ARABIC_DEMO} from={ARABIC.from} to={ARABIC.to} />
-      <Captions phrases={PHRASES} />
-      <SourceTag text={HADITH.tag} from={TAG.from} to={TAG.to} />
+      {f >= ARABIC.from && f < ARABIC.to ? <Backdrop centreY={text.quoteY} half={h * 0.16} strength={0.4}
+        opacity={Math.min(1, (f - ARABIC.from) / 8, (ARABIC.to - f) / 6)} /> : null}
+      <ArabicLine words={ARABIC_DEMO} from={ARABIC.from} to={ARABIC.to} centreY={text.arabicY} />
+      <Captions phrases={text.phrases} backdrop={!(f >= ARABIC.from && f < ARABIC.to)} />
+      <SourceTag text={HADITH.tag} from={TAG.from} to={TAG.to} centreY={text.tagY} />
       <SourcesCard sources={[HADITH.card]} note={REVIEW_NOTE} from={CARD.from} to={CARD.to} />
     </AbsoluteFill>
   );

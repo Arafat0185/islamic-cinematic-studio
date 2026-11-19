@@ -3,19 +3,22 @@
 //
 //  beat      frames    camera                                           the Traveller
 //  opening   0-66      low angle; rack focus from the lamp to him       head bowed in thought, then turns up to the lamp
-//  hook      66-178    wide establishing, slow crane down               looks up at the sky; lowers his head on "first"
+//  hook      66-178    wide establishing through the foreground arch,   looks up at the sky; lowers his head on "first"
+//                      slow push (the arch frames the courtyard, soft)
 //  (star iris 178-192)
 //  intro     178-276   close-up on his head, the lamp behind, slow orbit turned toward the lamp
 //  quote     276-450   medium shot, a wider slow arc around him         a hand placed on his chest, head a little bowed
 //  (whip pan 450-460)
 //  weight    455-540   crane up: the courtyard grows, he becomes small  turns and walks to the prayer mat
 //  (star iris 536-550)
-//  mercy     536-636   overhead on the mat                               stands in thought; turns to face the qibla
+//  mercy     536-636   high angle (~32 deg) over the mat                 stands in thought; turns to face the qibla
 //  ending    636-750   low angle as he raises his hands, then the       takbir, held
-//                      signature rise to the star mark
+//                      signature rise to the star mark (to ~40 deg, never straight down)
 // Every hold also gets a very subtle handheld drift, and the Traveller always breathes and shifts his weight a little,
 // with a breeze in his shawl, so nothing is ever frozen.
 import { Cam, V3, glide, smooth, clamp01 } from "../../camera/ease";
+import { whipAt } from "../../brand/transitions";
+import { endingAt } from "../../brand/sequences";
 import { SU } from "../../render/card";
 import { keywordMoments, Phrase } from "../../text/Captions";
 import { NARRATION, HADITH } from "./content";
@@ -31,7 +34,7 @@ export const PHRASES: Phrase[] = [
   { text: HADITH.parts[1], keys: HADITH.keys, from: 362, to: 448 },
   { ...NARRATION.weight2, from: 466, to: 536 },
   { ...NARRATION.mercy1, from: 556, to: 632 },
-  { ...NARRATION.turn2, from: 642, to: 702 },
+  { ...NARRATION.turn2, from: 642, to: 688 }, // ends before the camera's rise moves him up the frame
 ];
 export const ARABIC = { from: 278, to: 448 };
 export const TAG = { from: 292, to: 448 };
@@ -109,7 +112,8 @@ export const travellerAt = (f: number) => {
 };
 
 // ---------------- the camera ----------------
-export type Beat = { from: number; to: number; cam: (f: number) => Cam; focus: (f: number) => V3; cInf: number };
+/** nearScale (optional): foreground blur strength for this beat (default 1.6) */
+export type Beat = { from: number; to: number; cam: (f: number) => Cam; focus: (f: number) => V3; cInf: number; nearScale?: number };
 const cam = (pos: V3, look: V3, fov: number): Cam => ({ pos, look, fov, roll: 0 });
 const mixCam = (a: Cam, b: Cam, t: number): Cam => ({ pos: lerp3(a.pos, b.pos, t), look: lerp3(a.look, b.look, t), fov: a.fov + (b.fov - a.fov) * t, roll: 0 });
 const move = (a: Cam, b: Cam, from: number, to: number) => (f: number) => mixCam(a, b, glide((f - from) / (to - from)) * 0.7 + clamp01((f - from) / (to - from)) * 0.3);
@@ -123,13 +127,15 @@ const chest = (p: V3): V3 => [p[0], 1.35, p[2]];
 export const BEATS: Record<"opening" | "hook" | "intro" | "quote" | "weight" | "mercy" | "endLow", Beat> = {
   opening: {
     from: 0, to: 66, cInf: 7,
-    cam: move(cam([0.75, 0.42, 1.95], [1.25, 1.45, -3.0], 46), cam([0.7, 0.46, 1.75], [1.2, 1.5, -3.0], 46), 0, 66),
+    cam: move(cam([0.75, 0.5, 1.95], [1.25, 1.45, -3.0], 46), cam([0.7, 0.54, 1.75], [1.2, 1.5, -3.0], 46), 0, 66),
     // rack focus: the lamp first, then him (as his head turns up to it)
     focus: (f) => lerp3(LAMP, chest(P1), ramp(f, 30, 58)),
   },
   hook: {
-    from: 66, to: 192, cInf: 5,
-    cam: move(cam([0.6, 3.4, 8.8], [0.5, 1.0, -2.0], 48), cam([0.45, 1.95, 7.0], [0.4, 1.35, -2.0], 48), 66, 192),
+    // from the gallery behind the foreground arch, looking out through it at the courtyard, the arcade, the dome and
+    // the moon; a slow push that stays behind the arch (the arch's back face is at z = 7.9)
+    from: 66, to: 192, cInf: 4, nearScale: 0.9,
+    cam: move(cam([0.27, 1.5, 11.4], [0.22, 2.05, -3.0], 50), cam([0.27, 1.52, 9.7], [0.2, 1.95, -3.0], 50), 66, 192),
     focus: () => chest(P1),
   },
   intro: {
@@ -139,7 +145,8 @@ export const BEATS: Record<"opening" | "hook" | "intro" | "quote" | "weight" | "
   },
   quote: {
     from: 276, to: 460, cInf: 7,
-    cam: orbit(chest(P1), 3.4, 1.45, -22, 12, 276, 460, 38, 0.1),
+    // aimed above him, so he sits in the lower part of the frame with the lamps and arches above: the text goes there
+    cam: orbit(chest(P1), 3.4, 1.45, -22, 12, 276, 460, 38, 0.55),
     focus: () => chest(P1),
   },
   weight: {
@@ -148,14 +155,17 @@ export const BEATS: Record<"opening" | "hook" | "intro" | "quote" | "weight" | "
     focus: (f) => chest(lerp3(P1, P2, walkProgress(f))),
   },
   mercy: {
-    from: 536, to: 640, cInf: 3, // overhead on the mat, drifting slowly down
-    cam: move(cam([0.85, 4.9, 0.55], [0.85, 0.0, -1.35], 48), cam([0.95, 4.4, 0.3], [0.88, 0.0, -1.4], 48), 536, 640),
-    focus: () => [P2[0], 0.6, P2[2]],
+    // a high angle (~32 deg down to him), not overhead: he stays a standing figure, and the floor where the stars fill
+    // is in view in front of him
+    from: 536, to: 640, cInf: 3,
+    cam: move(cam([0.05, 3.6, 2.0], [0.8, 0.25, -0.95], 48), cam([0.2, 3.4, 1.65], [0.82, 0.3, -1.0], 48), 536, 640),
+    focus: () => [P2[0], 0.9, P2[2]],
   },
   endLow: {
     from: 636, to: 680, cInf: 6, // low angle (about hip height) from his side as he raises his hands
     // from his side (he faces the qibla, screen left), so the drawing is his true profile, slowly pushing in
-    cam: move(cam([1.05, 0.95, 1.6], [1.2, 1.5, -1.55], 42), cam([1.08, 1.0, 1.3], [1.2, 1.52, -1.55], 42), 636, 680),
+    // pulled back and aimed a little above him: his profile in the lower frame, room for the line above
+    cam: move(cam([1.0, 1.05, 2.4], [1.2, 1.75, -1.55], 40), cam([1.02, 1.1, 2.1], [1.2, 1.78, -1.55], 40), 636, 680),
     focus: () => chest(P2),
   },
 };
@@ -175,6 +185,8 @@ export const irisOut = (f: number) => {
   return i < 0 ? null : { iris: IRIS[i], beat: i === 0 ? BEATS.hook : BEATS.weight };
 };
 export const ENDING = { from: 676, len: 90 }; // the signature rise starts once the hands are up
+/** where the ending's rise lands: high and back, ~40 deg down to the star mark (~30 deg to him), never straight down */
+export const ENDING_TOP: Cam = { pos: [0.75, 4.6, 4.8], look: [0.75, 0.0, -0.7], fov: 46, roll: 0 };
 
 /** a very subtle handheld drift: a few millimetres, slow, never still */
 export const handheld = (f: number, k = 1): { pos: V3; look: V3 } => {
@@ -197,4 +209,34 @@ export const accentAt = (f: number) => {
     flash = Math.max(flash, d < 10 ? (d < 2 ? d / 2 : Math.exp(-(d - 2) / 3)) : 0);
   }
   return { punch, shake, flash, warm };
+};
+
+// ---------------- the whole camera plan ----------------
+export type Plan = { cam: Cam; focus: V3; cInf: number; nearScale: number; endingU: number | null };
+const yawed = (c: Cam, yaw: number): Cam => {
+  if (!yaw) return c;
+  const dx = c.look[0] - c.pos[0], dz = c.look[2] - c.pos[2], cs = Math.cos(yaw), sn = Math.sin(yaw);
+  return { ...c, look: [c.pos[0] + dx * cs + dz * sn, c.look[1], c.pos[2] - dx * sn + dz * cs] };
+};
+/** the camera at frame f, with whip pan, ending, strong-word accents and handheld drift (before collision checks).
+ *  `outgoing` = the outgoing beat of a running star iris. */
+export const planAt = (f: number, outgoing?: Beat): Plan => {
+  const beat = outgoing ?? beatAt(f);
+  let c = beat.cam(f), focus = beat.focus(f), cInf = beat.cInf, nearScale = beat.nearScale ?? 1.6, endingU: number | null = null;
+  const whip = outgoing ? null : whipAt(f, WHIP.from, WHIP.len);
+  if (whip) { const b = whip.side === "out" ? BEATS.quote : BEATS.weight; c = yawed(b.cam(f), whip.yaw); focus = b.focus(f); cInf = b.cInf; nearScale = b.nearScale ?? 1.6; }
+  let hand = 1;
+  if (!outgoing && f >= ENDING.from) {
+    endingU = (f - ENDING.from) / ENDING.len;
+    c = endingAt(endingU, BEATS.endLow.cam(ENDING.from), MARK_CENTRE, ENDING_TOP).cam;
+    cInf = 2; focus = [MARK_CENTRE[0], 0, MARK_CENTRE[2]]; hand = 1 - Math.min(1, (f - ENDING.from) / 40);
+  }
+  const acc = accentAt(f), hh = handheld(f, hand), sh = acc.shake * 0.012;
+  c = {
+    ...c,
+    pos: [c.pos[0] + hh.pos[0] + sh * Math.sin(f * 2.7), c.pos[1] + hh.pos[1] + sh * Math.sin(f * 3.9 + 1), c.pos[2] + hh.pos[2]],
+    look: [c.look[0] + hh.look[0], c.look[1] + hh.look[1], c.look[2] + hh.look[2]],
+    fov: c.fov * (1 - 0.05 * acc.punch),
+  };
+  return { cam: c, focus, cInf, nearScale, endingU };
 };

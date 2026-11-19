@@ -24,7 +24,7 @@ export const SourcesCard: React.FC<SourcesCardProps> = ({ title = "Sources", sou
     <AbsoluteFill style={{ background: `rgba(8,11,28,${0.55 * a})`, alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
       <div style={{
         position: "relative", width: 860, padding: "64px 70px", opacity: a, transform: `translateY(${(1 - a) * 16}px)`,
-        background: "rgba(14,20,48,0.92)", border: `2px solid ${KEY_COLOR.gold}`, outline: "1px solid rgba(232,176,75,0.35)", outlineOffset: 10,
+        background: "rgba(14,20,48,0.97)", border: `2px solid ${KEY_COLOR.gold}`, outline: "1px solid rgba(232,176,75,0.35)", outlineOffset: 10,
         textAlign: "center",
       }}>
         {corner({ left: -17, top: -17 })}{corner({ right: -17, top: -17 })}{corner({ left: -17, bottom: -17 })}{corner({ right: -17, bottom: -17 })}

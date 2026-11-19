@@ -1,6 +1,6 @@
 // Adapted from Claude Animated Shorts (templates/bridge/lensblur.ts), https://github.com/mromidev/claude-animated-shorts
 // Copyright (c) 2026 Mr omi. MIT License; full licence text in NOTICE.md at the repo root.
-// Changes in this copy: none (verbatim apart from this header).
+// Changes in this copy: LensBlur gained a nearScale setter (per-shot foreground blur strength).
 
 // Thin-lens depth of field for the reference's soft backgrounds (reports/depth.md 6.1), as two deterministic gather
 // passes. CoC radius (px at 1080x1920) = cInf * |1 - focus / depth|, x nearScale in front of the focus plane,
@@ -104,6 +104,8 @@ export class LensBlur {
   }
   set focus(v: number) { this.pre.focus = v; this.main.focus = v; }
   set cInf(v: number) { this.pre.cInf = v; this.main.cInf = v; }
+  /** how much more strongly things in FRONT of the focus blur (per shot) */
+  set nearScale(v: number) { for (const e of [this.pre, this.main]) e.uniforms.get("nearScale")!.value = v; }
   dispose() { this.pre.dispose(); this.main.dispose(); }
 }
 

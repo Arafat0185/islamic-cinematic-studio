@@ -13,7 +13,8 @@ import { FONT, measure, useFonts } from "./fonts";
 export type KeyKind = "gold" | "red" | "green";
 export const KEY_COLOR: Record<KeyKind, string> = { gold: "#E8B04B", red: "#E0605A", green: "#6CC08A" };
 /** one subtitle: text, the frames it is on screen [from, to), and keywords (a word or a few words) -> meaning */
-export type Phrase = { text: string; from: number; to: number; keys?: Record<string, KeyKind> };
+/** centreY (optional): where this phrase's centre sits, as a fraction of the frame height (default CAPTION.centreY) */
+export type Phrase = { text: string; from: number; to: number; keys?: Record<string, KeyKind>; centreY?: number };
 
 export const CAPTION = { centreY: 0.66, maxWidth: 900, size: 58, minSize: 42, lineHeight: 1.22, fade: 6, enter: 8, rise: 26 };
 
@@ -78,7 +79,8 @@ const Line: React.FC<{ toks: Tok[]; f: number }> = ({ toks, f }) => (
 );
 
 /** shows whichever phrase is on screen at the current frame */
-export const Captions: React.FC<{ phrases: Phrase[] }> = ({ phrases }) => {
+/** backdrop: a soft dark band behind the text (fades with it) for readability over bright or busy areas */
+export const Captions: React.FC<{ phrases: Phrase[]; backdrop?: boolean }> = ({ phrases, backdrop }) => {
   const ready = useFonts();
   const f = useCurrentFrame(), { height } = useVideoConfig();
   const ph = phrases.find((p) => f >= p.from && f < p.to);
@@ -94,13 +96,26 @@ export const Captions: React.FC<{ phrases: Phrase[] }> = ({ phrases }) => {
   const { size, lines } = layout(toks, 600);
   return (
     <AbsoluteFill style={{ pointerEvents: "none" }}>
+      {backdrop ? <Backdrop centreY={ph.centreY ?? CAPTION.centreY} half={(lines.length * size * CAPTION.lineHeight) / 2 + 70} opacity={a} /> : null}
       <div style={{
-        position: "absolute", left: 0, right: 0, top: height * CAPTION.centreY, transform: `translateY(calc(-50% + ${rise}px))`,
+        position: "absolute", left: 0, right: 0, top: height * (ph.centreY ?? CAPTION.centreY), transform: `translateY(calc(-50% + ${rise}px))`,
         textAlign: "center", fontFamily: FONT.caption, fontWeight: 600, fontSize: size, lineHeight: CAPTION.lineHeight,
         opacity: a, textShadow: "0 2px 10px rgba(5,8,22,0.85), 0 0 3px rgba(5,8,22,0.9)", letterSpacing: "0.005em",
       }}>
         {lines.map((l, i) => <Line key={i} toks={l} f={f} />)}
       </div>
     </AbsoluteFill>
+  );
+};
+
+/** a soft dark horizontal band centred at centreY (fraction of the frame), `half` px tall each way, faded at the edges */
+export const Backdrop: React.FC<{ centreY: number; half: number; opacity: number; strength?: number }> = ({ centreY, half, opacity, strength = 0.5 }) => {
+  const { height } = useVideoConfig();
+  const c = `rgba(5,8,22,${strength})`;
+  return (
+    <div style={{
+      position: "absolute", left: 0, right: 0, top: height * centreY - half, height: 2 * half, opacity,
+      background: `linear-gradient(rgba(5,8,22,0), ${c} 30%, ${c} 70%, rgba(5,8,22,0))`,
+    }} />
   );
 };

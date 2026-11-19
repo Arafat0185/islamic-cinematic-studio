@@ -22,10 +22,10 @@ export const openingAt = (t: number) => {
 
 export const ENDING_SECONDS = 3.0;
 
-/** u = 0..1 through the ending; `from` = the camera when the ending starts; the mark is centred at `centre` */
-export const endingAt = (u: number, from: Cam, centre: V3) => {
+/** u = 0..1 through the ending; `from` = the camera when the ending starts; the mark is centred at `centre`;
+ *  `top` = where the camera rises to (default: almost straight down over the mark) */
+export const endingAt = (u: number, from: Cam, centre: V3, top: Cam = { pos: [centre[0], 9.5, centre[2] + 0.9], look: [centre[0], 0, centre[2]], fov: 45, roll: 0 }) => {
   const e = glide(u);
-  const top: Cam = { pos: [centre[0], 9.5, centre[2] + 0.9], look: [centre[0], 0, centre[2]], fov: 45, roll: 0 };
   const mix = (a: number, b: number) => a + (b - a) * e;
   const cam: Cam = {
     pos: [mix(from.pos[0], top.pos[0]), mix(from.pos[1], top.pos[1]), mix(from.pos[2], top.pos[2])],
