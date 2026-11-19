@@ -1,5 +1,8 @@
 """Sound for video 001, final version. Every sound is synthesized here (nothing sampled, downloaded or licensed). No
-music, no instruments, no adhan, no Quran audio.
+music, no instruments, no adhan, no Quran audio, and no musical notes: risers, shimmers, pings, glitches, buzzes and
+glass are all made from filtered NOISE. The only sine waves left are the low "body" of hits and thuds (continuous
+downward sweeps under ~120 Hz that die away in under a second, like a kick of air) and the crickets in the courtyard
+ambience.
 
 Reads videos/<id>/final/plan.json, the plan the picture uses, so every sound lands on its frame:
   sfx     the sound map: each effect tied to something on screen or a spoken word (coins = clinks, bubbles = pings,
@@ -26,8 +29,71 @@ from pedalboard import Pedalboard, Compressor, HighpassFilter, LowShelfFilter, P
 from scipy.signal import resample_poly
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from mix_d3 import (SR, rng, db, lp, hp, bp, noise, tt, env, stereo, verb, ROOM, HALL, crack, crack_layered, impact, hit, hit_layered,
-                    whoosh, ping, glitch, riser, sub_drop, thud, shimmer, tick_whirr, tap, horn, bed as bed_d3, envelope)
+from mix_d3 import (SR, rng, db, lp, hp, bp, noise, tt, env, stereo, verb, ROOM, HALL, impact, hit, hit_layered,
+                    whoosh, sub_drop, thud, bed as bed_d3, envelope)
+
+# ---------------- noise-only versions of draft 3's tonal sounds (no pitches, no notes) ----------------
+def riser(dur=1.0, soft=False):
+    """a riser before a reveal: band-passed NOISE whose band sweeps upward and swells (no tone, no pitch glide)"""
+    n = int(dur * SR); t = np.arange(n) / SR; u = t / dur
+    nz = np.zeros(n); x = noise(n)
+    for k in range(12):
+        a, b = int(k * n / 12), int((k + 1) * n / 12); c = 400 + 4500 * ((k + 0.5) / 12) ** 2
+        nz[a:b] = bp(x, c * 0.6, c * 1.6)[a:b]
+    air = hp(noise(n), 3000) * 0.15
+    e = u ** 2.2 * (1 - np.clip((u - 0.97) / 0.03, 0, 1))
+    return verb(stereo((nz * 0.7 + air) * e * (0.55 if soft else 1.0))) * db(-8)
+
+def shimmer(dur=1.0, soft=False):
+    """soft light: a cloud of tiny bursts of high, wide-band NOISE (airy sparkle, no tones), with a slow swell"""
+    n = int(dur * SR); x = np.zeros(n); t = np.arange(n) / SR
+    for _ in range(int(80 * dur)):
+        m = int(rng.uniform(0.02, 0.06) * SR); i = rng.integers(0, max(1, n - m))
+        lo = rng.uniform(3500, 7000)
+        x[i:i + m] += bp(noise(m), lo, min(lo * 1.8, 20000)) * np.hanning(m) * rng.uniform(0.3, 1.0)
+    x *= np.sin(np.pi * np.minimum(1, t / dur)) ** 1.5
+    return verb(stereo(x * 0.35 * (0.6 if soft else 1.0)), HALL) * db(-6)
+
+def ping(soft=False):
+    """a notification: a short bright tick-pop of band-passed NOISE (no tone, no chime)"""
+    n = int(0.12 * SR); t = np.arange(n) / SR
+    pop = bp(noise(n), 1800, 6000) * np.exp(-t / 0.018) * 0.9 + hp(noise(n), 4000) * np.exp(-t / 0.004) * 0.6
+    return verb(stereo(pop, rng.uniform(-0.6, 0.6))) * db(-9 if soft else -6)
+
+def glitch():
+    """a short digital stutter: gated bursts of bright NOISE (no buzz tones)"""
+    n = int(0.22 * SR); x = np.zeros(n)
+    for k in range(5):
+        a = int(k * 0.044 * SR); m = int(0.022 * SR)
+        x[a:a + m] = (bp(noise(m), 1500, 7000) * 0.7 + lp(noise(m), 600) * 0.4) * (rng.random() > 0.25)
+    return stereo(x, rng.uniform(-0.4, 0.4)) * db(-12)
+
+def crack():
+    """glass cracking: a sharp NOISE burst, short glassy noise 'tings' (band-passed noise, no sine pings), crackles
+    and a dull low thud"""
+    n = int(0.9 * SR); t = np.arange(n) / SR
+    glass = hp(noise(n), 2500, 4) * env(n, 0.0005, 0.035)
+    for lo in (3000, 4400, 6000):
+        glass += bp(noise(n), lo, lo * 1.5) * env(n, 0.0005, 0.05) * (rng.random() + 0.5) * 0.6
+    tick = np.zeros(n)
+    for k in range(5):
+        i = int((0.03 + 0.05 * k + rng.random() * 0.03) * SR); m = int(0.01 * SR)
+        tick[i:i + m] += hp(noise(m), 3000) * np.exp(-np.arange(m) / (0.002 * SR)) * 0.5
+    thud = np.sin(2 * np.pi * (70 + 40 * np.exp(-t / 0.03)) * t) * env(n, 0.002, 0.16) * 1.4
+    return verb(stereo(glass * 0.8 + tick + thud)) * db(-2)
+
+def crack_layered():
+    c = crack(); d = sub_drop(); m = min(c.shape[1], d.shape[1]); c[:, :m] += d[:, :m] * 0.35
+    return c
+
+def traffic_pass():
+    """a car passing in the distance: a swell of low road NOISE (replaces the two-tone horns)"""
+    n = int(1.4 * SR); t = np.arange(n) / SR
+    return stereo(lp(noise(n), 500) * np.sin(np.pi * t / 1.4) ** 2 * 0.6, rng.uniform(-0.7, 0.7)) * db(-6)
+
+def mains_buzz(n, t, hz=100):
+    """an electrical buzz: NOISE switched on and off 100 times a second (a texture, not a held note)"""
+    return bp(noise(n), 150, 3000) * (np.sin(2 * np.pi * hz * t) > 0.6) * 0.5
 
 # ---------------- new one-shots ----------------
 def impact_big():
@@ -38,11 +104,13 @@ def impact_big():
     return h
 
 def coin(pan=0.0):
-    """a coin: a short metallic clink (inharmonic partials, fast decay)"""
-    t = tt(0.4); x = np.zeros(len(t)); f0 = rng.uniform(2400, 3600)
-    for k, a in ((1.0, 1.0), (2.76, 0.6), (5.4, 0.35), (8.9, 0.2)):
-        x += a * np.sin(2 * np.pi * f0 * k * t) * np.exp(-t / (0.09 / k ** 0.5))
-    return verb(stereo(x * 0.25 * env(len(t), 0.0005, 0.2), pan)) * db(-6)
+    """a coin: a short bright metallic 'chink' made of NOISE (a sharp tick and quickly decaying high noise bands, no
+    sine partials)"""
+    n = int(0.25 * SR); t = np.arange(n) / SR
+    x = hp(noise(n), 5000) * np.exp(-t / 0.003) * 0.8
+    for lo in rng.uniform(2500, 7000, 3):
+        x += bp(noise(n), lo, min(lo * 1.6, 20000)) * np.exp(-t / rng.uniform(0.02, 0.05)) * 0.5
+    return verb(stereo(x * 0.6, pan)) * db(-6)
 
 def paper(pan=0.0):
     """a sheet of paper flying past: a crisp flutter"""
@@ -70,8 +138,11 @@ def zoom_in(dur=0.3):
 def freeze():
     """the world freezes: everything stops like a tape halting (a falling-pitch tone and a muffled thump)"""
     n = int(0.45 * SR); t = np.arange(n) / SR
-    f = 220 * np.exp(-t / 0.12) + 30
-    x = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.25) * 0.6 + lp(noise(n), 400) * np.exp(-t / 0.06) * 0.5
+    x = np.zeros(n); src = noise(n)                    # NOISE whose low-pass closes down fast (no falling tone)
+    for k in range(9):
+        a, b = int(k * n / 9), int((k + 1) * n / 9); c = 3500 * np.exp(-((k + 0.5) / 9) / 0.25) + 60
+        x[a:b] = lp(src, c)[a:b]
+    x = x * np.exp(-t / 0.25) * 0.9 + lp(noise(n), 400) * np.exp(-t / 0.06) * 0.5
     return verb(stereo(x)) * db(-3)
 
 def shatter():
@@ -95,7 +166,7 @@ def spot_on():
     """a big stage spotlight switching on: a heavy clunk and a short electric hum swelling"""
     n = int(1.2 * SR); t = np.arange(n) / SR
     clunk = lp(noise(n), 1200) * env(n, 0.001, 0.03) * 1.2 + np.sin(2 * np.pi * 90 * t) * env(n, 0.001, 0.08)
-    hum = (np.sin(2 * np.pi * 100 * t) + 0.4 * np.sin(2 * np.pi * 200 * t)) * np.minimum(1, t / 0.05) * np.exp(-t / 0.5) * 0.15
+    hum = mains_buzz(n, t) * np.minimum(1, t / 0.05) * np.exp(-t / 0.5) * 0.25
     return verb(stereo(clunk + hum), HALL) * db(-4)
 
 def dots_on():
@@ -103,7 +174,7 @@ def dots_on():
     n = int(0.8 * SR); x = np.zeros(n)
     for k in range(5):
         i = int(k * 0.12 * SR); m = int(0.03 * SR)
-        x[i:i + m] += bp(noise(m), 1200, 4500) * np.exp(-np.arange(m) / (0.004 * SR)) * 0.7 + np.sin(2 * np.pi * 1500 * np.arange(m) / SR) * np.exp(-np.arange(m) / (0.006 * SR)) * 0.2
+        x[i:i + m] += bp(noise(m), 1200, 4500) * np.exp(-np.arange(m) / (0.004 * SR)) * 0.8
     return stereo(x) * db(-4)
 
 def whoosh_fast():
@@ -231,20 +302,20 @@ def bed(kind, n):
     t = np.arange(n) / SR
     if kind == "city_night":
         x = bed_d3("city", n) * db(-2)
-        for k in range(int(n / SR / 2) + 1):  # distant horns now and then
-            i = int((0.7 + 2.1 * k) * SR)
-            if i < n - int(0.4 * SR): h = horn() * db(-14); x[:, i:i + h.shape[1]] += h[:, : n - i]
+        for k in range(int(n / SR / 2) + 1):  # cars passing in the distance now and then
+            i = int((0.5 + 1.7 * k) * SR); h = traffic_pass() * db(-8)
+            if i < n: m = min(h.shape[1], n - i); x[:, i:i + m] += h[:, :m]
         return x
     if kind == "office": return bed_d3("office", n) * db(3)
     if kind == "feed":   # electronics: a low hum, a digital hiss, faint data blips
-        x = stereo(lp(noise(n), 160) * 0.5 + np.sin(2 * np.pi * 55 * t) * 0.12 + bp(noise(n), 5000, 9000) * 0.03)
-        for _ in range(int(n / SR * 8)):
-            i = rng.integers(0, n - 1000); m = int(0.01 * SR)
-            x[:, i:i + m] += np.sin(2 * np.pi * rng.uniform(1500, 4000) * np.arange(m) / SR) * 0.1
+        x = stereo(lp(noise(n), 160) * 0.5 + mains_buzz(n, t) * 0.15 + bp(noise(n), 5000, 9000) * 0.03)
+        for _ in range(int(n / SR * 8)):   # data ticks: tiny noise clicks
+            i = rng.integers(0, n - 1000); m = int(0.008 * SR)
+            x[:, i:i + m] += hp(noise(m), 2500) * np.exp(-np.arange(m) / (0.0015 * SR)) * 0.2
         return x * db(-16)
     if kind == "void": return stereo(lp(noise(n), 120) * 0.5) * db(-28)
     if kind == "deadlines":  # fluorescent buzz, a fast ticking clock, a printer in the distance
-        x = stereo(np.sin(2 * np.pi * 100 * t) * 0.05 + np.sin(2 * np.pi * 200 * t) * 0.02 + lp(noise(n), 300) * 0.3)
+        x = stereo(mains_buzz(n, t) * 0.12 + lp(noise(n), 300) * 0.3)
         for k in range(int(n / SR * 4)):
             i = int(k * SR / 4); m = int(0.006 * SR)
             if i + m < n: x[:, i:i + m] += hp(noise(m), 2500) * np.exp(-np.arange(m) / (0.0015 * SR)) * 0.4
@@ -257,9 +328,9 @@ def bed(kind, n):
         return verb(stereo(crowd + roll + lp(noise(n), 150) * 0.4), HALL) * db(-14)
     if kind == "bedroom": return bed_d3("room_dawn", n) * db(4)
     if kind == "traffic":    # idling engines, a rumble, horns
-        x = stereo(lp(noise(n), 140) * 0.8 + np.sin(2 * np.pi * 38 * t) * 0.2 + bp(noise(n), 300, 900) * 0.2)
-        h = horn() * db(-6); i = int(0.25 * SR)
-        if i + h.shape[1] < n: x[:, i:i + h.shape[1]] += h
+        x = stereo(lp(noise(n), 140) * 0.8 + lp(noise(n), 60) * 0.5 + bp(noise(n), 300, 900) * 0.2)
+        h = traffic_pass(); i = int(0.1 * SR); m = min(h.shape[1], n - i)
+        if m > 0: x[:, i:i + m] += h[:, :m]
         return x * db(-14)
     if kind == "sofa": return bed_d3("room_night", n) * db(2)
     if kind == "courtyard": return bed_d3("courtyard", n) * db(2)

@@ -6,11 +6,11 @@
 //    light up, crack (red) when a prayer is let go, light orange when one is prayed, and are mended by the mercy
 //  - pop-outs: coins, papers, notification bubbles, sticky notes, boarding passes flying at the lens and past the frame
 //  - shockwave rings on the impacts; the giant FIRST; the phone flooded with pings; the hadith's source tag; the end
-//    card with the logo and the source
+//    card with the source (the channel logo is left off until the new one is ready)
 // All timing from final/plan.json via timeline.ts.
 import React, { useMemo } from "react";
 import * as THREE from "three";
-import { AbsoluteFill, Img, getInputProps, staticFile, useCurrentFrame } from "remotion";
+import { AbsoluteFill, getInputProps, useCurrentFrame } from "remotion";
 import { applyCam, smooth, clamp01 } from "../../camera/ease";
 import { FONT, measure, useFonts } from "../../text/fonts";
 import { A, F, FPS, WORDS, shotAt, shotOf, minutesAt, Word } from "./timeline";
@@ -380,15 +380,15 @@ const SourceTag: React.FC<{ f: number; y: number }> = ({ f, y }) => {
 const EndCard: React.FC<{ f: number }> = ({ f }) => {
   const a = F(A.card);
   if (f < a) return null;
-  const k = smooth((f - a) / 14), lk = smooth((f - a - 6) / 16), sk = smooth((f - a - 16) / 14);
+  // the channel logo is left off for now (a new one is being made): the card shows the source only
+  const k = smooth((f - a) / 14), sk = smooth((f - a - 8) / 14);
   return (
     <AbsoluteFill style={{ background: `rgba(77,49,44,${0.94 * k})`, alignItems: "center", justifyContent: "center" }}>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", opacity: k }}>
-        <Img src={staticFile("brand/logo_transparent.png")} style={{ width: 820, opacity: lk, transform: `scale(${0.94 + 0.06 * lk})` }} />
-        <div style={{ height: 120 }} />
         <div style={{ opacity: sk, transform: `translateY(${(1 - sk) * 14}px)`, textAlign: "center" }}>
-          <div style={{ fontFamily: FONT.caption, fontWeight: 800, fontSize: 30, letterSpacing: "0.22em", color: BRAND.orange, marginBottom: 18 }}>SOURCES</div>
-          <div style={{ fontFamily: FONT.caption, fontWeight: 600, fontSize: 38, lineHeight: 1.4, color: BRAND.white }}>Jami' at-Tirmidhi 413,<br />graded Sahih (Darussalam)</div>
+          <div style={{ fontFamily: FONT.caption, fontWeight: 800, fontSize: 34, letterSpacing: "0.22em", color: BRAND.orange, marginBottom: 22 }}>SOURCES</div>
+          <div style={{ width: 120, height: 3, background: BRAND.orange, margin: "0 auto 30px" }} />
+          <div style={{ fontFamily: FONT.caption, fontWeight: 600, fontSize: 46, lineHeight: 1.4, color: BRAND.white }}>Jami' at-Tirmidhi 413,<br />graded Sahih (Darussalam)</div>
         </div>
       </div>
     </AbsoluteFill>

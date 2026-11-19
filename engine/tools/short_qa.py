@@ -45,14 +45,17 @@ W, H = 180, 320
 # Remotion's ffmpeg has no rawvideo muxer: read the frames as a PNG stream and decode them with Pillow
 import io
 raw = subprocess.run([FFMPEG, "-v", "error", "-i", vid, "-vf", f"scale={W}:{H}:flags=area", "-f", "image2pipe", "-vcodec", "png", "-"], capture_output=True).stdout
-ends = []
-i = 0
-while True:
-    j = raw.find(b"IEND", i)
-    if j < 0: break
-    ends.append(j + 8); i = j + 8
-starts = [0] + ends[:-1]
-F = np.stack([np.asarray(Image.open(io.BytesIO(raw[a:b])).convert("RGB")) for a, b in zip(starts, ends)])
+def png_spans(buf):
+    """split a stream of PNG files by walking each file's chunks (length, type, data, crc) to its IEND chunk"""
+    out, p = [], 0
+    while p + 8 <= len(buf):
+        q = p + 8
+        while True:
+            ln = int.from_bytes(buf[q:q + 4], "big"); typ = buf[q + 4:q + 8]; q += 12 + ln
+            if typ == b"IEND": break
+        out.append((p, q)); p = q
+    return out
+F = np.stack([np.asarray(Image.open(io.BytesIO(raw[a:b])).convert("RGB")) for a, b in png_spans(raw)])
 n = len(F)
 f32 = F.astype(np.float32) / 255
 luma = (f32 @ np.array([0.2126, 0.7152, 0.0722], np.float32))
