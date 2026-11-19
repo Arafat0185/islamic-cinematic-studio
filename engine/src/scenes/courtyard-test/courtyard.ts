@@ -117,7 +117,18 @@ const archPts = (cx: number): P2[] => {
 const stoneMat = (tex: THREE.Texture, tint = "#ffffff") =>
   twoTone(new THREE.MeshLambertMaterial({ map: tex, color: tint }));
 
-export const buildCourtyard = () => {
+/** options (all optional; the defaults build exactly the original test courtyard) */
+export type CourtyardOpts = {
+  /** centres of the arches along the back wall */
+  archX?: number[];
+  /** world direction the moonlight comes FROM (default: NIGHT.moonFrom) */
+  moonFrom?: [number, number, number];
+  /** more and brighter stars */
+  denseStars?: boolean;
+};
+
+export const buildCourtyard = (opts: CourtyardOpts = {}) => {
+  const archX = opts.archX ?? ARCH_X;
   const root = new THREE.Group();
 
   // floor: one big plane, the star tile repeated every TILE metres
@@ -132,7 +143,7 @@ export const buildCourtyard = () => {
 
   // arcade wall: one outline with the three arches cut in from the floor, extruded to the wall's thickness
   const outline: P2[] = [[-WALL_W / 2, -SINK]];
-  for (const x of ARCH_X) outline.push(...archPts(x));
+  for (const x of archX) outline.push(...archPts(x));
   outline.push([WALL_W / 2, -SINK], [WALL_W / 2, WALL_H], [-WALL_W / 2, WALL_H]);
   const shape = new THREE.Shape(outline.map(([x, y]) => new THREE.Vector2(x, y)));
   // three 0.175 bug: with bevelEnabled false, ExtrudeGeometry builds no front/back faces. A zero-size bevel builds
@@ -157,9 +168,9 @@ export const buildCourtyard = () => {
   // between them that flickered.) None of its faces lies in the plane of a wall face.
   const IMP_H = 0.14, IMP_OVER = 0.09, IMP_PROUD = 0.06, h2 = ARCH_W / 2;
   const impost = (x0: number, x1: number) => box(x1 - x0, IMP_H, WALL_T + 2 * IMP_PROUD, (x0 + x1) / 2, SPRING + IMP_H / 2, WALL_Z);
-  for (let i = 0; i + 1 < ARCH_X.length; i++) impost(ARCH_X[i] + h2 - IMP_OVER, ARCH_X[i + 1] - h2 + IMP_OVER);
-  impost(ARCH_X[0] - h2 - 0.3, ARCH_X[0] - h2 + IMP_OVER);                                         // outer left pier
-  impost(ARCH_X[ARCH_X.length - 1] + h2 - IMP_OVER, ARCH_X[ARCH_X.length - 1] + h2 + 0.3);          // outer right pier
+  for (let i = 0; i + 1 < archX.length; i++) impost(archX[i] + h2 - IMP_OVER, archX[i + 1] - h2 + IMP_OVER);
+  impost(archX[0] - h2 - 0.3, archX[0] - h2 + IMP_OVER);                                         // outer left pier
+  impost(archX[archX.length - 1] + h2 - IMP_OVER, archX[archX.length - 1] + h2 + 0.3);          // outer right pier
 
   // gallery behind the arches: back wall and ceiling, left in shadow (the lamp warms the near part)
   const gTex = blockTex();
@@ -170,11 +181,11 @@ export const buildCourtyard = () => {
   ceil.position.set(0, GALLERY_H + 0.15, (GALLERY_Z + WALL_Z - WALL_T / 2) / 2); ceil.castShadow = true; ceil.receiveShadow = true;
   root.add(ceil);
 
-  root.add(sky());
+  root.add(sky(!!opts.denseStars));
 
   // moonlight: directional light 0, the only shadow caster (render/shade.ts reads it as "the sun")
   const moon = new THREE.DirectionalLight("#ffffff", 1);
-  moon.position.copy(moonDir().multiplyScalar(20)).add(new THREE.Vector3(0, 0, -1));
+  moon.position.copy((opts.moonFrom ? new THREE.Vector3(...opts.moonFrom).normalize() : moonDir()).multiplyScalar(20)).add(new THREE.Vector3(0, 0, -1));
   moon.target.position.set(0, 0, -1);
   moon.castShadow = true;
   moon.shadow.mapSize.set(2048, 2048);
@@ -187,16 +198,17 @@ export const buildCourtyard = () => {
 };
 
 /** sky dome: indigo gradient (top -> horizon) and a sprinkle of small stars, unlit, never outlined */
-const sky = () => {
+const sky = (dense = false) => {
   const top = untone(NIGHT.skyTop), hor = untone(NIGHT.skyHorizon);
   const mat = new THREE.ShaderMaterial({
     side: THREE.BackSide, depthWrite: false, fog: false,
-    uniforms: { uTop: { value: new THREE.Vector3(top.r, top.g, top.b) }, uHor: { value: new THREE.Vector3(hor.r, hor.g, hor.b) } },
+    uniforms: { uTop: { value: new THREE.Vector3(top.r, top.g, top.b) }, uHor: { value: new THREE.Vector3(hor.r, hor.g, hor.b) },
+      uStarCut: { value: dense ? 0.978 : 0.993 }, uStarGain: { value: dense ? 0.75 : 0.55 } },
     vertexShader: /* glsl */ `
       varying vec3 vDir;
       void main() { vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: /* glsl */ `
-      uniform vec3 uTop; uniform vec3 uHor; varying vec3 vDir;
+      uniform vec3 uTop; uniform vec3 uHor; uniform float uStarCut; uniform float uStarGain; varying vec3 vDir;
       float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
       void main() {
         vec3 d = normalize(vDir);
@@ -206,11 +218,11 @@ const sky = () => {
         vec2 uv = vec2(atan(d.x, -d.z) * 70.0, d.y * 110.0);
         vec2 cell = floor(uv), f = fract(uv) - 0.5;
         float h = hash(cell);
-        if (h > 0.993 && d.y > 0.06) {
+        if (h > uStarCut && d.y > 0.06) {
           vec2 o = vec2(hash(cell + 3.1), hash(cell + 7.7)) - 0.5;
           float r = length(f - 0.5 * o);
           float b = 0.35 + 0.65 * hash(cell + 1.3);
-          c += vec3(0.8, 0.84, 1.0) * b * 0.55 * smoothstep(0.09, 0.0, r) * smoothstep(0.06, 0.3, d.y);
+          c += vec3(0.8, 0.84, 1.0) * b * uStarGain * smoothstep(0.09, 0.0, r) * smoothstep(0.06, 0.3, d.y);
         }
         gl_FragColor = vec4(c, 1.0);
       }`,

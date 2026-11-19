@@ -6,9 +6,16 @@ import { NOINK } from "../../render/ink";
 import { NIGHT } from "./look";
 
 /** builds the lamp hanging from (x, top, z); the glass centre ends up about 0.6 m below `top` */
-export const buildLamp = (x: number, top: number, z: number) => {
+/** options (all optional; the defaults build exactly the original main lamp):
+ *  lit: glowing glass + lights (false = an unlit lantern); pool: the downward spot light with shadows;
+ *  intensity: point-light strength; scale: overall size */
+export type LampOpts = { lit?: boolean; pool?: boolean; intensity?: number; scale?: number };
+
+export const buildLamp = (x: number, top: number, z: number, opts: LampOpts = {}) => {
+  const lit = opts.lit ?? true, usePool = opts.pool ?? true;
   const root = new THREE.Group();
   root.position.set(x, top, z);
+  if (opts.scale) root.scale.setScalar(opts.scale);
   const brass = twoTone(new THREE.MeshLambertMaterial({ color: "#9a7a40" }));
 
   // chain: a thin rod
@@ -25,7 +32,9 @@ export const buildLamp = (x: number, top: number, z: number) => {
   // glass body: a lathe profile, wide at the shoulder, narrowing to the base
   const prof = [[0.0, 0.0], [0.05, 0.01], [0.09, 0.06], [0.115, 0.14], [0.1, 0.22], [0.07, 0.26], [0.0, 0.27]]
     .map(([r, y]) => new THREE.Vector2(r, -y));
-  const glassMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(...NIGHT.glass), fog: false });
+  const glassMat = lit
+    ? new THREE.MeshBasicMaterial({ color: new THREE.Color(...NIGHT.glass), fog: false })
+    : twoTone(new THREE.MeshLambertMaterial({ color: "#4a3a2a" })); // unlit: dark amber glass
   const glass = new THREE.Mesh(new THREE.LatheGeometry(prof, 24), glassMat);
   glass.position.y = -chainLen - 0.1;
   root.add(glass);
@@ -41,13 +50,13 @@ export const buildLamp = (x: number, top: number, z: number) => {
   // soft halo card around the glass (additive, camera-facing, not outlined)
   const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTex(), color: new THREE.Color(1.0, 0.62, 0.25), blending: THREE.AdditiveBlending, depthWrite: false, fog: false, transparent: true }));
   halo.scale.set(1.1, 1.1, 1); halo.position.y = glass.position.y - 0.13; halo.layers.set(NOINK);
-  root.add(halo);
+  if (lit) root.add(halo);
 
   // the light itself, at the flame: a point light for the glow on the stone around the lamp ...
   const flameY = glass.position.y - 0.13;
-  const light = new THREE.PointLight(NIGHT.lampCol, NIGHT.lampI, 0, 2);
+  const light = new THREE.PointLight(NIGHT.lampCol, opts.intensity ?? NIGHT.lampI, 0, 2);
   light.position.y = flameY;
-  root.add(light);
+  if (lit) root.add(light);
   // ... and a wide spot light aimed down and forward: the warm pool on the floor, with soft shadows
   const pool = new THREE.SpotLight(NIGHT.lampCol, NIGHT.poolI, 0, NIGHT.poolAngle, NIGHT.poolPenumbra, 2);
   pool.position.y = flameY;
@@ -55,10 +64,10 @@ export const buildLamp = (x: number, top: number, z: number) => {
   pool.shadow.mapSize.set(1024, 1024); // modest resolution + PCF soft filtering = soft-edged shadows
   pool.shadow.camera.near = 0.1; pool.shadow.camera.far = 20;
   pool.shadow.bias = -0.0008; pool.shadow.normalBias = 0.02;
-  root.add(pool);
+  if (lit && usePool) root.add(pool);
   // the target is a world point; the lamp group sits at (x, top, z), so convert
   pool.target.position.set(NIGHT.poolTarget[0] - x, NIGHT.poolTarget[1] - top, NIGHT.poolTarget[2] - z);
-  root.add(pool.target);
+  if (lit && usePool) root.add(pool.target);
 
   return root;
 };

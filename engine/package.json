@@ -10,7 +10,8 @@
     "fullsize-test": "remotion render src/index.ts CourtyardTest out/fullsize_test.mp4 --frames=150-210 --codec=h264 --muted",
     "final": "remotion render src/index.ts CourtyardTest out/final.mp4 --codec=h264 --crf=16 --muted",
     "pose-sheet": "remotion still src/index.ts PoseSheet out/pose_sheet.png",
-    "motion-test": "remotion render src/index.ts TravellerMotionTest out/motion_test.mp4 --codec=h264 --crf=16 --muted"
+    "motion-test": "remotion render src/index.ts TravellerMotionTest out/motion_test.mp4 --codec=h264 --crf=16 --muted",
+    "beauty": "remotion still src/index.ts BeautyWide out/beauty_wide.png && remotion still src/index.ts BeautyLow out/beauty_low.png && remotion still src/index.ts BeautyClose out/beauty_close.png"
   },
   "dependencies": {
     "@react-three/fiber": "9.1.2",

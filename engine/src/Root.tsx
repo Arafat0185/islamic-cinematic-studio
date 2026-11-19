@@ -4,6 +4,7 @@ import { Composition } from "remotion";
 import { CourtyardTest, COURTYARD_FRAMES, COURTYARD_FPS } from "./scenes/courtyard-test/CourtyardTest";
 import { PoseSheet, POSE_SHEET_W, POSE_SHEET_H } from "./scenes/pose-sheet/PoseSheet";
 import { TravellerMotionTest, MOTION_FRAMES, MOTION_FPS } from "./scenes/motion-test/TravellerMotionTest";
+import { CourtyardBeauty } from "./scenes/courtyard-beauty/CourtyardBeauty";
 
 export const RemotionRoot: React.FC = () => (
   <>
@@ -25,6 +26,10 @@ export const RemotionRoot: React.FC = () => (
       width={1080}
       height={1920}
     />
+    {/* Still images: the rich courtyard, three beauty shots (wide establishing, low angle by the fountain, close-up) */}
+    <Composition id="BeautyWide" component={CourtyardBeauty} defaultProps={{ shot: "wide" as const }} durationInFrames={1} fps={30} width={1080} height={1920} />
+    <Composition id="BeautyLow" component={CourtyardBeauty} defaultProps={{ shot: "low" as const }} durationInFrames={1} fps={30} width={1080} height={1920} />
+    <Composition id="BeautyClose" component={CourtyardBeauty} defaultProps={{ shot: "close" as const }} durationInFrames={1} fps={30} width={1080} height={1920} />
     {/* Still image only: every Traveller pose side by side (no 3D scene) */}
     <Composition
       id="PoseSheet"

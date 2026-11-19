@@ -37,9 +37,9 @@ export const NIGHT = {
   blob: "#3a3a5a",
 };
 
-/** push the night preset into the shared shader uniforms (cheap: call once per frame) */
-export const applyLook = () => {
-  const L = NIGHT;
+/** push the night preset (optionally with some values changed) into the shared shader uniforms */
+export const applyLook = (over: Partial<typeof NIGHT> = {}) => {
+  const L = { ...NIGHT, ...over };
   TONE.uLitCol.value.set(...L.lit); TONE.uShadeCol.value.set(...L.shade); TONE.uShadeLift.value.set(...L.lift);
   TONE.uLambert.value = L.lambert; TONE.uSideK.value = L.sideK; TONE.uTerm.value = L.term;
   TONE.uBounce.value.set(0, 0, 0); TONE.uSat.value = L.sat; TONE.uPointK.value = L.pointK;
