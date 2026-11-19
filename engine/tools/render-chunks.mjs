@@ -26,7 +26,7 @@ const run = (cmd, a, quiet = false) => {
   return r.stdout || "";
 };
 const frameCount = (file) => Number(run("npx", ["remotion", "ffprobe", "-v", "error", "-select_streams", "v:0", "-count_packets",
-  "-show_entries", "stream=nb_read_packets", "-of", "csv=p=0", `"${file}"`], true).trim());
+  "-show_entries", "stream=nb_read_packets", "-of", "csv=p=0", `"${file}"`], true).trim().split(/[,\s]/)[0]); // ffprobe prints e.g. "600,"
 
 // how many frames the composition has: the listing reads "<id>  <fps>  <w>x<h>  <frames> (<seconds> sec)"
 const ESC = String.fromCharCode(27);
