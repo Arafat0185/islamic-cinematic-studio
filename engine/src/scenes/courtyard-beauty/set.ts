@@ -112,7 +112,7 @@ const octagon = (r: number): P2[] => Array.from({ length: 8 }, (_, i): P2 => { c
 /** octagonal basin (outer radius r) with still water that mirrors the scene (a reflecting pool, no spout) */
 export const fountain = (x: number, z: number, r = 1.05) => {
   const g = new THREE.Group(); g.position.set(x, 0, z);
-  const H = 0.45, RIM = 0.16, WATER = 0.36;
+  const H = 0.45, RIM = 0.16, WATER = 0.41; // filled nearly to the brim
   // basin wall: an octagon with an octagonal hole, extruded upward (rotated so the extrusion points up)
   const outer = new THREE.Shape(octagon(r).map(([a, b]) => new THREE.Vector2(a, b)));
   outer.holes.push(new THREE.Path(octagon(r - RIM).reverse().map(([a, b]) => new THREE.Vector2(a, b))));
@@ -123,8 +123,16 @@ export const fountain = (x: number, z: number, r = 1.05) => {
   inner.rotation.x = -Math.PI / 2; inner.position.y = 0.08;
   // water: a real mirror (renders the scene from below the surface), tinted dark blue-green so it reads as water
   const water = new Reflector(new THREE.ShapeGeometry(new THREE.Shape(octagon(r - RIM + 0.005).map(([a, b]) => new THREE.Vector2(a, b)))), {
-    color: new THREE.Color("#55627a"), textureWidth: 1024, textureHeight: 1024, clipBias: 0.003, multisample: 4,
+    color: new THREE.Color("#7f8aa2"), textureWidth: 1024, textureHeight: 1024, clipBias: 0.003, multisample: 4,
   });
+  // three's Reflector tints with an OVERLAY blend, which over-saturates warm lights (orange arches came out red).
+  // Water instead: the reflection slightly desaturated, then multiplied by a cool tint, plus a faint deep-blue floor.
+  const wm = water.material as THREE.ShaderMaterial;
+  const OUT = "gl_FragColor = vec4( blendOverlay( base.rgb, color ), 1.0 );";
+  if (!wm.fragmentShader.includes(OUT)) throw new Error("set.ts: three's Reflector shader changed");
+  wm.fragmentShader = wm.fragmentShader.replace(OUT,
+    "float wl = dot( base.rgb, vec3( 0.2126, 0.7152, 0.0722 ) ); " +
+    "gl_FragColor = vec4( mix( vec3( wl ), base.rgb, 0.7 ) * color * 2.0 + vec3( 0.004, 0.007, 0.014 ), 1.0 );");
   water.rotation.x = -Math.PI / 2; water.position.y = WATER;
   water.camera.layers.enable(NOINK); // also reflect the sky, moon, lamp glow and the Traveller's card
   const update = water.onBeforeRender;
@@ -169,14 +177,42 @@ export const palm = (x: number, z: number, h = 2.4, seed = 1) => {
   }
   return g;
 };
-/** a potted shrub: a round clump of low-poly leaves in a smaller pot */
+/** one soft leaf: a pointed oval, curved along its length and cupped across, smooth-shaded (no facets) */
+const leafGeo = (() => {
+  const L = 0.24, W = 0.075, sh = new THREE.Shape();
+  sh.moveTo(0, 0);
+  sh.quadraticCurveTo(L * 0.45, W, L, 0);
+  sh.quadraticCurveTo(L * 0.45, -W, 0, 0);
+  const g = new THREE.ShapeGeometry(sh, 8);
+  const pos = g.attributes.position as THREE.BufferAttribute;
+  for (let i = 0; i < pos.count; i++) {
+    const u = pos.getX(i) / L, v = pos.getY(i) / W;
+    pos.setZ(i, -0.06 * u * u + 0.018 * v * v); // arches down at the tip, cups a little across
+  }
+  g.computeVertexNormals();
+  return g;
+})();
+/** a potted shrub: a soft, leafy mound of ~40 curved leaves on short stems, in a terracotta pot */
 export const shrub = (x: number, z: number, s = 1) => {
   const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(s);
-  const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.19, 0.42, 10), potMat()); pot.position.y = 0.2; pot.castShadow = true;
-  g.add(pot);
-  const lm = leafMat("#33613f");
-  for (const [dx, dy, dz, r] of [[0, 0.62, 0, 0.3], [0.18, 0.55, 0.08, 0.22], [-0.16, 0.56, -0.06, 0.22], [0.02, 0.8, -0.05, 0.2]] as number[][]) {
-    const b = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 0), lm); b.position.set(dx, dy, dz); b.rotation.set(dx * 5, dy * 3, dz * 7); b.castShadow = true; g.add(b);
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.19, 0.42, 14), potMat()); pot.position.y = 0.2; pot.castShadow = true;
+  const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.29, 0.29, 0.06, 14), potMat()); rim.position.y = 0.42;
+  g.add(pot, rim);
+  const greens = ["#2f5a3c", "#386b45", "#2a5236", "#40774c"].map((c) => leafMat(c));
+  let sd = 3; const r = () => { sd = (sd * 16807) % 2147483647; return (sd - 1) / 2147483646; };
+  const N = 42;
+  for (let i = 0; i < N; i++) {
+    // leaves spread over a dome: the angle around the stem and how far out from the centre
+    const a = i * 2.39996 + r() * 0.4, k = Math.sqrt((i + 0.5) / N);
+    const m = new THREE.Mesh(leafGeo, greens[i % 4]);
+    m.position.set(0.05 * k * Math.cos(a), 0.5 + 0.28 * (1 - k * k) + 0.05 * r(), 0.05 * k * Math.sin(a));
+    m.rotation.order = "YZX";
+    m.rotation.y = -a;                              // point outward
+    m.rotation.z = 1.25 - 1.15 * k + 0.2 * r();     // centre leaves stand up, outer ones arch out and down
+    m.rotation.x = (r() - 0.5) * 0.8;               // a little twist
+    m.scale.setScalar(0.85 + 0.4 * r());
+    m.castShadow = true;
+    g.add(m);
   }
   return g;
 };

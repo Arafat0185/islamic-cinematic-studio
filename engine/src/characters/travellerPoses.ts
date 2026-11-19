@@ -65,7 +65,31 @@ const sandal = (p: Pen, heel: P2, ang: number) => {
 };
 
 /** a sleeve (loose thobe cloth with an ink rim) along a curve */
-const sleeve = (p: Pen, a: P2, k: P2, b: P2, w = SLEEVE_W) => p.line(qc(a, k, b), SLEEVE, w);
+/** a sleeve as loose cloth: tapers from the shoulder to the wrist, sags softly on its underside (gravity), shaded,
+ *  with one faint fold and a thin outline (not a uniform outlined tube) */
+const sleeve = (p: Pen, a: P2, k: P2, b: P2, w = SLEEVE_W) => {
+  const c = qc(a, k, b, 16), n = c.length, L: P2[] = [], R: P2[] = [];
+  let nEnd: P2 = [0, 0], nStart: P2 = [0, 0], hEnd = 0, hStart = 0;
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1), p0 = c[Math.max(0, i - 1)], p1 = c[Math.min(n - 1, i + 1)];
+    const tg = unit(sub(p1, p0)), nr: P2 = [-tg[1], tg[0]];
+    const half = (w / 2) * (1.18 - 0.36 * t), sag = 0.2 * w * Math.sin(Math.PI * t);
+    const hl = half + Math.max(0, nr[1]) * sag, hr = half + Math.max(0, -nr[1]) * sag;
+    L.push(add(c[i], nr, hl)); R.push(add(c[i], nr, -hr));
+    if (i === 0) { nStart = nr; hStart = half; }
+    if (i === n - 1) { nEnd = nr; hEnd = half; }
+  }
+  const arc = (ctr: P2, nr: P2, h: number, out: P2): P2[] => { // half circle from +nr side to -nr side, bulging along `out`
+    const pts: P2[] = [];
+    for (let j = 1; j < 8; j++) { const th = (Math.PI * j) / 8; pts.push(add(add(ctr, nr, h * Math.cos(th)), out, h * Math.sin(th))); }
+    return pts;
+  };
+  const tEnd = unit(sub(c[n - 1], c[n - 2])), tStart = unit(sub(c[0], c[1]));
+  const poly = cw([...L, ...arc(c[n - 1], nEnd, hEnd, tEnd), ...R.slice().reverse(), ...arc(c[0], [-nStart[0], -nStart[1]], hStart, tStart)]);
+  p.gradFill(poly, SLEEVE, mul(SLEEVE, [0.8, 0.8, 0.86]), DEF_LIGHT, 0.3);
+  p.clip(poly, () => p.stroke(qc(add(a, unit(sub(b, a)), 10), k, b, 10), 2.5, mix(SLEEVE, INK, 0.25)));
+  p.inkRing(poly, OW * 0.55, thickAngle(DEF_LIGHT));
+};
 /** a hand lying flat (seen from the side): a thin ink slab from the wrist along `ang` */
 const flatHand = (p: Pen, wrist: P2, ang: number, L = 64) => {
   const c = Math.cos(ang), s = Math.sin(ang);
@@ -142,11 +166,12 @@ const backHead = (p: Pen, hc: number, crown: number, light: number, seed = 1) =>
   }
   p.shadedFill(h.hp, SKIN_T, mul(SKIN_T, SH_SKIN), light, h.headA);
   // hair band: from under the kufi down to a nape hairline that dips at the centre; inset from the head's sides
-  // a band the full width of the head, like hair showing under a cap from behind: from the kufi down to a hairline
-  // that dips at the nape; below it, the back of the neck is skin, so the head reads as skin with a band of hair
-  const top = crown + 0.13 * HH - 4, side0 = hc + 0.08 * v, nape = hc + 0.36 * v, IN = -4;
-  const ysL = [top, hc - 0.4 * v, hc - 0.1 * v, hc + 0.15 * v, side0];
+  // hair only as a band across the back of the head and the nape: skin from under the kufi down to the band's upper
+  // edge, the band, then the nape hairline that dips at the centre
+  const top = hc - 0.12 * v, side0 = hc + 0.42 * v, nape = hc + 0.7 * v, IN = -4; // skin above the band
+  const ysL = [top, hc + 0.05 * v, hc + 0.2 * v, hc + 0.32 * v, side0];
   const band: P2[] = [
+    ...qc([300 - (h.edgeX(top) - IN), top + 6], [300, top - 0.12 * v], [300 + (h.edgeX(top) - IN), top + 6], 12).slice(0, -1),
     ...ysL.map((y): P2 => [300 + (h.edgeX(y) - IN), y]),
     ...qc([300 + (h.edgeX(side0) - IN), side0], [300, nape + 0.25 * v], [300 - (h.edgeX(side0) - IN), side0], 14).slice(1, -1),
     ...ysL.slice().reverse().map((y): P2 => [300 - (h.edgeX(y) - IN), y]),
@@ -509,7 +534,7 @@ export const travellerThreeQuarterBack = (p: Pen, o: PoseOpts = {}) => {
   p.gradFill(sl, BEARD, mul(BEARD, [0.72, 0.72, 0.76]), light, 0.35);
   p.inkRing(sl, OW_HEAD * 0.55, thick);
   p.shadedFill(h.hp, SKIN_T, mul(SKIN_T, SH_SKIN), light, h.headA);
-  const top = crown + 0.13 * HH - 4, side0 = hc + 0.08 * v, nape = hc + 0.36 * v;
+  const top = hc - 0.12 * v, side0 = hc + 0.42 * v, nape = hc + 0.7 * v; // skin above the band, as in the back view
   p.clip(h.hp, () => {
     // hair from the far side across to ~1/4 of the way into the near (face) side; the cheek in front stays skin
     const band = cw([
