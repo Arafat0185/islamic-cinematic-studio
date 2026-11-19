@@ -16,6 +16,11 @@ Run these from this `engine/` folder. Do the first one once; it downloads the pa
 | `npm run preview` | Render the whole 10 s test at half size to `out/preview.mp4` |
 | `npm run fullsize-test` | Render frames 150-210 (2 s) at full size to `out/fullsize_test.mp4`, to judge fine detail such as floor shimmer |
 | `npm run final` | Render it at full size (1080 x 1920) to `out/final.mp4` |
+| `npm run pose-sheet` | Every Traveller pose side by side to `out/pose_sheet.png` |
+| `npm run motion-test` | The 12 s Traveller motion test (stand, turn, walk, turn to the qibla, takbir) to `out/motion_test.mp4` |
+| `npm run beauty` | The rich courtyard: three stills to `out/beauty_wide.png`, `beauty_low.png`, `beauty_close.png` |
+| `npm run toolkit-stills` | One full-size still of each brand piece to `out/toolkit_*.png` |
+| `npm run toolkit` | The 25 s brand toolkit demo at full size to `out/toolkit_demo.mp4` |
 
 Render settings for this PC (1 browser tab, installed Chrome, the "angle" GL setting, temp files in
 `.remotion-tmp/`) are in `remotion.config.ts`.
@@ -29,9 +34,17 @@ src/
 ├── render/                3D look: shade.ts (two-tone world light), cardshade.ts + card.ts (lit character
 │                          cards), ink.ts (outlines), lensblur.ts (depth of field), grade.ts (colour grade)
 ├── camera/ease.ts         easing curves and camera moves (glide, push-in, dolly, zoom)
-├── characters/            character drawings (traveller.ts)
-└── scenes/courtyard-test/ the 10 s test: look.ts (palette + lights), courtyard.ts, lamp.ts, shot.ts (camera),
-                           CourtyardTest.tsx (puts it all together with the effects)
+├── characters/            traveller.ts (front views, takbir, qiyam), travellerPoses.ts (side, back, 3/4, walk,
+│                          ruku, sujood, sitting)
+├── text/                  on-screen text: fonts.ts (OFL fonts), Captions, ArabicLine, SourceTag, SourcesCard
+├── brand/                 signature pieces: floorFx.ts (tile grooves, star mark, tile gaps), levels.ts (darkness /
+│                          ignite / dim), sequences.ts (opening + ending timing), StarWipe.tsx, mercy.ts
+└── scenes/
+    ├── courtyard-test/    the first 10 s test (look.ts = palette + lights, courtyard.ts, lamp.ts, shot.ts)
+    ├── pose-sheet/        the pose sheet still
+    ├── motion-test/       the 12 s Traveller motion test (timeline.ts, mat.ts = the prayer mat)
+    ├── courtyard-beauty/  the rich courtyard (world.ts builds it, set.ts = the dressing, shots.ts = 3 stills)
+    └── toolkit/           the brand toolkit demo (content.ts = ALL its text, timeline.ts, TextSample stills)
 ```
 
 Files in `draw/`, `render/` and `camera/` are adapted from Claude Animated Shorts (MIT). Each says so at the top;
@@ -47,3 +60,5 @@ see `../NOTICE.md`.
   `npm run fullsize-test`.
 - three.js 0.175 bug: `ExtrudeGeometry` with `bevelEnabled: false` builds no front or back faces. Use a zero-size
   bevel instead (see `courtyard.ts`).
+- On-screen text: every line must come verbatim from the video's script and references.yaml (see
+  `scenes/toolkit/content.ts`). Captions are at most 2 lines; a longer quote is shown as consecutive exact phrases.
