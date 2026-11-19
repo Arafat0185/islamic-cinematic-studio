@@ -155,3 +155,7 @@ vite.config.ts.timestamp-*
 .nx/cache
 .nx/workspace-data
 .nx/migrate-runs
+
+# Generated audio (narration, mixes): kept out of git
+videos/*/voice/
+engine/public/audio/

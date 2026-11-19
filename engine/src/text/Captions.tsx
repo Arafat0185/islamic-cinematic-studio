@@ -14,7 +14,8 @@ export type KeyKind = "gold" | "red" | "green";
 export const KEY_COLOR: Record<KeyKind, string> = { gold: "#E8B04B", red: "#E0605A", green: "#6CC08A" };
 /** one subtitle: text, the frames it is on screen [from, to), and keywords (a word or a few words) -> meaning */
 /** centreY (optional): where this phrase's centre sits, as a fraction of the frame height (default CAPTION.centreY) */
-export type Phrase = { text: string; from: number; to: number; keys?: Record<string, KeyKind>; centreY?: number };
+/** times (optional): the frame each word is spoken (one per word of text); keyword pops then land on the real word */
+export type Phrase = { text: string; from: number; to: number; keys?: Record<string, KeyKind>; centreY?: number; times?: number[] };
 
 export const CAPTION = { centreY: 0.66, maxWidth: 900, size: 58, minSize: 42, lineHeight: 1.22, fade: 6, enter: 8, rise: 26 };
 
@@ -35,7 +36,7 @@ export const tokenize = (text: string, keys: Record<string, KeyKind> = {}): Tok[
 export const keywordMoments = (ph: Phrase): { word: string; kind: KeyKind; at: number }[] => {
   const toks = tokenize(ph.text, ph.keys), n = toks.length, span = ph.to - ph.from - CAPTION.enter - 10, out: { word: string; kind: KeyKind; at: number }[] = [];
   toks.forEach((t, i) => {
-    if (t.kind && (i === 0 || toks[i - 1].kind !== t.kind)) out.push({ word: norm(t.word), kind: t.kind, at: Math.round(ph.from + CAPTION.enter + (span * i) / Math.max(1, n - 1)) });
+    if (t.kind && (i === 0 || toks[i - 1].kind !== t.kind)) out.push({ word: norm(t.word), kind: t.kind, at: ph.times?.[i] ?? Math.round(ph.from + CAPTION.enter + (span * i) / Math.max(1, n - 1)) });
   });
   return out;
 };
@@ -62,6 +63,15 @@ const layout = (toks: Tok[], weight: number) => {
   return { size: CAPTION.minSize, lines: [toks.slice(0, mid), toks.slice(mid)] };
 };
 
+/** the salawat sign ﷺ: always drawn from Amiri (Inter has no glyph for it), small and gold, sitting on the line */
+export const SALAWAT = "ﷺ";
+const Salawat: React.FC = () => (
+  <span style={{ fontFamily: FONT.arabic, fontWeight: 400, color: KEY_COLOR.gold, fontSize: "0.82em", lineHeight: 1, display: "inline-block",
+    verticalAlign: "0.02em", margin: "0 0.04em", textShadow: "0 0 8px rgba(232,176,75,0.35), 0 2px 8px rgba(5,8,22,0.85)" }}>{SALAWAT}</span>
+);
+/** a word, with any salawat sign in it drawn by <Salawat> */
+const word = (w: string) => (w.includes(SALAWAT) ? w.split(SALAWAT).flatMap((part, i) => (i ? [<Salawat key={i} />, part] : [part])) : w);
+
 const Line: React.FC<{ toks: Tok[]; f: number }> = ({ toks, f }) => (
   <div style={{ whiteSpace: "nowrap" }}>
     {toks.map((t, i) => {
@@ -71,7 +81,7 @@ const Line: React.FC<{ toks: Tok[]; f: number }> = ({ toks, f }) => (
           <span style={{
             color: t.kind ? KEY_COLOR[t.kind] : "#FBF6EC", display: "inline-block", transform: `scale(${1 + 0.12 * e})`,
             textShadow: e > 0 && t.kind ? `0 0 ${6 + 22 * e}px ${KEY_COLOR[t.kind]}, 0 2px 10px rgba(5,8,22,0.85)` : undefined,
-          }}>{t.word}</span>{i < toks.length - 1 ? " " : ""}
+          }}>{word(t.word)}</span>{i < toks.length - 1 ? " " : ""}
         </React.Fragment>
       );
     })}

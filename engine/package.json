@@ -16,7 +16,10 @@
     "toolkit": "remotion render src/index.ts BrandToolkitDemo out/toolkit_demo.mp4 --codec=h264 --crf=16 --muted",
     "toolkit-v2": "remotion render src/index.ts BrandToolkitDemo out/toolkit_demo_v2.mp4 --codec=h264 --crf=16 --muted",
     "toolkit-v3": "remotion render src/index.ts BrandToolkitDemo out/toolkit_demo_v3.mp4 --codec=h264 --crf=16 --muted",
-    "camera-report": "remotion still src/index.ts BrandToolkitDemo out/camera_report.png --frame=100 --scale=0.5 --props={\\\"post\\\":{\\\"camReport\\\":true,\\\"dpr\\\":0.5}} --log=verbose"
+    "camera-report": "remotion still src/index.ts BrandToolkitDemo out/camera_report.png --frame=100 --scale=0.5 --props={\\\"post\\\":{\\\"camReport\\\":true,\\\"dpr\\\":0.5}} --log=verbose",
+    "video001-voice": ".venv-tts/Scripts/python tools/narrate.py ../videos/001-the-first-question && .venv-tts/Scripts/python tools/align_words.py ../videos/001-the-first-question",
+    "video001-mix": ".venv-tts/Scripts/python tools/mix.py ../videos/001-the-first-question src/scenes/video001/film.json public/audio/video001_mix.wav",
+    "video001": "remotion render src/index.ts Video001 out/video001_draft1.mp4 --codec=h264 --crf=16 --audio-codec=aac --audio-bitrate=192k"
   },
   "dependencies": {
     "@fontsource/amiri": "5.3.0",

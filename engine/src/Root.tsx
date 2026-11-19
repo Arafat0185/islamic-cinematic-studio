@@ -7,6 +7,7 @@ import { TravellerMotionTest, MOTION_FRAMES, MOTION_FPS } from "./scenes/motion-
 import { CourtyardBeauty } from "./scenes/courtyard-beauty/CourtyardBeauty";
 import { TextSample } from "./scenes/toolkit/TextSample";
 import { BrandToolkitDemo, TOOLKIT_FRAMES, TOOLKIT_FPS } from "./scenes/toolkit/BrandToolkitDemo";
+import { Video001, VIDEO001_FRAMES, VIDEO001_FPS } from "./scenes/video001/Video001";
 
 export const RemotionRoot: React.FC = () => (
   <>
@@ -28,6 +29,8 @@ export const RemotionRoot: React.FC = () => (
       width={1080}
       height={1920}
     />
+    {/* Video 001 · The First Question: the full draft, timed to the narration (with sound) */}
+    <Composition id="Video001" component={Video001} durationInFrames={VIDEO001_FRAMES} fps={VIDEO001_FPS} width={1080} height={1920} />
     {/* 25 s: every brand piece in the rich courtyard with the Traveller (opening, captions, Arabic line, source tag,
         star wipes, mercy effect, ending, sources card) */}
     <Composition id="BrandToolkitDemo" component={BrandToolkitDemo} durationInFrames={TOOLKIT_FRAMES} fps={TOOLKIT_FPS} width={1080} height={1920} />

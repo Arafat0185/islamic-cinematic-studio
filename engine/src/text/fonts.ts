@@ -24,6 +24,8 @@ const loadAll = () => (loaded ??= Promise.all([
   document.fonts.load("500 60px Inter"), document.fonts.load("600 60px Inter"), document.fonts.load("700 60px Inter"),
   document.fonts.load("600 60px 'Cormorant Garamond'"), document.fonts.load("700 60px 'Cormorant Garamond'"),
   document.fonts.load("400 60px Amiri", "ال"), document.fonts.load("700 60px Amiri", "ال"),
+  // the salawat sign (U+FDFA) is drawn from Amiri inside English captions: load the face that has it
+  document.fonts.load("400 60px Amiri", "ﷺ"),
 ]));
 
 /** call in any component that draws text; resolves once (cached) */

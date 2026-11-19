@@ -21,7 +21,7 @@ import { whipAt } from "../../brand/transitions";
 import { endingAt } from "../../brand/sequences";
 import { SU } from "../../render/card";
 import { keywordMoments, Phrase } from "../../text/Captions";
-import { NARRATION, HADITH } from "./content";
+import { NARRATION, HADITH, ARABIC_DEMO, REVIEW_NOTE } from "./content";
 
 export const FPS = 30;
 export const FRAMES = 25 * FPS;
@@ -66,19 +66,17 @@ const walkProgress = (f: number) => { // trapezoid speed: eases in and out over 
   if (x > T - r) { const y = T - x; return 1 - (v * y * y) / (2 * r); }
   return v * (x - r / 2);
 };
-const lerp3 = (a: V3, b: V3, t: number): V3 => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+export const lerp3 = (a: V3, b: V3, t: number): V3 => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 
-export type Act =
-  | { view: "front"; arms: "down" | "chest"; turn: number; tilt: number }
-  | { view: "q34"; mirror: boolean }
-  | { view: "side"; mirror: boolean; phase: number; k: number; raise: number; settle: number };
+import type { Act, Beat, Plan, Film, TravellerState } from "../../film/film";
+export type { Act, Beat, Plan };
 
 /** a weighted settle after a turn (frames since arriving): dips ~1.5 % of his height, a tiny rebound */
-const settle = (d: number) => (d < 0 ? 0 : d < 10 ? 13 * Math.sin((Math.PI * d) / 10) : d < 18 ? -3.2 * Math.sin((Math.PI * (d - 10)) / 8) : 0);
-const ramp = (f: number, a: number, b: number) => smooth((f - a) / (b - a));
+export const settle = (d: number) => (d < 0 ? 0 : d < 10 ? 13 * Math.sin((Math.PI * d) / 10) : d < 18 ? -3.2 * Math.sin((Math.PI * (d - 10)) / 8) : 0);
+export const ramp = (f: number, a: number, b: number) => smooth((f - a) / (b - a));
 const firstAt = ACCENTS.find((a) => a.word === "first")?.at ?? 120;
 
-export const travellerAt = (f: number) => {
+export const travellerAt = (f: number): TravellerState => {
   const t = f / FPS;
   // always alive: breathing (a slow rise and fall), a tiny weight shift, and a breeze in the shawl
   const idle = { bob: 1.8 * Math.sin((2 * Math.PI * t) / 3.8), sway: 0.006 * Math.sin((2 * Math.PI * t) / 7.3), wind: 0.55 * Math.sin(t * 1.1) + 0.3 * Math.sin(t * 2.7 + 1) };
@@ -112,17 +110,16 @@ export const travellerAt = (f: number) => {
 };
 
 // ---------------- the camera ----------------
-/** nearScale (optional): foreground blur strength for this beat (default 1.6) */
-export type Beat = { from: number; to: number; cam: (f: number) => Cam; focus: (f: number) => V3; cInf: number; nearScale?: number };
-const cam = (pos: V3, look: V3, fov: number): Cam => ({ pos, look, fov, roll: 0 });
-const mixCam = (a: Cam, b: Cam, t: number): Cam => ({ pos: lerp3(a.pos, b.pos, t), look: lerp3(a.look, b.look, t), fov: a.fov + (b.fov - a.fov) * t, roll: 0 });
-const move = (a: Cam, b: Cam, from: number, to: number) => (f: number) => mixCam(a, b, glide((f - from) / (to - from)) * 0.7 + clamp01((f - from) / (to - from)) * 0.3);
+
+export const cam = (pos: V3, look: V3, fov: number): Cam => ({ pos, look, fov, roll: 0 });
+export const mixCam = (a: Cam, b: Cam, t: number): Cam => ({ pos: lerp3(a.pos, b.pos, t), look: lerp3(a.look, b.look, t), fov: a.fov + (b.fov - a.fov) * t, roll: 0 });
+export const move = (a: Cam, b: Cam, from: number, to: number) => (f: number) => mixCam(a, b, glide((f - from) / (to - from)) * 0.7 + clamp01((f - from) / (to - from)) * 0.3);
 /** orbit around `c` at radius r and height y, azimuth (degrees, 0 = toward +z) from a0 to a1 */
-const orbit = (c: V3, r: number, y: number, a0: number, a1: number, from: number, to: number, fov: number, lookUp = 0) => (f: number): Cam => {
+export const orbit = (c: V3, r: number, y: number, a0: number, a1: number, from: number, to: number, fov: number, lookUp = 0) => (f: number): Cam => {
   const a = ((a0 + (a1 - a0) * (glide((f - from) / (to - from)) * 0.6 + clamp01((f - from) / (to - from)) * 0.4)) * Math.PI) / 180;
   return cam([c[0] + r * Math.sin(a), y, c[2] + r * Math.cos(a)], [c[0], c[1] + lookUp, c[2]], fov);
 };
-const chest = (p: V3): V3 => [p[0], 1.35, p[2]];
+export const chest = (p: V3): V3 => [p[0], 1.35, p[2]];
 
 export const BEATS: Record<"opening" | "hook" | "intro" | "quote" | "weight" | "mercy" | "endLow", Beat> = {
   opening: {
@@ -212,8 +209,8 @@ export const accentAt = (f: number) => {
 };
 
 // ---------------- the whole camera plan ----------------
-export type Plan = { cam: Cam; focus: V3; cInf: number; nearScale: number; endingU: number | null };
-const yawed = (c: Cam, yaw: number): Cam => {
+
+export const yawed = (c: Cam, yaw: number): Cam => {
   if (!yaw) return c;
   const dx = c.look[0] - c.pos[0], dz = c.look[2] - c.pos[2], cs = Math.cos(yaw), sn = Math.sin(yaw);
   return { ...c, look: [c.pos[0] + dx * cs + dz * sn, c.look[1], c.pos[2] - dx * sn + dz * cs] };
@@ -239,4 +236,17 @@ export const planAt = (f: number, outgoing?: Beat): Plan => {
     fov: c.fov * (1 - 0.05 * acc.punch),
   };
   return { cam: c, focus, cInf, nearScale, endingU };
+};
+
+// ---------------- the film ----------------
+export const TOOLKIT_FILM: Film = {
+  frames: FRAMES, fps: FPS, planAt, irisOut, irises: IRIS, whips: [WHIP], travellerAt, strideUnits: STRIDE_UNITS, accentAt,
+  openingTo: 66,
+  ending: { from: BEATS.endLow.cam(ENDING.from), top: ENDING_TOP, markCentre: MARK_CENTRE, markR: 1.9 },
+  mercy: { centre: MERCY_CENTRE, from: 536, to: 636, firstFill: 566, lastFill: 618, keepClear: [[P2[0], P2[2], 0.5]] },
+  text: {
+    phrases: PHRASES,
+    quote: { from: ARABIC.from, to: ARABIC.to, arabic: ARABIC_DEMO, tag: HADITH.tag, tagFrom: TAG.from },
+    card: { from: CARD.from, to: CARD.to, sources: [HADITH.card], note: REVIEW_NOTE },
+  },
 };
