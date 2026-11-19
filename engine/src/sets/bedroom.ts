@@ -3,16 +3,18 @@
 // open side toward +z (where the camera stands).
 // States: "dawn" (pre-dawn blue), "dawnAlarm" (the phone on the nightstand lights up), "morning" (bright),
 // "night" (dark, his phone lights his face), "nightOff" (the phone is off: almost dark).
-// Where he goes: LYING (pivot at his soles, roll +90 deg: on his back, head at the pillow), STAND (beside the bed),
-// SIT (sitting up against the headboard, legs under the blanket).
+// Where he goes (the Traveller is a card; the blanket and pillow are drawn ON him, so no 3D part passes through him):
+// LYING  wide card resting on the mattress, his head at the pillow end   SIT  wide card, sitting up against the headboard
+// EDGE   sitting on the front edge of the bed, feet on the floor          STAND  beside the bed
 import * as THREE from "three";
 import { ctex } from "../draw/paint";
 import { GRADE_NIGHT } from "../render/grade";
 import type { V3 } from "../camera/ease";
-import { StorySet, SetLook, GRADE_DAY, mat, glow, box, plane, cyl, sun, planks } from "./common";
+import { StorySet, SetLook, GRADE_DAY, mat, glow, box, plane, cyl, sun, planks, lightBeam, dust } from "./common";
 
 export const BEDROOM = {
-  LYING: [0.25, 0.71, -1.27] as V3, STAND: [0.95, 0, -0.35] as V3, SIT: [-1.22, 0.55, -1.27] as V3,
+  // EDGE and STAND are on the rug: their soles rest on its top (1.3 cm), not inside it
+  LYING: [-0.52, 0.55, -1.3] as V3, SIT: [-1.05, 0.55, -1.3] as V3, EDGE: [-0.55, 0.013, -0.22] as V3, STAND: [0.95, 0.013, -0.35] as V3,
   PHONE: [-2.17, 0.57, -1.71] as V3,
 };
 
@@ -57,9 +59,7 @@ export const buildBedroom = (offset: V3): StorySet => {
   box(root, [-1.75, 0, -2.0], [0.45, 0.38, -0.6], wood);
   box(root, [-1.72, 0.38, -1.96], [0.42, 0.55, -0.64], linen);
   box(root, [-1.86, 0, -2.0], [-1.72, 1.15, -0.6], woodDark);
-  box(root, [-1.7, 0.55, -1.88], [-1.24, 0.69, -0.72], mat("#f1ece2"));
-  box(root, [-1.2, 0.55, -1.99], [0.44, 0.82, -0.61], mat("#3d5688")); // blanket (its front face hides his body)
-  box(root, [-1.2, 0.81, -1.99], [-0.98, 0.84, -0.61], mat("#e9e3d6"), false); // folded sheet edge
+  // (no 3D pillow or blanket: they are drawn on his card, so nothing 3D passes through him)
   // nightstand, lamp, phone
   box(root, [-2.45, 0, -1.95], [-1.9, 0.55, -1.45], wood);
   cyl(root, 0.07, 0.09, 0.06, mat("#c9b8a0"), [-2.35, 0.58, -1.86]);
@@ -74,6 +74,21 @@ export const buildBedroom = (offset: V3): StorySet => {
   box(root, [-0.85, 1.42, -2.2], [-0.25, 2.02, -2.15], fr);
   plane(root, 0.52, 0.52, mat("#ffffff", { map: starFrame() }), [-0.55, 1.72, -2.145]);
 
+  // richer room: bookshelf with books, a chair with his jacket, a ceiling light, a rolled prayer mat in the corner
+  box(root, [-2.95, 0, -2.18], [-2.35, 1.9, -1.88], wood);
+  for (const y of [0.45, 0.95, 1.45]) box(root, [-2.93, y, -2.16], [-2.37, y + 0.03, -1.9], woodDark, false);
+  let bs = 3; const br = () => { bs = (bs * 16807) % 2147483647; return (bs - 1) / 2147483646; };
+  for (const y of [0.48, 0.98, 1.48]) { let x = -2.9; while (x < -2.45) { const w = 0.04 + br() * 0.05, h = 0.22 + br() * 0.18;
+    box(root, [x, y, -2.12], [x + w, y + h, -1.94], mat(["#7a2f2c", "#2f5d8a", "#c79c48", "#3f6b4b", "#e8e2cf", "#5f4a7a"][Math.floor(br() * 6)]), false); x += w + 0.01; } }
+  box(root, [2.2, 0.45, -1.0], [2.65, 0.5, -0.55], wood); box(root, [2.2, 0.5, -1.0], [2.25, 1.0, -0.55], wood);
+  for (const [x, z] of [[2.22, -0.98], [2.62, -0.98], [2.22, -0.57], [2.62, -0.57]]) box(root, [x - 0.02, 0, z - 0.02], [x + 0.02, 0.45, z + 0.02], woodDark);
+  box(root, [2.22, 0.55, -0.98], [2.3, 0.95, -0.6], mat("#3a4256"), false); // his jacket over the chair back
+  cyl(root, 0.22, 0.26, 0.08, mat("#efe3c9"), [0, 2.86, -0.6]);
+  const rolled = cyl(root, 0.07, 0.07, 0.7, mat("#7e1a22"), [-2.75, 0.35, -1.1], 14); rolled.rotation.z = 0.08; // rolled prayer mat, unused
+  // the morning light through the window, and dust in it
+  const beam = lightBeam(root, [1.05, 1.6, -2.15], [0.2, 0.0, -0.2], 1.0, 1.8, "#ffe8c2", 0.32);
+  const beamNight = lightBeam(root, [1.05, 1.7, -2.15], [0.6, 0.0, -0.5], 0.9, 1.5, "#9fb4e8", 0.12);
+  const motes = dust(root, [-0.6, 0.3, -1.9], [1.8, 2.2, 0.3], 160, "#ffe6c0", 0.016, 1.1);
   const s = sun(root, [-0.5, 0.6, -1.2], 6);
   const phoneLight = new THREE.PointLight("#cfe1ff", 0, 0, 2); phoneLight.position.set(-2.17, 0.75, -1.5); root.add(phoneLight);
   const handLight = new THREE.PointLight("#c9dcff", 0, 0, 2); handLight.position.set(-0.75, 1.15, -0.95); root.add(handLight);
@@ -84,9 +99,12 @@ export const buildBedroom = (offset: V3): StorySet => {
     phoneScreen.visible = state === "dawnAlarm";
     phoneLight.intensity = state === "dawnAlarm" ? 0.55 * (0.8 + 0.2 * Math.sin(t * 40)) : 0;
     handLight.intensity = state === "night" ? 0.32 : 0;
+    motes.update(t);
+    beam.setLevel(state === "morning" ? 1 : 0); beamNight.setLevel(state === "dawn" || state === "dawnAlarm" ? 0.9 : state === "night" ? 0.6 : 0);
+    motes.points.visible = state === "morning";
     if (state === "morning") {
       pm.map = tex.morning; pm.color.setScalar(1.25); s.setFrom([0.8, 1.3, 1.2]);
-      return { lit: [1.1, 1.0, 0.86], shade: [0.36, 0.36, 0.48], lift: [0.02, 0.02, 0.04], sat: 1.0, charTint: [1, 0.96, 0.9], cardGain: 1.0, grade: GRADE_DAY };
+      return { lit: [1.1, 1.0, 0.86], shade: [0.36, 0.36, 0.48], lift: [0.02, 0.02, 0.04], sat: 1.0, charTint: [1, 0.96, 0.9], cardGain: 1.0, grade: GRADE_DAY, fog: ["#e9dcc6", 4, 16] };
     }
     s.setFrom([0.6, 1.2, 1.4]);
     if (state === "night" || state === "nightOff") {

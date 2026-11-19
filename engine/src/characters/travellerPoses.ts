@@ -702,14 +702,25 @@ export const phoneInHand = (p: Pen, x: number, y: number, ang: number, light: nu
 /** Sitting on a chair at a desk, side view. arms "type": both hands forward on a keyboard at desk height;
  *  "wave": the near hand raised beside his head, palm out, waggling (wave = phase 0..1 of the waggle) - "not now".
  *  tilt: head (-1 down .. 1 up). Seat height 0.46 m; his soles on the floor (y = 975). */
-export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave"; wave?: number; tilt?: number; wind?: number } = {}) => {
+/** arms "rest": both hands on his knees (sitting on the edge of a bed). chair: draw the office chair (seat and back)
+ *  as part of the drawing, so no 3D chair ever cuts through him. Hands typing at 0.78 m (above a 0.75 m desk top). */
+export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | "rest"; wave?: number; tilt?: number; wind?: number; chair?: boolean } = {}) => {
   const light = o.light ?? DEF_LIGHT, arms = o.arms ?? "type";
   const hip: P2 = [272, 742], knee: P2 = [445, 748], ankle: P2 = [455, 952], sh: P2 = [292, 545];
   const hc = 404;
   sandal(p, [436, SOLE], 0); sandal(p, [446, SOLE - 3], 0);
   // far arm: forward to the keyboard
-  sleeve(p, [290, 560], [342, 682], [528, 640]);
-  p.dot(534, 644, 12);
+  if (o.chair) { // the office chair behind him: back, seat, column, base
+    const dark = "#2c3038", steel = "#6b7079";
+    p.poly(cw([[150, 470], [205, 470], [215, 735], [160, 740]] as P2[]), dark, OW * 0.7);
+    p.poly(cw([[170, 742], [372, 742], [372, 768], [170, 768]] as P2[]), dark, OW * 0.7);
+    p.poly(cw([[262, 768], [282, 768], [282, 935], [262, 935]] as P2[]), steel, OW * 0.6);
+    p.poly(cw([[180, 935], [362, 935], [362, 952], [180, 952]] as P2[]), steel, OW * 0.6);
+    for (const x of [190, 352]) p.dot(x, 962, 12, "#17181c");
+  }
+  const rest = (o.arms ?? "type") === "rest";
+  if (rest) { sleeve(p, [290, 560], [330, 680], [420, 735]); p.dot(426, 740, 12); }
+  else { sleeve(p, [290, 560], [342, 670], [528, 612]); p.dot(534, 616, 12); }
   neck(p, [298, 552], [305, hc + 50], light);
   const shawl = drapeShawl(300, 540, 190, light, o.wind ?? 0);
   if (!o.shawlNear) { shawl.panel(p); shawl.cap(p); }
@@ -717,9 +728,14 @@ export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave"; w
   unionFill(p, parts, THOBE, thobeDark, light);
   if (o.shawlNear) shawl.panel(p);
   const tilt = o.tilt ?? 0;
-  if (arms === "type") {
-    sleeve(p, [300, 562], [352, 690], [548, 650]);
-    p.dot(556, 654, 12.5);
+  if (arms === "rest") {
+    sleeve(p, [300, 562], [338, 690], [436, 742]);
+    p.dot(442, 746, 12.5);
+    if (o.shawlNear) shawl.cap(p);
+    profileHead(p, 314, hc, -0.28 * tilt + 0.1, light, o.seed ?? 1);
+  } else if (arms === "type") {
+    sleeve(p, [300, 562], [352, 680], [548, 622]);
+    p.dot(556, 626, 12.5);
     if (o.shawlNear) shawl.cap(p);
     profileHead(p, 314, hc, -0.28 * tilt + 0.12, light, o.seed ?? 1);
   } else {
@@ -744,9 +760,56 @@ export const travellerBedPhone = (p: Pen, o: PoseOpts & { scroll?: number; dark?
   if (!o.shawlNear) { shawl.panel(p); shawl.cap(p); }
   unionFill(p, [cap(hip, sh, 64, 52), cap(hip, knee, 54, 44), cap(knee, ankle, 44, 34)], THOBE, thobeDark, light);
   if (o.shawlNear) { shawl.panel(p); shawl.cap(p); }
+  // the blanket over his legs, from the hips to past his feet, resting on the mattress (part of the drawing)
+  const bl = cw(join(qc([300, 975], [300, 900], [340, 880]), qc([340, 880], [520, 862], [700, 900]), qc([700, 900], [735, 930], [740, 975])) as P2[]);
+  p.gradFill(bl, "#3d5688", mul("#3d5688", [0.7, 0.72, 0.8]), light, 0.3);
+  p.clip(bl, () => { p.stroke(qc([450, 870], [480, 920], [460, 975]), 4, mix("#2a3c60", INK, 0.3)); p.stroke(qc([600, 878], [630, 930], [615, 975]), 3.5, mix("#2a3c60", INK, 0.3)); });
+  p.inkRing(bl, OW, thickAngle(light));
   profileHead(p, 280, hc, 0.42, light, o.seed ?? 1);       // head bowed to the screen
   sleeve(p, [262, 746], [318, 868], [384, 790]);           // near arm
   phoneInHand(p, 392, 752, -0.55, light, !!o.dark);
   const th = o.scroll ?? 0;                                 // the thumb moving on the screen
   p.dot(388 + 4 * Math.sin(th * Math.PI * 2), 740 - 10 * th, 7);
+};
+
+/** Lying in bed on his back, seen from the side, on a WIDE card (design space 1400 x 700, the mattress surface at
+ *  y = 680, x = 700 the card's centre): the pillow under his head (head toward the left), the blanket over his body up
+ *  to the chest, his near arm over the blanket. Everything is part of the drawing, so the card rests ON the mattress
+ *  and nothing 3D passes through him. stir: 0..1 he stirs (shoulders lift a little, the near hand moves). */
+export const travellerLying = (p: Pen, o: PoseOpts & { stir?: number } = {}) => {
+  const light = o.light ?? DEF_LIGHT, st = o.stir ?? 0, B = 680;
+  const sheet = "#f1ece2", blanket = "#3d5688", blanketDark = mul("#3d5688", [0.7, 0.72, 0.8]);
+  // pillow
+  const pil = cw([[176, B - 4], [178, B - 64], [210, B - 92], [380, B - 96], [410, B - 70], [412, B - 4]] as P2[]);
+  p.gradFill(pil, sheet, mul(sheet, [0.85, 0.85, 0.9]), light);
+  p.inkRing(pil, OW * 0.8, thickAngle(light));
+  // head on the pillow (profile, face up: rotated so the crown points left)
+  profileHead(p, 300, B - 132 - 6 * st, -Math.PI / 2 + 0.08, light, o.seed ?? 1);
+  // shoulders and chest in the thobe, under the blanket's top edge
+  unionFill(p, [cap([385, B - 95 - 4 * st], [520, B - 92], 54, 50)], THOBE, thobeDark, light);
+  // the blanket: over his body to the feet, folded back at the chest; soft folds; a fold-over band of sheet
+  const bl = cw(join(
+    qc([470, B - 4], [468, B - 120], [500, B - 150]),
+    qc([500, B - 150], [800, B - 160], [1100, B - 128]),
+    qc([1100, B - 128], [1210, B - 112], [1230, B - 4]),
+  ) as P2[]);
+  p.gradFill(bl, blanket, blanketDark, light, 0.3);
+  p.clip(bl, () => {
+    const f = mix(blanketDark, INK, 0.3);
+    p.stroke(qc([620, B - 145], [660, B - 80], [640, B - 4]), 4, f);
+    p.stroke(qc([860, B - 150], [900, B - 70], [880, B - 4]), 4, f);
+    p.stroke(qc([1060, B - 132], [1080, B - 70], [1070, B - 4]), 3.5, f);
+  });
+  p.inkRing(bl, OW, thickAngle(light));
+  const band = cw([[478, B - 132], [520, B - 158], [560, B - 150], [520, B - 120]] as P2[]);
+  p.poly(band, sheet, OW * 0.6);
+  // near arm over the blanket, hand resting on his chest
+  sleeve(p, [430, B - 120], [560, B - 128 - 10 * st], [640, B - 150 - 14 * st]);
+  p.dot(648, B - 156 - 14 * st, 12.5);
+};
+
+/** sitting up in bed scrolling, on a WIDE card (resting line = the mattress at y = 680): the same drawing as
+ *  travellerBedPhone, moved into the wide design space so the blanket over his legs is never cut off */
+export const travellerBedPhoneWide = (p: Pen, o: PoseOpts & { scroll?: number; dark?: boolean } = {}) => {
+  p.g.save(); p.g.translate(250, -295); travellerBedPhone(p, o); p.g.restore();
 };

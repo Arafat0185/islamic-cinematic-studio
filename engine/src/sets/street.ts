@@ -7,7 +7,7 @@
 import * as THREE from "three";
 import { ctex, rep } from "../draw/paint";
 import type { V3 } from "../camera/ease";
-import { StorySet, SetLook, GRADE_DAY, GRADE_DUSK, mat, box, cyl, sun, skyDome, facade } from "./common";
+import { StorySet, SetLook, GRADE_DAY, GRADE_DUSK, mat, box, cyl, sun, skyDome, facade, lightBeam, dust } from "./common";
 
 export const STREET = { WALK_Z: 0.9, KERB: 0.14, LANE_NEAR: 3.4, LANE_FAR: 5.3 };
 export type Vehicle = { kind: "car" | "bus"; passAt: number; passX: number; speed: number; lane: number; colour?: string };
@@ -75,6 +75,23 @@ export const buildStreet = (offset: V3) => {
     cyl(root, 0.1, 0.13, 2.6, bark, [x + 5, 1.3, 1.85], 8);
     const c = new THREE.Mesh(new THREE.IcosahedronGeometry(1.25, 1), leaf); c.position.set(x + 5, 3.3, 1.85); c.castShadow = true; c.receiveShadow = true; root.add(c);
   }
+  // more street life: parked cars, a traffic light, bicycles, benches, signs, hydrants
+  const parked = ["#7a8fa8", "#b8423b", "#e6e1d4", "#3f6b4b", "#3a3d45"];
+  for (let k = 0; k < 9; k++) {
+    const x = -48 + k * 11.5 + (k % 3), c = mat(parked[k % 5]), glass = mat("#24324a");
+    box(root, [x - 2.0, 0.3, 2.45], [x + 2.0, 1.0, 3.95], c); box(root, [x - 1.0, 1.0, 2.55], [x + 0.9, 1.45, 3.85], glass);
+    for (const dx of [-1.3, 1.3]) for (const z of [2.42, 3.98]) { const w = cyl(root, 0.32, 0.32, 0.18, mat("#17181c"), [x + dx, 0.32, z], 12); w.rotation.x = Math.PI / 2; }
+  }
+  cyl(root, 0.07, 0.07, 3.2, iron, [6.8, 1.6, 2.0], 8); box(root, [6.62, 2.6, 1.9], [6.98, 3.5, 2.1], iron);
+  for (const [y, c] of [[3.32, "#c0392b"], [3.05, "#f1c40f"], [2.78, "#27ae60"]] as [number, string][]) cyl(root, 0.11, 0.11, 0.03, mat(c), [6.8, y, 2.12], 12).rotation.x = Math.PI / 2;
+  for (const x of [-15, 22, 37]) { box(root, [x, 0.42, 0.25], [x + 1.6, 0.48, 0.6], mat("#6a5038")); box(root, [x, 0.48, 0.2], [x + 1.6, 0.85, 0.26], mat("#6a5038")); }
+  for (const x of [-9, 30]) { cyl(root, 0.12, 0.14, 0.6, mat("#b8423b"), [x, 0.43, 1.95], 10); }
+  for (const x of [-30, 3, 26]) { cyl(root, 0.03, 0.03, 2.4, iron, [x, 1.33, 0.35], 6); box(root, [x - 0.35, 2.2, 0.32], [x + 0.35, 2.6, 0.38], mat("#2f5d8a")); }
+  for (const x of [16, 44]) { const r1 = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.03, 6, 20), iron); r1.position.set(x, 0.46, 0.4); root.add(r1);
+    const r2 = r1.clone(); r2.position.x = x + 1.0; root.add(r2); box(root, [x, 0.6, 0.38], [x + 1.0, 0.64, 0.42], iron); }
+  // sun shafts between the buildings, haze and dust in the air
+  const shafts = [-20, -6, 8, 24, 40].map((x) => lightBeam(root, [x, 9, -1.0], [x + 3, 0, 3.5], 2.2, 3.2, "#fff2d8", 0.13));
+  const motes = dust(root, [-60, 0.5, 0], [60, 4, 5], 700, "#fff4e0", 0.022, 0.9);
   box(root, [11.5, 0.12, 0.3], [14.5, 2.5, 0.4], mat("#9fb4c4")); box(root, [11.4, 2.5, 0.1], [14.6, 2.6, 1.3], iron); // bus stop
   box(root, [-4.2, 0.12, 1.6], [-3.7, 1.0, 2.0], mat("#3b5f4a")); // bin
   const sky = skyDome(root, 160);
@@ -83,16 +100,17 @@ export const buildStreet = (offset: V3) => {
   let traffic: { v: Vehicle; mesh: THREE.Group }[] = [];
   const setTraffic = (list: Vehicle[]) => {
     for (const t of traffic) root.remove(t.mesh);
-    traffic = list.map((v, i) => { const m = vehicleMesh(v.kind, v.colour ?? ["#b8423b", "#e6e1d4", "#2f5d8a", "#3a3d45", "#c79c48"][i % 5]); root.add(m); return { v, mesh: m }; });
+    traffic = list.map((v, i) => { const m = vehicleMesh(v.kind, v.colour ?? ["#b8423b", "#e6e1d4", "#2f5d8a", "#3a3d45", "#c79c48"][i % 5]); m.userData.moving = true; root.add(m); return { v, mesh: m }; });
   };
   const apply = (state: string, t: number): SetLook => {
+    motes.update(t); for (const s3 of shafts) s3.setLevel(state === "afternoon" ? 1.2 : 0.9);
     for (const { v, mesh } of traffic) { mesh.position.set(v.passX + v.speed * (t - v.passAt), 0, v.lane); mesh.rotation.y = v.speed < 0 ? Math.PI : 0; }
     if (state === "afternoon") {
       sky.setColours("#5e8fcf", "#f2cf9c"); s2.setFrom([1.0, 0.75, 0.7]);
-      return { lit: [1.25, 0.98, 0.72], shade: [0.3, 0.3, 0.46], lift: [0.03, 0.02, 0.04], sat: 1.05, charTint: [1, 0.92, 0.82], cardGain: 1.0, grade: GRADE_DUSK };
+      return { lit: [1.25, 0.98, 0.72], shade: [0.3, 0.3, 0.46], lift: [0.03, 0.02, 0.04], sat: 1.05, charTint: [1, 0.92, 0.82], cardGain: 1.0, grade: GRADE_DUSK, fog: ["#f0d2a8", 14, 75] };
     }
     sky.setColours("#4f8fd8", "#cfe2f2"); s2.setFrom([-0.55, 1.2, 0.9]);
-    return { lit: [1.12, 1.08, 0.98], shade: [0.34, 0.36, 0.52], lift: [0.02, 0.025, 0.05], sat: 1.0, charTint: [1, 0.98, 0.95], cardGain: 1.0, grade: GRADE_DAY };
+    return { lit: [1.12, 1.08, 0.98], shade: [0.34, 0.36, 0.52], lift: [0.02, 0.025, 0.05], sat: 1.0, charTint: [1, 0.98, 0.95], cardGain: 1.0, grade: GRADE_DAY, fog: ["#cfe0ef", 14, 75] };
   };
   // the sun's shadow box follows the action along the street
   const follow = (x: number) => s2.aim([x, 0, 1]);

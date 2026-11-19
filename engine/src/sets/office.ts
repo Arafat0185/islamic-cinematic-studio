@@ -6,7 +6,7 @@
 import * as THREE from "three";
 import { ctex } from "../draw/paint";
 import type { V3 } from "../camera/ease";
-import { StorySet, SetLook, GRADE_DAY, mat, glow, box, plane, cyl, sun, liveCanvas } from "./common";
+import { StorySet, SetLook, GRADE_DAY, mat, glow, box, plane, cyl, sun, liveCanvas, lightBeam, dust } from "./common";
 
 export const OFFICE = { CHAIR: [-0.02, 0.0, -0.8] as V3, SCREEN: [0.95, 1.0, -0.8] as V3 };
 
@@ -46,10 +46,23 @@ export const buildOffice = (offset: V3) => {
   scr.position.set(-0.002, 0.16, 0); scr.rotation.y = -Math.PI / 2; lid.add(scr);
   cyl(root, 0.045, 0.04, 0.1, mat("#c79c48"), [1.2, 0.8, -0.45]);
   box(root, [1.05, 0.75, -1.25], [1.35, 0.76, -1.0], white, false);
-  // chair
-  box(root, [-0.28, 0.42, -1.05], [0.2, 0.48, -0.55], dark);
-  box(root, [-0.34, 0.48, -1.05], [-0.28, 1.0, -0.55], dark);
-  cyl(root, 0.03, 0.03, 0.42, mat("#6b7079"), [-0.04, 0.21, -0.8], 8);
+  // (his chair is drawn on his card, so it never cuts through him)
+  // a richer office: a second row of desks with glowing monitors, a whiteboard with sticky notes, a water cooler,
+  // a filing cabinet, ceiling light panels
+  for (const x of [-3.6, -2.4]) for (const z of [0.9, 2.1]) {
+    box(root, [x - 0.55, 0.71, z - 0.35], [x + 0.55, 0.75, z + 0.35], wood);
+    box(root, [x - 0.25, 0.75, z - 0.3], [x + 0.25, 1.1, z - 0.26], dark);
+    plane(root, 0.46, 0.31, glow("#9fc6ee", 1.0), [x, 0.93, z - 0.255]);
+    box(root, [x - 0.03, 0, z - 0.03], [x + 0.03, 0.71, z + 0.03], dark);
+  }
+  box(root, [-1.0, 1.0, -2.6], [-0.1, 1.65, -2.56], white, false);
+  ["#f4d35e", "#f28c8c", "#8ed1a5", "#f4d35e", "#9fc6ee", "#f28c8c"].forEach((c, i) => box(root, [-0.95 + (i % 3) * 0.28, 1.2 + Math.floor(i / 3) * 0.22, -2.56], [-0.8 + (i % 3) * 0.28, 1.35 + Math.floor(i / 3) * 0.22, -2.55], mat(c), false));
+  cyl(root, 0.16, 0.16, 0.95, mat("#e6e8ea"), [2.5, 0.48, -1.0]); cyl(root, 0.13, 0.11, 0.35, mat("#9fd0f0"), [2.5, 1.12, -1.0]);
+  box(root, [2.2, 0, -2.5], [2.7, 1.25, -2.0], mat("#8e939b"));
+  for (const z of [-1.8, 0.2, 2.2]) box(root, [-1.5, 2.94, z - 0.4], [1.5, 2.98, z + 0.4], glow("#f4f7fb", 1.05), false);
+  // midday light through the big window, dust in it
+  const beams = [-1.8, -0.6, 0.6].map((x) => lightBeam(root, [x, 2.4, -2.55], [x + 0.9, 0.0, -0.6], 1.0, 1.6, "#fff0d6", 0.22));
+  const motes = dust(root, [-2.4, 0.4, -2.4], [1.6, 2.4, 0.6], 150, "#fff2dc", 0.016, 1.0);
   // the wall clock: face, rim, ticking hands
   const clock = new THREE.Group(); clock.position.set(1.95, 2.15, -2.58); root.add(clock);
   const face = cyl(clock, 0.28, 0.28, 0.04, white, [0, 0, 0.02], 32); face.rotation.x = Math.PI / 2;
@@ -88,11 +101,11 @@ export const buildOffice = (offset: V3) => {
   });
 
   const apply = (_state: string, t: number): SetLook => {
-    drawScreen(t);
+    drawScreen(t); motes.update(t); void beams;
     // 12:31 plus the seconds of the scene: the second hand ticks once a second
     const sec = Math.floor(t), mins = 31 + t / 60;
     secH.rotation.z = -(sec / 60) * Math.PI * 2; minH.rotation.z = -(mins / 60) * Math.PI * 2; hourH.rotation.z = -((12 + mins / 60) / 12) * Math.PI * 2;
-    return { lit: [1.12, 1.08, 1.0], shade: [0.38, 0.4, 0.52], lift: [0.02, 0.02, 0.04], sat: 1.0, charTint: [1, 0.98, 0.96], cardGain: 1.0, grade: GRADE_DAY };
+    return { lit: [1.12, 1.08, 1.0], shade: [0.38, 0.4, 0.52], lift: [0.02, 0.02, 0.04], sat: 1.0, charTint: [1, 0.98, 0.96], cardGain: 1.0, grade: GRADE_DAY, fog: ["#dfe6ee", 5, 18] };
   };
   return { set: { id: "office", root, offset, apply } as StorySet, setBanner };
 };

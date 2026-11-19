@@ -13,6 +13,8 @@ type C3 = [number, number, number];
 export type SetLook = {
   lit: C3; shade: C3; lift: C3; sat: number; charTint: C3; cardGain: number; cardPointK?: number; pointK?: number;
   grade: GradeParams;
+  /** depth haze: colour (on-screen), near and far distance in metres */
+  fog?: [string, number, number];
 };
 export type StorySet = {
   id: string;
@@ -132,4 +134,57 @@ export const liveCanvas = (w: number, h: number) => {
   const g = cv.getContext("2d")!;
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
   return { tex: t, g, redraw: (fn: (g: CanvasRenderingContext2D) => void) => { fn(g); t.needsUpdate = true; } };
+};
+
+// ---------------- atmosphere ----------------
+const beamTex = () => {
+  const t = ctex("beamGrad", 64, 256, (g) => {
+    for (let y = 0; y < 256; y++) {
+      const along = 1 - y / 256, a = Math.pow(along, 0.8) * 0.9;
+      const gr = g.createLinearGradient(0, 0, 64, 0);
+      gr.addColorStop(0, "rgba(255,255,255,0)"); gr.addColorStop(0.5, `rgba(255,255,255,${a})`); gr.addColorStop(1, "rgba(255,255,255,0)");
+      g.fillStyle = gr; g.fillRect(0, y, 64, 1);
+    }
+  });
+  t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; return t;
+};
+/** a soft volumetric light beam from `from` to `to` (local metres): two crossed additive planes with a gradient that
+ *  fades along the beam and across its edges; never outlined, casts nothing. setLevel(k) scales its brightness. */
+export const lightBeam = (parent: THREE.Object3D, from: V3, to: V3, w0: number, w1: number, colour: string, k = 0.35) => {
+  const g = new THREE.Group();
+  const a = new THREE.Vector3(...from), b = new THREE.Vector3(...to), len = a.distanceTo(b);
+  const geo = new THREE.BufferGeometry();
+  // a tapered quad: w0 wide at `from` (v = 0), w1 at `to` (v = 1); built along +y then oriented
+  geo.setAttribute("position", new THREE.Float32BufferAttribute([-w0 / 2, 0, 0, w0 / 2, 0, 0, -w1 / 2, -len, 0, w1 / 2, -len, 0], 3));
+  geo.setAttribute("uv", new THREE.Float32BufferAttribute([0, 1, 1, 1, 0, 0, 1, 0], 2));
+  geo.setIndex([0, 2, 1, 1, 2, 3]);
+  const m = new THREE.MeshBasicMaterial({ map: beamTex(), color: new THREE.Color(colour).multiplyScalar(k), transparent: true, depthWrite: false,
+    blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false });
+  const base = m.color.clone();
+  for (const rot of [0, Math.PI / 2]) { const q = new THREE.Mesh(geo, m); q.rotation.y = rot; q.layers.set(NOINK); q.renderOrder = 3; g.add(q); }
+  g.position.copy(a);
+  const dir = b.clone().sub(a).normalize();
+  g.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir);
+  parent.add(g);
+  return { group: g, setLevel: (x: number) => m.color.copy(base).multiplyScalar(x) };
+};
+
+/** floating dust in a box (local min / max): tiny soft points that drift slowly; update(t) every frame */
+export const dust = (parent: THREE.Object3D, min: V3, max: V3, n: number, colour: string, size = 0.018, k = 1) => {
+  const pos = new Float32Array(n * 3), base = new Float32Array(n * 3), ph = new Float32Array(n);
+  let sd = 9; const r = () => { sd = (sd * 16807) % 2147483647; return (sd - 1) / 2147483646; };
+  for (let i = 0; i < n; i++) { base.set([min[0] + r() * (max[0] - min[0]), min[1] + r() * (max[1] - min[1]), min[2] + r() * (max[2] - min[2])], i * 3); ph[i] = r() * 6.28; }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  const dot = ctex("dustDot", 64, 64, (g) => { const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, "rgba(255,255,255,1)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); });
+  const m = new THREE.PointsMaterial({ map: dot, color: new THREE.Color(colour).multiplyScalar(k), size, sizeAttenuation: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false });
+  const pts = new THREE.Points(geo, m); pts.layers.set(NOINK); pts.frustumCulled = false; parent.add(pts);
+  const update = (t: number) => {
+    for (let i = 0; i < n; i++) {
+      const p = ph[i];
+      pos[i * 3] = base[i * 3] + 0.07 * Math.sin(0.35 * t + p); pos[i * 3 + 1] = base[i * 3 + 1] + 0.09 * Math.sin(0.27 * t + 2 * p); pos[i * 3 + 2] = base[i * 3 + 2] + 0.05 * Math.cos(0.31 * t + p);
+    }
+    geo.attributes.position.needsUpdate = true;
+  };
+  update(0);
+  return { points: pts, update };
 };

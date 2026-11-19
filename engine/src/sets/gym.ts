@@ -5,7 +5,7 @@
 import * as THREE from "three";
 import { ctex } from "../draw/paint";
 import type { V3 } from "../camera/ease";
-import { StorySet, SetLook, GRADE_DUSK, mat, glow, box, plane, cyl, sun, liveCanvas } from "./common";
+import { StorySet, SetLook, GRADE_DUSK, mat, glow, box, plane, cyl, sun, liveCanvas, lightBeam, dust } from "./common";
 
 export const GYM = { RUN: [-0.15, 0.22, -0.9] as V3, BELT_SPEED: 3.2 };
 
@@ -49,10 +49,13 @@ export const buildGym = (offset: V3): StorySet => {
   plane(root, 4.0, 0.9, mat("#a9b4c2"), [0, 0.5, -2.49]);
   cyl(root, 0.035, 0.035, 0.22, mat("#5aa0d6"), [rx + 1.05, 1.62, rz + 0.3], 10);
   const s = sun(root, [0, 0.5, -0.9], 6); s.setFrom([-0.6, 0.55, 1.0]);
+  const beams = [-2.2, -0.75, 0.75, 2.2].map((x) => lightBeam(root, [x, 2.2, -2.45], [x - 1.2, 0.0, 0.6], 1.2, 1.8, "#ffc48a", 0.2)); void beams;
+  const motes = dust(root, [-2.6, 0.3, -2.3], [2.6, 2.4, 0.8], 160, "#ffd7a8", 0.016, 1.0);
 
   const apply = (_state: string, t: number): SetLook => {
     // the belt runs toward -x at the running speed (1.9 m long, 4 repeats)
     belt.offset.x = ((t * GYM.BELT_SPEED) / 1.9) * 4 % 1;
+    motes.update(t);
     con.redraw((g) => {
       g.fillStyle = "#0d1a1c"; g.fillRect(0, 0, 256, 128);
       g.fillStyle = "#7ef0c0"; g.font = "700 46px Inter, Arial"; g.fillText("11.5", 18, 62);
@@ -60,7 +63,7 @@ export const buildGym = (offset: V3): StorySet => {
       g.fillStyle = "#f2c879"; g.font = "600 24px Inter, Arial"; g.fillText(`${23 + Math.floor(t / 60)}:${String(40 + (Math.floor(t) % 20)).padStart(2, "0")}`, 18, 108);
     });
     void beltMesh;
-    return { lit: [1.25, 0.82, 0.6], shade: [0.26, 0.24, 0.42], lift: [0.03, 0.02, 0.04], sat: 1.08, charTint: [1, 0.86, 0.74], cardGain: 0.95, grade: GRADE_DUSK };
+    return { lit: [1.25, 0.82, 0.6], shade: [0.26, 0.24, 0.42], lift: [0.03, 0.02, 0.04], sat: 1.08, charTint: [1, 0.86, 0.74], cardGain: 0.95, grade: GRADE_DUSK, fog: ["#6a4a5a", 4, 16] };
   };
   return { id: "gym", root, offset, apply };
 };

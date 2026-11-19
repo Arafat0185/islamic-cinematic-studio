@@ -60,6 +60,9 @@ const blank = (() => { const c = document.createElement("canvas"); c.width = c.h
 /** metres per design unit: 1000 units = 2.16 m */
 export const SU = 0.00216;
 const BODY = (() => { const g = new THREE.PlaneGeometry(600 * SU, 1000 * SU); g.translate(0, (975 - 500) * SU, 0); return g; })();
+/** a wide card (lying down): design space 1400 x 700 units, its resting line (mattress / floor) at y = 680, centre x = 700 */
+export const WIDE = { w: 1400, h: 700, base: 680 };
+const WIDE_GEO = (() => { const g = new THREE.PlaneGeometry(WIDE.w * SU, WIDE.h * SU); g.translate(0, (WIDE.base - WIDE.h / 2) * SU, 0); return g; })();
 const CARD = new THREE.PlaneGeometry(1, 1);
 
 /** lit flat character: cardShade() material, receives shadows (dims to the bright floor only). Drawn after the
@@ -123,6 +126,8 @@ export type Place = {
   scale?: number; mirror?: boolean; yaw?: number;
   /** turn the card in its own plane (radians, + = counter-clockwise on screen) about the pivot: lying down, leaning */
   roll?: number;
+  /** a wide card (design space WIDE: 1400 x 700, resting line at y = 680) for lying-down drawings */
+  wide?: boolean;
   /** contact shadow colour (multiply, sRGB hex); null = no blob */
   blob?: string | null;
   /** cast a real shadow (its drawn silhouette) from the scene's shadow-casting lights. A casting card does not also
@@ -143,8 +148,9 @@ export class Cast {
       const sc = p.scale ?? 1;
       const a = this.actors[ai] ?? (this.actors[ai] = new Actor(this.root));
       ai++;
+      a.mesh.geometry = p.wide ? WIDE_GEO : BODY;
       const d = cam.position.distanceTo(this.v.set(p.x, p.y + 1.2 * sc, p.z)) / sc;
-      const [w, h, k] = tier(d);
+      const [w0, h0, k] = tier(d), w = p.wide ? Math.round(w0 * (WIDE.w / 600)) : w0, h = p.wide ? Math.round(h0 * (WIDE.h / 1000)) : h0;
       a.r = this.pool.req(p.key, w, h, k, p.draw);
       a.mesh.visible = true;
       a.mesh.position.set(p.x, p.y, p.z);

@@ -12,7 +12,8 @@ export const SET_OFFSET: Record<SetId, V3> = {
 };
 
 /** the Traveller this frame (world position of his soles / the card's pivot), or null when he is off screen */
-export type TravellerCard = { pos: V3; key: string; draw: (p: Pen) => void; mirror?: boolean; roll?: number; blob?: string | null };
+/** yaw: a fixed facing (radians; default: turned toward the camera) - e.g. parallel to the bed he sits on */
+export type TravellerCard = { pos: V3; key: string; draw: (p: Pen) => void; mirror?: boolean; roll?: number; blob?: string | null; wide?: boolean; yaw?: number };
 export type Plan = { cam: Cam; focus: V3; cInf: number; nearScale: number; anchor?: V3 };
 
 /** what one view shows at one frame */
@@ -21,7 +22,7 @@ export type Frame = {
   plan: Plan;
   traveller: TravellerCard | null;
   /** the courtyard's own effects: light levels, the tile glow and the star mark of the ending */
-  courtyard?: { levels: { main: number; lanterns: number; night: number }; grooves?: [number, number, number, number, number]; mark?: [number, number, number, number, number] };
+  courtyard?: { levels: { main: number; lanterns: number; night: number }; grooves?: [number, number, number, number, number]; mark?: [number, number, number, number, number]; swirl?: number; rays?: boolean };
   /** extra per-frame control of a set (e.g. the street's sun following him, a screen banner) */
   hooks?: Partial<Record<"streetX" | "officeBanner", unknown>>;
 };
@@ -34,7 +35,15 @@ export type StoryFilm = {
   irises: { from: number; len: number }[];
   whips: { from: number; len: number }[];
   accentAt: (f: number) => Accent;
+  /** per-frame picture effects (optional): motion blur (px), chromatic aberration (px), glitch (0..1), a zoom-through
+   *  (scale about a screen point, with blur), a white flash (0..1), vignette (0..1), film grain on/off */
+  fxAt?: (f: number) => FrameFx;
   /** the 2D layer (tracker, labels, captions, cards) */
   Overlay: React.FC;
   audio?: string;
+};
+
+export type FrameFx = {
+  blurX: number; blurY: number; ca: number; glitch: number; flash: number; vignette: number; grain: boolean;
+  zoom?: { scale: number; x: number; y: number; blur: number };
 };

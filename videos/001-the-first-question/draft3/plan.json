@@ -1,0 +1,1868 @@
+{
+ "fps": 30,
+ "duration": 93.975,
+ "frames": 2819,
+ "intro": 5.0,
+ "ending": {
+  "from": 89.17500000000001,
+  "sec": 4.8
+ },
+ "ramps": [
+  [
+   8.05,
+   8.75,
+   2.2
+  ],
+  [
+   10.75,
+   11.45,
+   2.0
+  ]
+ ],
+ "place": {
+  "money_job": 14.15,
+  "followers": 19.1,
+  "hook": 27.1,
+  "chasing": 31.275000000000002,
+  "hadith": 41.70000000000001,
+  "weight": 55.20000000000001,
+  "mercy": 65.97500000000001,
+  "turn": 80.07500000000002
+ },
+ "words": [
+  {
+   "section": 2,
+   "word": "Before",
+   "start": 14.15,
+   "end": 14.95,
+   "block": "money_job"
+  },
+  {
+   "section": 2,
+   "word": "your",
+   "start": 14.95,
+   "end": 15.23,
+   "block": "money_job"
+  },
+  {
+   "section": 2,
+   "word": "money.",
+   "start": 15.23,
+   "end": 15.51,
+   "block": "money_job"
+  },
+  {
+   "section": 2,
+   "word": "Before",
+   "start": 16.05,
+   "end": 16.25,
+   "block": "money_job"
+  },
+  {
+   "section": 2,
+   "word": "your",
+   "start": 16.25,
+   "end": 16.57,
+   "block": "money_job"
+  },
+  {
+   "section": 2,
+   "word": "job.",
+   "start": 16.57,
+   "end": 16.87,
+   "block": "money_job"
+  },
+  {
+   "section": 2,
+   "word": "Before",
+   "start": 19.1,
+   "end": 19.96,
+   "block": "followers"
+  },
+  {
+   "section": 2,
+   "word": "your",
+   "start": 19.96,
+   "end": 20.42,
+   "block": "followers"
+  },
+  {
+   "section": 2,
+   "word": "followers.",
+   "start": 20.42,
+   "end": 20.88,
+   "block": "followers"
+  },
+  {
+   "section": 2,
+   "word": "There",
+   "start": 27.1,
+   "end": 27.64,
+   "block": "hook"
+  },
+  {
+   "section": 2,
+   "word": "is",
+   "start": 27.64,
+   "end": 27.78,
+   "block": "hook"
+  },
+  {
+   "section": 2,
+   "word": "one",
+   "start": 27.78,
+   "end": 28.1,
+   "block": "hook"
+  },
+  {
+   "section": 2,
+   "word": "thing",
+   "start": 28.1,
+   "end": 28.42,
+   "block": "hook"
+  },
+  {
+   "section": 2,
+   "word": "you",
+   "start": 28.42,
+   "end": 28.74,
+   "block": "hook"
+  },
+  {
+   "section": 2,
+   "word": "will",
+   "start": 28.74,
+   "end": 28.84,
+   "block": "hook"
+  },
+  {
+   "section": 2,
+   "word": "be",
+   "start": 28.84,
+   "end": 28.96,
+   "block": "hook"
+  },
+  {
+   "section": 2,
+   "word": "asked",
+   "start": 28.96,
+   "end": 29.36,
+   "block": "hook"
+  },
+  {
+   "section": 2,
+   "word": "about",
+   "start": 29.36,
+   "end": 29.68,
+   "block": "hook"
+  },
+  {
+   "section": 2,
+   "word": "first.",
+   "start": 29.68,
+   "end": 30.12,
+   "block": "hook"
+  },
+  {
+   "section": 3,
+   "word": "We",
+   "start": 31.275,
+   "end": 31.795,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "spend",
+   "start": 31.795,
+   "end": 32.035,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "our",
+   "start": 32.035,
+   "end": 32.255,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "days",
+   "start": 32.255,
+   "end": 32.575,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "chasing",
+   "start": 32.575,
+   "end": 32.915,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "things",
+   "start": 32.915,
+   "end": 33.515,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "that",
+   "start": 33.515,
+   "end": 33.735,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "will",
+   "start": 33.735,
+   "end": 33.855,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "never",
+   "start": 33.855,
+   "end": 34.075,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "be",
+   "start": 34.075,
+   "end": 34.295,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "mentioned",
+   "start": 34.295,
+   "end": 34.655,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "on",
+   "start": 34.655,
+   "end": 34.895,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "that",
+   "start": 34.895,
+   "end": 35.115,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "Day.",
+   "start": 35.115,
+   "end": 35.755,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "Deadlines.",
+   "start": 36.255,
+   "end": 36.815,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "Notifications.",
+   "start": 37.355,
+   "end": 38.055,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "Plans",
+   "start": 38.975,
+   "end": 39.035,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "for",
+   "start": 39.035,
+   "end": 39.435,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "next",
+   "start": 39.435,
+   "end": 39.655,
+   "block": "chasing"
+  },
+  {
+   "section": 3,
+   "word": "year.",
+   "start": 39.655,
+   "end": 40.035,
+   "block": "chasing"
+  },
+  {
+   "section": 4,
+   "word": "But",
+   "start": 41.7,
+   "end": 42.22,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "the",
+   "start": 42.22,
+   "end": 42.36,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "Prophet",
+   "start": 42.36,
+   "end": 42.72,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "ﷺ",
+   "start": 42.72,
+   "end": 44.94,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "told",
+   "start": 44.94,
+   "end": 45.44,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "us",
+   "start": 45.44,
+   "end": 45.76,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "what",
+   "start": 45.76,
+   "end": 45.96,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "comes",
+   "start": 45.96,
+   "end": 46.24,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "first:",
+   "start": 46.24,
+   "end": 46.76,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "\"Indeed",
+   "start": 47.48,
+   "end": 47.78,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "the",
+   "start": 47.78,
+   "end": 48.06,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "first",
+   "start": 48.06,
+   "end": 48.36,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "deed",
+   "start": 48.36,
+   "end": 48.68,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "by",
+   "start": 48.68,
+   "end": 49.12,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "which",
+   "start": 49.12,
+   "end": 49.3,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "a",
+   "start": 49.3,
+   "end": 49.44,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "servant",
+   "start": 49.44,
+   "end": 49.8,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "will",
+   "start": 49.8,
+   "end": 50.02,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "be",
+   "start": 50.02,
+   "end": 50.14,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "called",
+   "start": 50.14,
+   "end": 50.42,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "to",
+   "start": 50.42,
+   "end": 50.68,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "account",
+   "start": 50.68,
+   "end": 51.08,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "on",
+   "start": 51.08,
+   "end": 51.4,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "the",
+   "start": 51.4,
+   "end": 51.5,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "Day",
+   "start": 51.5,
+   "end": 51.68,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "of",
+   "start": 51.68,
+   "end": 51.82,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "Resurrection",
+   "start": 51.82,
+   "end": 52.38,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "is",
+   "start": 52.38,
+   "end": 52.96,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "his",
+   "start": 52.96,
+   "end": 53.16,
+   "block": "hadith"
+  },
+  {
+   "section": 4,
+   "word": "Salat.\"",
+   "start": 53.16,
+   "end": 53.7,
+   "block": "hadith"
+  },
+  {
+   "section": 5,
+   "word": "He",
+   "start": 55.2,
+   "end": 55.78,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "ﷺ",
+   "start": 55.78,
+   "end": 57.72,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "said",
+   "start": 57.72,
+   "end": 57.96,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "that",
+   "start": 57.96,
+   "end": 58.18,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "if",
+   "start": 58.18,
+   "end": 58.32,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "it",
+   "start": 58.32,
+   "end": 58.42,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "is",
+   "start": 58.42,
+   "end": 58.58,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "sound,",
+   "start": 58.58,
+   "end": 59.04,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "the",
+   "start": 59.04,
+   "end": 59.58,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "servant",
+   "start": 59.58,
+   "end": 59.9,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "has",
+   "start": 59.9,
+   "end": 60.16,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "succeeded,",
+   "start": 60.16,
+   "end": 60.66,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "and",
+   "start": 61.14,
+   "end": 61.34,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "if",
+   "start": 61.34,
+   "end": 61.48,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "it",
+   "start": 61.48,
+   "end": 61.58,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "is",
+   "start": 61.58,
+   "end": 61.7,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "lacking,",
+   "start": 61.7,
+   "end": 62.1,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "he",
+   "start": 62.1,
+   "end": 62.64,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "has",
+   "start": 62.64,
+   "end": 62.74,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "failed",
+   "start": 62.74,
+   "end": 63.22,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "and",
+   "start": 63.22,
+   "end": 63.54,
+   "block": "weight"
+  },
+  {
+   "section": 5,
+   "word": "lost.",
+   "start": 63.54,
+   "end": 63.8,
+   "block": "weight"
+  },
+  {
+   "section": 6,
+   "word": "But",
+   "start": 65.975,
+   "end": 66.495,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "then",
+   "start": 66.495,
+   "end": 66.715,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "comes",
+   "start": 66.715,
+   "end": 67.115,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "the",
+   "start": 67.115,
+   "end": 67.335,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "mercy.",
+   "start": 67.335,
+   "end": 67.695,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "If",
+   "start": 68.315,
+   "end": 68.515,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "something",
+   "start": 68.515,
+   "end": 68.815,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "is",
+   "start": 68.815,
+   "end": 69.055,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "missing",
+   "start": 69.055,
+   "end": 69.435,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "from",
+   "start": 69.435,
+   "end": 69.715,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "the",
+   "start": 69.715,
+   "end": 69.855,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "obligatory",
+   "start": 69.855,
+   "end": 70.255,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "prayers,",
+   "start": 70.255,
+   "end": 70.935,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "Allah",
+   "start": 71.415,
+   "end": 71.455,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "will",
+   "start": 71.455,
+   "end": 71.755,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "say:",
+   "start": 71.755,
+   "end": 72.075,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "look,",
+   "start": 72.595,
+   "end": 72.795,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "does",
+   "start": 73.115,
+   "end": 73.275,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "My",
+   "start": 73.275,
+   "end": 73.515,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "servant",
+   "start": 73.515,
+   "end": 73.955,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "have",
+   "start": 73.955,
+   "end": 74.255,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "voluntary",
+   "start": 74.255,
+   "end": 74.735,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "prayers?",
+   "start": 74.735,
+   "end": 75.335,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "And",
+   "start": 75.855,
+   "end": 76.135,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "with",
+   "start": 76.135,
+   "end": 76.295,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "them,",
+   "start": 76.295,
+   "end": 76.615,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "what",
+   "start": 76.615,
+   "end": 77.075,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "was",
+   "start": 77.075,
+   "end": 77.235,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "lacking",
+   "start": 77.235,
+   "end": 77.635,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "is",
+   "start": 77.635,
+   "end": 77.975,
+   "block": "mercy"
+  },
+  {
+   "section": 6,
+   "word": "completed.",
+   "start": 77.975,
+   "end": 78.515,
+   "block": "mercy"
+  },
+  {
+   "section": 7,
+   "word": "So",
+   "start": 80.075,
+   "end": 80.655,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "the",
+   "start": 80.655,
+   "end": 80.835,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "question",
+   "start": 80.835,
+   "end": 81.195,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "isn't",
+   "start": 81.195,
+   "end": 81.695,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "whether",
+   "start": 81.695,
+   "end": 81.895,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "you're",
+   "start": 81.895,
+   "end": 82.255,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "perfect.",
+   "start": 82.255,
+   "end": 82.655,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "It's",
+   "start": 83.295,
+   "end": 83.435,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "whether",
+   "start": 83.435,
+   "end": 83.595,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "you'll",
+   "start": 83.595,
+   "end": 83.935,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "stand",
+   "start": 83.935,
+   "end": 84.135,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "up",
+   "start": 84.135,
+   "end": 84.375,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "for",
+   "start": 84.375,
+   "end": 84.535,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "the",
+   "start": 84.535,
+   "end": 84.655,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "next",
+   "start": 84.655,
+   "end": 84.855,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "one.",
+   "start": 84.855,
+   "end": 85.095,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "Your",
+   "start": 85.695,
+   "end": 85.795,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "next",
+   "start": 85.795,
+   "end": 86.055,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "prayer",
+   "start": 86.055,
+   "end": 86.435,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "is",
+   "start": 86.435,
+   "end": 86.775,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "closer",
+   "start": 86.775,
+   "end": 87.055,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "than",
+   "start": 87.055,
+   "end": 87.375,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "you",
+   "start": 87.375,
+   "end": 87.515,
+   "block": "turn"
+  },
+  {
+   "section": 7,
+   "word": "think.",
+   "start": 87.515,
+   "end": 87.835,
+   "block": "turn"
+  }
+ ],
+ "anchors": {
+  "fajrTone": 5.25,
+  "alarmBuzz": 5.9,
+  "label1min": 6.25,
+  "fajrCrack": 6.9,
+  "timeJump": 7.35,
+  "alarmLoud": 7.85,
+  "sitUp": 8.0,
+  "jumpOut": 8.25,
+  "land": 8.45,
+  "cutStreet": 8.75,
+  "car1": 9.35,
+  "horn": 10.05,
+  "phoneCheck": 10.45,
+  "bus": 11.0,
+  "cutOffice": 11.6,
+  "dhuhrTone": 12.1,
+  "wave": 12.7,
+  "labelCall": 12.9,
+  "dhuhrCrack": 13.9,
+  "laptopPing": 16.0,
+  "cutAsr": 17.2,
+  "asrTone": 17.7,
+  "asrCrack": 18.9,
+  "cutGym": 20.7,
+  "maghribTone": 21.1,
+  "label5min": 21.5,
+  "maghribCrack": 22.4,
+  "cutNight": 23.0,
+  "ishaTone": 23.4,
+  "labelVideo": 23.9,
+  "ishaCrack": 24.9,
+  "clockLate": 25.4,
+  "phoneOff": 26.0,
+  "dotsCentre": 26.55,
+  "dotsBack": 31.075,
+  "zoomDot": 41.00000000000001,
+  "iris": 54.65000000000001,
+  "flash": 65.62500000000001,
+  "whipTurn": 79.67500000000001,
+  "ending": 89.17500000000001,
+  "card": 90.775,
+  "firstWord": 29.68,
+  "lostWord": 63.54,
+  "mercyWord": 67.335,
+  "voluntaryWord": 74.255,
+  "completedWord": 77.975,
+  "hadithFirst": 46.24,
+  "quoteStart": 47.48,
+  "standWord": 83.935,
+  "nextWord": 85.795,
+  "walk": 83.245,
+  "walkEnd": 85.44500000000001,
+  "turnQibla": 85.445,
+  "takbir": 86.04499999999999,
+  "nextPrayer": 85.49499999999999,
+  "mends": [
+   74.255,
+   75.248,
+   76.24,
+   77.232,
+   78.225
+  ],
+  "snuff": 63.66,
+  "fb": [
+   31.235,
+   32.875,
+   33.815,
+   36.215,
+   37.315,
+   38.935
+  ],
+  "fbEnd": 41.00000000000001
+ },
+ "clock": [
+  [
+   0.0,
+   1438
+  ],
+  [
+   4.99,
+   1438
+  ],
+  [
+   5.0,
+   312
+  ],
+  [
+   7.35,
+   313
+  ],
+  [
+   7.85,
+   468
+  ],
+  [
+   8.75,
+   501
+  ],
+  [
+   11.6,
+   503
+  ],
+  [
+   11.61,
+   751
+  ],
+  [
+   17.2,
+   753
+  ],
+  [
+   17.21,
+   947
+  ],
+  [
+   20.7,
+   949
+  ],
+  [
+   20.71,
+   1102
+  ],
+  [
+   23.0,
+   1104
+  ],
+  [
+   23.01,
+   1198
+  ],
+  [
+   25.4,
+   1200
+  ],
+  [
+   26.0,
+   1421
+  ],
+  [
+   93.975,
+   1439
+  ]
+ ],
+ "prayers": [
+  {
+   "name": "Fajr",
+   "time": 312,
+   "crack": 6.9
+  },
+  {
+   "name": "Dhuhr",
+   "time": 751,
+   "crack": 13.9
+  },
+  {
+   "name": "Asr",
+   "time": 947,
+   "crack": 18.9
+  },
+  {
+   "name": "Maghrib",
+   "time": 1102,
+   "crack": 22.4
+  },
+  {
+   "name": "Isha",
+   "time": 1198,
+   "crack": 24.9
+  }
+ ],
+ "transitions": [
+  {
+   "type": "match",
+   "at": 5.0
+  },
+  {
+   "type": "glitch",
+   "at": 8.75
+  },
+  {
+   "type": "whip",
+   "at": 11.6
+  },
+  {
+   "type": "glitch",
+   "at": 17.2
+  },
+  {
+   "type": "zoom",
+   "at": 20.7,
+   "into": "phone"
+  },
+  {
+   "type": "whip",
+   "at": 23.0
+  },
+  {
+   "type": "glitch",
+   "at": 32.875
+  },
+  {
+   "type": "glitch",
+   "at": 33.815
+  },
+  {
+   "type": "glitch",
+   "at": 36.215
+  },
+  {
+   "type": "glitch",
+   "at": 37.315
+  },
+  {
+   "type": "glitch",
+   "at": 38.935
+  },
+  {
+   "type": "zoom",
+   "at": 41.00000000000001,
+   "into": "dot"
+  },
+  {
+   "type": "iris",
+   "at": 54.65000000000001
+  },
+  {
+   "type": "flash",
+   "at": 65.62500000000001
+  },
+  {
+   "type": "whip",
+   "at": 79.67500000000001
+  }
+ ],
+ "shots": [
+  {
+   "from": 41.00000000000001,
+   "kinds": [
+    "orbitHead",
+    "archLow",
+    "lampClose",
+    "matDrift",
+    "chestHand"
+   ],
+   "cuts": [
+    44.89,
+    47.43,
+    49.75,
+    52.33
+   ]
+  },
+  {
+   "from": 54.65000000000001,
+   "kinds": [
+    "poolLow",
+    "craneWide",
+    "lampFlicker",
+    "pushIn"
+   ],
+   "cuts": [
+    57.67,
+    59.85,
+    62.05
+   ]
+  },
+  {
+   "from": 65.62500000000001,
+   "kinds": [
+    "craneThrough",
+    "highFloor",
+    "trackerUp",
+    "wideSwirl",
+    "healClose"
+   ],
+   "cuts": [
+    68.465,
+    71.365,
+    73.905,
+    76.565
+   ]
+  },
+  {
+   "from": 79.67500000000001,
+   "kinds": [
+    "mediumPush",
+    "walkTrack",
+    "takbirSide"
+   ],
+   "cuts": [
+    83.14500000000001,
+    85.29499999999999
+   ]
+  }
+ ],
+ "sound": {
+  "events": [
+   {
+    "kind": "drop",
+    "t": 5.0
+   },
+   {
+    "kind": "shimmer",
+    "t": 5.0,
+    "dur": 0.5,
+    "soft": true
+   },
+   {
+    "kind": "tone",
+    "t": 5.25
+   },
+   {
+    "kind": "buzz",
+    "t": 5.9,
+    "dur": 1.0
+   },
+   {
+    "kind": "crack",
+    "t": 6.9
+   },
+   {
+    "kind": "tick_whirr",
+    "t": 7.35,
+    "dur": 0.5
+   },
+   {
+    "kind": "whoosh",
+    "t": 7.35,
+    "dur": 0.45
+   },
+   {
+    "kind": "alarm",
+    "t": 7.85,
+    "dur": 0.7
+   },
+   {
+    "kind": "whoosh",
+    "t": 8.366,
+    "dur": 0.4
+   },
+   {
+    "kind": "impact",
+    "t": 8.593
+   },
+   {
+    "kind": "whoosh",
+    "t": 8.63,
+    "dur": 0.3,
+    "soft": true
+   },
+   {
+    "kind": "car",
+    "t": 9.35
+   },
+   {
+    "kind": "horn",
+    "t": 10.05
+   },
+   {
+    "kind": "riser",
+    "t": 10.268,
+    "dur": 0.9,
+    "soft": true
+   },
+   {
+    "kind": "buzz",
+    "t": 10.45,
+    "dur": 0.35
+   },
+   {
+    "kind": "car",
+    "t": 11.168,
+    "big": true
+   },
+   {
+    "kind": "whoosh",
+    "t": 11.48,
+    "dur": 0.3,
+    "soft": false
+   },
+   {
+    "kind": "tone",
+    "t": 12.1
+   },
+   {
+    "kind": "swish",
+    "t": 12.7
+   },
+   {
+    "kind": "crack",
+    "t": 13.9
+   },
+   {
+    "kind": "ping",
+    "t": 16.0
+   },
+   {
+    "kind": "whoosh",
+    "t": 17.08,
+    "dur": 0.3,
+    "soft": true
+   },
+   {
+    "kind": "ping",
+    "t": 17.45,
+    "soft": true
+   },
+   {
+    "kind": "tone",
+    "t": 17.7
+   },
+   {
+    "kind": "ping",
+    "t": 17.9,
+    "soft": true
+   },
+   {
+    "kind": "buzz",
+    "t": 18.3,
+    "dur": 0.3
+   },
+   {
+    "kind": "ping",
+    "t": 18.35,
+    "soft": true
+   },
+   {
+    "kind": "ping",
+    "t": 18.8,
+    "soft": true
+   },
+   {
+    "kind": "crack",
+    "t": 18.9
+   },
+   {
+    "kind": "ping",
+    "t": 19.25,
+    "soft": true
+   },
+   {
+    "kind": "buzz",
+    "t": 19.5,
+    "dur": 0.3
+   },
+   {
+    "kind": "riser",
+    "t": 19.6,
+    "dur": 1.1
+   },
+   {
+    "kind": "ping",
+    "t": 19.7,
+    "soft": true
+   },
+   {
+    "kind": "ping",
+    "t": 20.15,
+    "soft": true
+   },
+   {
+    "kind": "whoosh",
+    "t": 20.5,
+    "dur": 0.45
+   },
+   {
+    "kind": "tone",
+    "t": 21.1
+   },
+   {
+    "kind": "crack",
+    "t": 22.4
+   },
+   {
+    "kind": "whoosh",
+    "t": 22.88,
+    "dur": 0.3,
+    "soft": false
+   },
+   {
+    "kind": "tone",
+    "t": 23.4
+   },
+   {
+    "kind": "tap",
+    "t": 23.9
+   },
+   {
+    "kind": "tap",
+    "t": 24.35
+   },
+   {
+    "kind": "tap",
+    "t": 24.8
+   },
+   {
+    "kind": "crack",
+    "t": 24.9
+   },
+   {
+    "kind": "tick_whirr",
+    "t": 25.4,
+    "dur": 0.55
+   },
+   {
+    "kind": "click",
+    "t": 26.0
+   },
+   {
+    "kind": "hit",
+    "t": 26.55,
+    "sub": true
+   },
+   {
+    "kind": "hit",
+    "t": 29.68,
+    "soft": true,
+    "sub": true
+   },
+   {
+    "kind": "cut",
+    "t": 31.235
+   },
+   {
+    "kind": "whoosh",
+    "t": 32.755,
+    "dur": 0.3,
+    "soft": true
+   },
+   {
+    "kind": "cut",
+    "t": 32.875
+   },
+   {
+    "kind": "glitch",
+    "t": 32.875
+   },
+   {
+    "kind": "whoosh",
+    "t": 33.695,
+    "dur": 0.3,
+    "soft": true
+   },
+   {
+    "kind": "cut",
+    "t": 33.815
+   },
+   {
+    "kind": "glitch",
+    "t": 33.815
+   },
+   {
+    "kind": "whoosh",
+    "t": 36.095,
+    "dur": 0.3,
+    "soft": true
+   },
+   {
+    "kind": "cut",
+    "t": 36.215
+   },
+   {
+    "kind": "glitch",
+    "t": 36.215
+   },
+   {
+    "kind": "whoosh",
+    "t": 37.195,
+    "dur": 0.3,
+    "soft": true
+   },
+   {
+    "kind": "cut",
+    "t": 37.315
+   },
+   {
+    "kind": "glitch",
+    "t": 37.315
+   },
+   {
+    "kind": "whoosh",
+    "t": 38.815,
+    "dur": 0.3,
+    "soft": true
+   },
+   {
+    "kind": "cut",
+    "t": 38.935
+   },
+   {
+    "kind": "glitch",
+    "t": 38.935
+   },
+   {
+    "kind": "riser",
+    "t": 39.9,
+    "dur": 1.1
+   },
+   {
+    "kind": "whoosh",
+    "t": 40.8,
+    "dur": 0.45
+   },
+   {
+    "kind": "riser",
+    "t": 53.75,
+    "dur": 0.9,
+    "soft": true
+   },
+   {
+    "kind": "shimmer",
+    "t": 54.75,
+    "dur": 0.7,
+    "soft": true
+   },
+   {
+    "kind": "hit",
+    "t": 63.54,
+    "sub": true
+   },
+   {
+    "kind": "thud",
+    "t": 63.66
+   },
+   {
+    "kind": "riser",
+    "t": 64.775,
+    "dur": 0.85
+   },
+   {
+    "kind": "shimmer",
+    "t": 65.625,
+    "dur": 1.4
+   },
+   {
+    "kind": "hit",
+    "t": 67.335,
+    "soft": true,
+    "sub": true
+   },
+   {
+    "kind": "shimmer",
+    "t": 67.335,
+    "dur": 2.4
+   },
+   {
+    "kind": "shimmer",
+    "t": 73.355,
+    "dur": 1.1,
+    "soft": true
+   },
+   {
+    "kind": "chime_soft",
+    "t": 74.255
+   },
+   {
+    "kind": "shimmer",
+    "t": 74.348,
+    "dur": 1.1,
+    "soft": true
+   },
+   {
+    "kind": "chime_soft",
+    "t": 75.248
+   },
+   {
+    "kind": "shimmer",
+    "t": 75.34,
+    "dur": 1.1,
+    "soft": true
+   },
+   {
+    "kind": "chime_soft",
+    "t": 76.24
+   },
+   {
+    "kind": "shimmer",
+    "t": 76.332,
+    "dur": 1.1,
+    "soft": true
+   },
+   {
+    "kind": "chime_soft",
+    "t": 77.232
+   },
+   {
+    "kind": "shimmer",
+    "t": 77.325,
+    "dur": 1.1,
+    "soft": true
+   },
+   {
+    "kind": "chime_soft",
+    "t": 78.225
+   },
+   {
+    "kind": "whoosh",
+    "t": 79.555,
+    "dur": 0.3,
+    "soft": false
+   },
+   {
+    "kind": "whoosh",
+    "t": 83.245,
+    "dur": 0.4,
+    "soft": true
+   },
+   {
+    "kind": "swish",
+    "t": 86.245,
+    "soft": true
+   },
+   {
+    "kind": "riser",
+    "t": 88.575,
+    "dur": 0.7,
+    "soft": true
+   },
+   {
+    "kind": "drop",
+    "t": 89.225
+   }
+  ],
+  "beds": [
+   {
+    "kind": "courtyard_intro",
+    "from": 0.0,
+    "to": 5.0
+   },
+   {
+    "kind": "room_dawn",
+    "from": 5.0,
+    "to": 7.35
+   },
+   {
+    "kind": "room_morning",
+    "from": 7.35,
+    "to": 8.75
+   },
+   {
+    "kind": "city",
+    "from": 8.75,
+    "to": 11.6
+   },
+   {
+    "kind": "office",
+    "from": 11.6,
+    "to": 17.2
+   },
+   {
+    "kind": "city_afternoon",
+    "from": 17.2,
+    "to": 20.7
+   },
+   {
+    "kind": "gym",
+    "from": 20.7,
+    "to": 23.0
+   },
+   {
+    "kind": "room_night",
+    "from": 23.0,
+    "to": 26.0
+   },
+   {
+    "kind": "silence",
+    "from": 26.18,
+    "to": 26.55
+   },
+   {
+    "kind": "room_still",
+    "from": 26.55,
+    "to": 31.235
+   },
+   {
+    "kind": "fb_city",
+    "from": 31.235,
+    "to": 32.875
+   },
+   {
+    "kind": "fb_office",
+    "from": 32.875,
+    "to": 33.815
+   },
+   {
+    "kind": "fb_gym",
+    "from": 33.815,
+    "to": 36.215
+   },
+   {
+    "kind": "fb_office",
+    "from": 36.215,
+    "to": 37.315
+   },
+   {
+    "kind": "fb_city",
+    "from": 37.315,
+    "to": 38.935
+   },
+   {
+    "kind": "fb_city",
+    "from": 38.935,
+    "to": 41.0
+   },
+   {
+    "kind": "courtyard",
+    "from": 41.0,
+    "to": 93.975
+   }
+  ],
+  "voice": "voice/voice3.wav"
+ }
+}
