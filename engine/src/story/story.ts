@@ -5,10 +5,11 @@ import type { Cam, V3 } from "../camera/ease";
 import type { Pen } from "../draw/toon";
 import type { Accent } from "../film/film";
 
-export type SetId = "courtyard" | "bedroom" | "street" | "office" | "gym";
+export type SetId = "courtyard" | "bedroom" | "street" | "office" | "gym" | "feed" | "void" | "deadlines" | "airport" | "car" | "sofa";
 /** world offset of each set (local coordinates + offset = world) */
 export const SET_OFFSET: Record<SetId, V3> = {
   courtyard: [0, 0, 0], bedroom: [200, 0, 0], street: [400, 0, 0], office: [600, 0, 0], gym: [800, 0, 0],
+  feed: [1000, 0, 0], void: [1200, 0, 0], deadlines: [1400, 0, 0], airport: [1600, 0, 0], car: [1800, 0, 0], sofa: [2000, 0, 0],
 };
 
 /** the Traveller this frame (world position of his soles / the card's pivot), or null when he is off screen */
@@ -41,7 +42,15 @@ export type StoryFilm = {
   /** the 2D layer (tracker, labels, captions, cards) */
   Overlay: React.FC;
   audio?: string;
+  /** the sets this film uses (only these are built; default: the original five) */
+  sets?: SetId[];
+  /** the shatter: the rendered frame breaks into pieces that fly at the lens (see StoryPlayer) */
+  shatterAt?: (f: number) => Shatter | null;
 };
+
+/** crack: 0..1 the cracks spreading from (x, y) over the frame; fly: 0..1 the pieces flying toward the lens and past
+ *  the frame's edges; black: 0..1 the dark behind the pieces */
+export type Shatter = { crack: number; fly: number; black: number; x: number; y: number };
 
 export type FrameFx = {
   blurX: number; blurY: number; ca: number; glitch: number; flash: number; vignette: number; grain: boolean;

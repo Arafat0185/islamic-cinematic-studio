@@ -18,12 +18,13 @@ sources:
       Indeed the first deed by which a servant will be called to account on the
       Day of Resurrection is his Salat.
     paraphrased_in_script:
-      - section 5 (succeeded / failed and lost)
-      - section 6 (voluntary prayers completing the obligatory)
+      - section 7 (sound: succeeded / lacking: failed and lost)
+      - section 8 (voluntary prayers completing what is missing from the obligatory)
     arabic_text: TODO, copy verbatim from the same sunnah.com page
     checked_on: 2026-11-18
     checked_by: Claude (sunnah.com page read; English opening sentence and grade confirmed)
 
+  # quran-20-14 is not used in the final version of the script (2026-11-19); kept here only as a note.
   - id: quran-20-14
     type: quran
     reference: Surah Ta-Ha 20:14

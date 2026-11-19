@@ -34,6 +34,12 @@ export const GRADE_DUSK: GradeParams = {
   tintS: [0.03, 0.0], tintM: [0, 0.01], tintH: [-0.02, 0.02], vig: [0.24, 0.36],
 };
 
+/** n grades blended evenly from a to b (cached objects: the player swaps grades by identity), for time-lapses */
+export const gradeSteps = (a: GradeParams, b: GradeParams, n = 9): GradeParams[] => Array.from({ length: n }, (_, i) => {
+  const k = i / (n - 1), m = (x: number[], y: number[]) => x.map((v, j) => v + (y[j] - v) * k);
+  return { ky: m(a.ky, b.ky), sat: m(a.sat, b.sat), tintS: m(a.tintS, b.tintS), tintM: m(a.tintM, b.tintM), tintH: m(a.tintH, b.tintH), vig: m(a.vig, b.vig) } as GradeParams;
+});
+
 export const mat = (c: string, opts: THREE.MeshLambertMaterialParameters = {}) => twoTone(new THREE.MeshLambertMaterial({ color: c, ...opts }));
 /** an unlit, glowing material (screens, windows, lamps); colours above 1 bloom */
 export const glow = (c: THREE.ColorRepresentation, k = 1, map?: THREE.Texture) => {

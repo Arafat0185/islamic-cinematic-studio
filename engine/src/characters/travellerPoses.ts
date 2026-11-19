@@ -151,9 +151,9 @@ export const profileHead = (p: Pen, cx: number, cy: number, rot: number, light: 
   g.restore();
 };
 
-/** back of the head: normal skin tone (the front-view head shape), a band of short near-black hair just under the
- *  kufi, across the back of the head down to the nape hairline (skin below it), a sliver of the beard at both jaw
- *  edges, the same kufi */
+/** back of the head: the front-view head shape; short near-black hair covers the TOP half of the back of the head,
+ *  from just under the kufi down to a hairline across the middle of the head (dipping a little at the centre); the
+ *  lower half is skin down to the neck; a sliver of the beard at both jaw edges; the same kufi */
 const backHead = (p: Pen, hc: number, crown: number, light: number, seed = 1) => {
   const h = frontHeadShape(hc, seed), thick = thickAngle(light), v = h.headB;
   // beard slivers: drawn first, a little wider than the jaw, so the head covers all but ~5 units on each side
@@ -165,13 +165,11 @@ const backHead = (p: Pen, hc: number, crown: number, light: number, seed = 1) =>
     p.inkRing(sc, OW_HEAD * 0.55, thick);
   }
   p.shadedFill(h.hp, SKIN_T, mul(SKIN_T, SH_SKIN), light, h.headA);
-  // hair band: from under the kufi down to a nape hairline that dips at the centre; inset from the head's sides
-  // hair only as a band across the back of the head and the nape: skin from under the kufi down to the band's upper
-  // edge, the band, then the nape hairline that dips at the centre
-  const top = hc - 0.12 * v, side0 = hc + 0.42 * v, nape = hc + 0.7 * v, IN = -4; // skin above the band
-  const ysL = [top, hc + 0.05 * v, hc + 0.2 * v, hc + 0.32 * v, side0];
+  // the hair: from above the kufi's base (hidden under it) down to a hairline across the middle of the head
+  const top = crown - 4, side0 = hc - 0.02 * v, nape = hc + 0.1 * v, IN = -4;
+  const ysL = [crown + 0.13 * HH, hc - 0.55 * v, hc - 0.3 * v, side0];
   const band: P2[] = [
-    ...qc([300 - (h.edgeX(top) - IN), top + 6], [300, top - 0.12 * v], [300 + (h.edgeX(top) - IN), top + 6], 12).slice(0, -1),
+    [300 - 200, top], [300 + 200, top],
     ...ysL.map((y): P2 => [300 + (h.edgeX(y) - IN), y]),
     ...qc([300 + (h.edgeX(side0) - IN), side0], [300, nape + 0.25 * v], [300 - (h.edgeX(side0) - IN), side0], 14).slice(1, -1),
     ...ysL.slice().reverse().map((y): P2 => [300 - (h.edgeX(y) - IN), y]),
@@ -545,7 +543,7 @@ export const travellerThreeQuarterBack = (p: Pen, o: PoseOpts = {}) => {
   p.gradFill(sl, BEARD, mul(BEARD, [0.72, 0.72, 0.76]), light, 0.35);
   p.inkRing(sl, OW_HEAD * 0.55, thick);
   p.shadedFill(h.hp, SKIN_T, mul(SKIN_T, SH_SKIN), light, h.headA);
-  const top = hc - 0.12 * v, side0 = hc + 0.42 * v, nape = hc + 0.7 * v; // skin above the band, as in the back view
+  const top = crown - 4, side0 = hc - 0.02 * v, nape = hc + 0.1 * v; // hair on the top half, skin below, as in the back view
   p.clip(h.hp, () => {
     // hair from the far side across to ~1/4 of the way into the near (face) side; the cheek in front stays skin
     const band = cw([
@@ -704,7 +702,9 @@ export const phoneInHand = (p: Pen, x: number, y: number, ang: number, light: nu
  *  tilt: head (-1 down .. 1 up). Seat height 0.46 m; his soles on the floor (y = 975). */
 /** arms "rest": both hands on his knees (sitting on the edge of a bed). chair: draw the office chair (seat and back)
  *  as part of the drawing, so no 3D chair ever cuts through him. Hands typing at 0.78 m (above a 0.75 m desk top). */
-export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | "rest"; wave?: number; tilt?: number; wind?: number; chair?: boolean } = {}) => {
+/** arms "phone": both hands hold a phone in front of his chest, head bowed to it (scroll = 0..1 thumb, glow = the
+ *  screen's brightness); "call": the near hand holds a phone to his ear, the far hand rests on his knee. */
+export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | "rest" | "phone" | "call"; wave?: number; tilt?: number; wind?: number; chair?: boolean; scroll?: number } = {}) => {
   const light = o.light ?? DEF_LIGHT, arms = o.arms ?? "type";
   const hip: P2 = [272, 742], knee: P2 = [445, 748], ankle: P2 = [455, 952], sh: P2 = [292, 545];
   const hc = 404;
@@ -718,8 +718,9 @@ export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | 
     p.poly(cw([[180, 935], [362, 935], [362, 952], [180, 952]] as P2[]), steel, OW * 0.6);
     for (const x of [190, 352]) p.dot(x, 962, 12, "#17181c");
   }
-  const rest = (o.arms ?? "type") === "rest";
+  const rest = (o.arms ?? "type") === "rest" || arms === "call";
   if (rest) { sleeve(p, [290, 560], [330, 680], [420, 735]); p.dot(426, 740, 12); }
+  else if (arms === "phone") { sleeve(p, [290, 560], [330, 690], [398, 628]); p.dot(402, 624, 12); }
   else { sleeve(p, [290, 560], [342, 670], [528, 612]); p.dot(534, 616, 12); }
   neck(p, [298, 552], [305, hc + 50], light);
   const shawl = drapeShawl(300, 540, 190, light, o.wind ?? 0);
@@ -733,6 +734,20 @@ export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | 
     p.dot(442, 746, 12.5);
     if (o.shawlNear) shawl.cap(p);
     profileHead(p, 314, hc, -0.28 * tilt + 0.1, light, o.seed ?? 1);
+  } else if (arms === "phone") {
+    if (o.shawlNear) shawl.cap(p);
+    profileHead(p, 314, hc, 0.42 - 0.28 * tilt, light, o.seed ?? 1);       // head bowed to the screen
+    sleeve(p, [300, 562], [350, 694], [410, 632]);
+    phoneInHand(p, 420, 604, -0.62, light, false);
+    const th = o.scroll ?? 0;
+    p.dot(416 + 4 * Math.sin(th * Math.PI * 2), 594 - 10 * th, 7);
+  } else if (arms === "call") {
+    if (o.shawlNear) shawl.cap(p);
+    profileHead(p, 314, hc, 0.05 - 0.28 * tilt, light, o.seed ?? 1);
+    // the near arm folded up: elbow down by his ribs, the hand at the side of his head holding the phone to his ear
+    sleeve(p, [300, 562], [318, 652], [292, 470]);
+    phoneInHand(p, 290, 428, 0.08, light, true);
+    p.dot(294, 466, 12.5);
   } else if (arms === "type") {
     sleeve(p, [300, 562], [352, 680], [548, 622]);
     p.dot(556, 626, 12.5);
@@ -803,9 +818,10 @@ export const travellerLying = (p: Pen, o: PoseOpts & { stir?: number } = {}) => 
   p.inkRing(bl, OW, thickAngle(light));
   const band = cw([[478, B - 132], [520, B - 158], [560, B - 150], [520, B - 120]] as P2[]);
   p.poly(band, sheet, OW * 0.6);
-  // near arm over the blanket, hand resting on his chest
-  sleeve(p, [430, B - 120], [560, B - 128 - 10 * st], [640, B - 150 - 14 * st]);
-  p.dot(648, B - 156 - 14 * st, 12.5);
+  // near arm relaxed and bent: the elbow down at his side on the blanket, the hand resting on his chest (it shifts and
+  // pulls the blanket a little when he stirs)
+  sleeve(p, [420, B - 116], [540, B - 92 - 6 * st], [492 + 18 * st, B - 150 - 12 * st]);
+  p.dot(486 + 18 * st, B - 154 - 12 * st, 12.5);
 };
 
 /** sitting up in bed scrolling, on a WIDE card (resting line = the mattress at y = 680): the same drawing as

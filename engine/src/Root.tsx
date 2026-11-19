@@ -10,6 +10,7 @@ import { BrandToolkitDemo, TOOLKIT_FRAMES, TOOLKIT_FPS } from "./scenes/toolkit/
 import { Video001, VIDEO001_FRAMES, VIDEO001_FPS } from "./scenes/video001/Video001";
 import { Video001D2, VIDEO001D2_FRAMES, VIDEO001D2_FPS } from "./scenes/video001d2/Video001D2";
 import { Video001D3, VIDEO001D3_FRAMES, VIDEO001D3_FPS } from "./scenes/video001d3/Video001D3";
+import { Final001, FINAL001_FRAMES, FINAL001_FPS } from "./scenes/final001/Final001";
 
 export const RemotionRoot: React.FC = () => (
   <>
@@ -33,6 +34,7 @@ export const RemotionRoot: React.FC = () => (
     />
     {/* Video 001 draft 3: recitation slot, the day with varied transitions and effects, the faster courtyard (with sound) */}
     <Composition id="Video001D3" component={Video001D3} durationInFrames={VIDEO001D3_FRAMES} fps={VIDEO001D3_FPS} width={1080} height={1920} />
+    <Composition id="TheFirstQuestionFinal" component={Final001} durationInFrames={FINAL001_FRAMES} fps={FINAL001_FPS} width={1080} height={1920} />
     {/* Video 001 draft 2 - "A day of chasing": the story version across five sets (with sound) */}
     <Composition id="Video001D2" component={Video001D2} durationInFrames={VIDEO001D2_FRAMES} fps={VIDEO001D2_FPS} width={1080} height={1920} />
     {/* Video 001 · The First Question: the full draft, timed to the narration (with sound) */}

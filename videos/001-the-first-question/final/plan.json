@@ -1,0 +1,1980 @@
+{
+ "fps": 30,
+ "frames": 1674,
+ "duration": 55.813,
+ "voice": [
+  {
+   "block": 1,
+   "file": "voice/final/01.wav",
+   "at": 0.527,
+   "onset": 0.8,
+   "offset": 2.4322,
+   "reverb": false
+  },
+  {
+   "block": 2,
+   "file": "voice/final/02.wav",
+   "at": 2.31,
+   "onset": 2.5822,
+   "offset": 3.6212,
+   "reverb": false
+  },
+  {
+   "block": 3,
+   "file": "voice/final/03.wav",
+   "at": 4.349,
+   "onset": 4.6212,
+   "offset": 6.7594,
+   "reverb": false
+  },
+  {
+   "block": 4,
+   "file": "voice/final/04.wav",
+   "at": 6.7886,
+   "onset": 7.0594,
+   "offset": 10.0082,
+   "reverb": false
+  },
+  {
+   "block": 5,
+   "file": "voice/final/05.wav",
+   "at": 9.9409,
+   "onset": 10.2082,
+   "offset": 13.9253,
+   "reverb": false
+  },
+  {
+   "block": 6,
+   "file": "voice/final/06.wav",
+   "at": 14.6466,
+   "onset": 14.9253,
+   "offset": 22.6432,
+   "reverb": true
+  },
+  {
+   "block": 7,
+   "file": "voice/final/07.wav",
+   "at": 22.9649,
+   "onset": 23.2432,
+   "offset": 26.5459,
+   "reverb": true
+  },
+  {
+   "block": 8,
+   "file": "voice/final/08.wav",
+   "at": 27.5718,
+   "onset": 27.8459,
+   "offset": 35.8798,
+   "reverb": true
+  },
+  {
+   "block": 9,
+   "file": "voice/final/09.wav",
+   "at": 36.216,
+   "onset": 36.4798,
+   "offset": 41.9626,
+   "reverb": true
+  }
+ ],
+ "words": [
+  {
+   "block": 1,
+   "word": "Your",
+   "start": 0.8,
+   "end": 0.84
+  },
+  {
+   "block": 1,
+   "word": "money.",
+   "start": 0.84,
+   "end": 1.067
+  },
+  {
+   "block": 1,
+   "word": "Your",
+   "start": 1.354,
+   "end": 1.394
+  },
+  {
+   "block": 1,
+   "word": "job.",
+   "start": 1.394,
+   "end": 1.627
+  },
+  {
+   "block": 1,
+   "word": "Your",
+   "start": 1.736,
+   "end": 1.887
+  },
+  {
+   "block": 1,
+   "word": "followers.",
+   "start": 1.927,
+   "end": 2.432
+  },
+  {
+   "block": 2,
+   "word": "None",
+   "start": 2.582,
+   "end": 2.73
+  },
+  {
+   "block": 2,
+   "word": "of",
+   "start": 2.807,
+   "end": 2.857
+  },
+  {
+   "block": 2,
+   "word": "it",
+   "start": 2.927,
+   "end": 2.967
+  },
+  {
+   "block": 2,
+   "word": "comes",
+   "start": 2.967,
+   "end": 3.13
+  },
+  {
+   "block": 2,
+   "word": "first.",
+   "start": 3.23,
+   "end": 3.621
+  },
+  {
+   "block": 3,
+   "word": "There's",
+   "start": 4.621,
+   "end": 4.766
+  },
+  {
+   "block": 3,
+   "word": "one",
+   "start": 4.766,
+   "end": 4.949
+  },
+  {
+   "block": 3,
+   "word": "thing",
+   "start": 5.015,
+   "end": 5.055
+  },
+  {
+   "block": 3,
+   "word": "you'll",
+   "start": 5.055,
+   "end": 5.274
+  },
+  {
+   "block": 3,
+   "word": "be",
+   "start": 5.274,
+   "end": 5.389
+  },
+  {
+   "block": 3,
+   "word": "asked",
+   "start": 5.398,
+   "end": 5.649
+  },
+  {
+   "block": 3,
+   "word": "about",
+   "start": 5.708,
+   "end": 5.949
+  },
+  {
+   "block": 3,
+   "word": "before",
+   "start": 6.049,
+   "end": 6.209
+  },
+  {
+   "block": 3,
+   "word": "all",
+   "start": 6.209,
+   "end": 6.569
+  },
+  {
+   "block": 3,
+   "word": "of",
+   "start": 6.661,
+   "end": 6.711
+  },
+  {
+   "block": 3,
+   "word": "it.",
+   "start": 6.769,
+   "end": 6.759
+  },
+  {
+   "block": 4,
+   "word": "You",
+   "start": 7.059,
+   "end": 7.137
+  },
+  {
+   "block": 4,
+   "word": "chase",
+   "start": 7.137,
+   "end": 7.369
+  },
+  {
+   "block": 4,
+   "word": "deadlines.",
+   "start": 7.407,
+   "end": 7.809
+  },
+  {
+   "block": 4,
+   "word": "Notifications.",
+   "start": 8.07,
+   "end": 8.569
+  },
+  {
+   "block": 4,
+   "word": "Plans",
+   "start": 8.985,
+   "end": 9.209
+  },
+  {
+   "block": 4,
+   "word": "for",
+   "start": 9.283,
+   "end": 9.397
+  },
+  {
+   "block": 4,
+   "word": "next",
+   "start": 9.397,
+   "end": 9.655
+  },
+  {
+   "block": 4,
+   "word": "year.",
+   "start": 9.655,
+   "end": 10.008
+  },
+  {
+   "block": 5,
+   "word": "And",
+   "start": 10.208,
+   "end": 10.248
+  },
+  {
+   "block": 5,
+   "word": "every",
+   "start": 10.248,
+   "end": 10.481
+  },
+  {
+   "block": 5,
+   "word": "day,",
+   "start": 10.536,
+   "end": 10.681
+  },
+  {
+   "block": 5,
+   "word": "you",
+   "start": 10.753,
+   "end": 10.861
+  },
+  {
+   "block": 5,
+   "word": "push",
+   "start": 10.869,
+   "end": 10.909
+  },
+  {
+   "block": 5,
+   "word": "it",
+   "start": 10.909,
+   "end": 11.161
+  },
+  {
+   "block": 5,
+   "word": "back.",
+   "start": 11.166,
+   "end": 11.401
+  },
+  {
+   "block": 5,
+   "word": "One",
+   "start": 11.615,
+   "end": 11.781
+  },
+  {
+   "block": 5,
+   "word": "more",
+   "start": 11.841,
+   "end": 11.981
+  },
+  {
+   "block": 5,
+   "word": "minute.",
+   "start": 11.988,
+   "end": 12.221
+  },
+  {
+   "block": 5,
+   "word": "After",
+   "start": 12.308,
+   "end": 12.521
+  },
+  {
+   "block": 5,
+   "word": "this",
+   "start": 12.525,
+   "end": 12.761
+  },
+  {
+   "block": 5,
+   "word": "call.",
+   "start": 12.814,
+   "end": 13.041
+  },
+  {
+   "block": 5,
+   "word": "One",
+   "start": 13.125,
+   "end": 13.321
+  },
+  {
+   "block": 5,
+   "word": "more",
+   "start": 13.39,
+   "end": 13.521
+  },
+  {
+   "block": 5,
+   "word": "video.",
+   "start": 13.585,
+   "end": 13.925
+  },
+  {
+   "block": 6,
+   "word": "But",
+   "start": 14.925,
+   "end": 14.965
+  },
+  {
+   "block": 6,
+   "word": "the",
+   "start": 14.965,
+   "end": 15.107
+  },
+  {
+   "block": 6,
+   "word": "Prophet",
+   "start": 15.107,
+   "end": 15.387
+  },
+  {
+   "block": 6,
+   "word": "ﷺ",
+   "start": 15.431,
+   "end": 17.207
+  },
+  {
+   "block": 6,
+   "word": "told",
+   "start": 17.238,
+   "end": 17.427
+  },
+  {
+   "block": 6,
+   "word": "us:",
+   "start": 17.521,
+   "end": 17.767
+  },
+  {
+   "block": 6,
+   "word": "\"Indeed",
+   "start": 17.819,
+   "end": 18.127
+  },
+  {
+   "block": 6,
+   "word": "the",
+   "start": 18.195,
+   "end": 18.327
+  },
+  {
+   "block": 6,
+   "word": "first",
+   "start": 18.335,
+   "end": 18.527
+  },
+  {
+   "block": 6,
+   "word": "deed",
+   "start": 18.622,
+   "end": 18.807
+  },
+  {
+   "block": 6,
+   "word": "by",
+   "start": 18.904,
+   "end": 18.947
+  },
+  {
+   "block": 6,
+   "word": "which",
+   "start": 18.947,
+   "end": 19.192
+  },
+  {
+   "block": 6,
+   "word": "a",
+   "start": 19.192,
+   "end": 19.305
+  },
+  {
+   "block": 6,
+   "word": "servant",
+   "start": 19.305,
+   "end": 19.607
+  },
+  {
+   "block": 6,
+   "word": "will",
+   "start": 19.687,
+   "end": 19.727
+  },
+  {
+   "block": 6,
+   "word": "be",
+   "start": 19.727,
+   "end": 19.942
+  },
+  {
+   "block": 6,
+   "word": "called",
+   "start": 19.942,
+   "end": 20.187
+  },
+  {
+   "block": 6,
+   "word": "to",
+   "start": 20.286,
+   "end": 20.407
+  },
+  {
+   "block": 6,
+   "word": "account",
+   "start": 20.507,
+   "end": 20.707
+  },
+  {
+   "block": 6,
+   "word": "on",
+   "start": 20.768,
+   "end": 20.887
+  },
+  {
+   "block": 6,
+   "word": "the",
+   "start": 20.987,
+   "end": 21.027
+  },
+  {
+   "block": 6,
+   "word": "Day",
+   "start": 21.027,
+   "end": 21.107
+  },
+  {
+   "block": 6,
+   "word": "of",
+   "start": 21.206,
+   "end": 21.246
+  },
+  {
+   "block": 6,
+   "word": "Resurrection",
+   "start": 21.246,
+   "end": 21.651
+  },
+  {
+   "block": 6,
+   "word": "is",
+   "start": 21.651,
+   "end": 22.047
+  },
+  {
+   "block": 6,
+   "word": "his",
+   "start": 22.047,
+   "end": 22.287
+  },
+  {
+   "block": 6,
+   "word": "Salat.\"",
+   "start": 22.35,
+   "end": 22.643
+  },
+  {
+   "block": 7,
+   "word": "If",
+   "start": 23.243,
+   "end": 23.283
+  },
+  {
+   "block": 7,
+   "word": "it's",
+   "start": 23.283,
+   "end": 23.399
+  },
+  {
+   "block": 7,
+   "word": "sound,",
+   "start": 23.399,
+   "end": 23.705
+  },
+  {
+   "block": 7,
+   "word": "you've",
+   "start": 23.735,
+   "end": 23.925
+  },
+  {
+   "block": 7,
+   "word": "succeeded.",
+   "start": 24.024,
+   "end": 24.285
+  },
+  {
+   "block": 7,
+   "word": "If",
+   "start": 24.54,
+   "end": 24.58
+  },
+  {
+   "block": 7,
+   "word": "it's",
+   "start": 24.58,
+   "end": 24.749
+  },
+  {
+   "block": 7,
+   "word": "lacking,",
+   "start": 24.749,
+   "end": 25.037
+  },
+  {
+   "block": 7,
+   "word": "you've",
+   "start": 25.037,
+   "end": 25.405
+  },
+  {
+   "block": 7,
+   "word": "failed.",
+   "start": 25.428,
+   "end": 25.665
+  },
+  {
+   "block": 7,
+   "word": "And",
+   "start": 25.73,
+   "end": 25.84
+  },
+  {
+   "block": 7,
+   "word": "you've",
+   "start": 25.84,
+   "end": 26.06
+  },
+  {
+   "block": 7,
+   "word": "lost.",
+   "start": 26.06,
+   "end": 26.546
+  },
+  {
+   "block": 8,
+   "word": "But",
+   "start": 27.846,
+   "end": 27.886
+  },
+  {
+   "block": 8,
+   "word": "Allah",
+   "start": 27.886,
+   "end": 28.152
+  },
+  {
+   "block": 8,
+   "word": "is",
+   "start": 28.221,
+   "end": 28.352
+  },
+  {
+   "block": 8,
+   "word": "merciful.",
+   "start": 28.362,
+   "end": 28.792
+  },
+  {
+   "block": 8,
+   "word": "If",
+   "start": 28.943,
+   "end": 29.012
+  },
+  {
+   "block": 8,
+   "word": "your",
+   "start": 29.012,
+   "end": 29.232
+  },
+  {
+   "block": 8,
+   "word": "obligatory",
+   "start": 29.311,
+   "end": 29.558
+  },
+  {
+   "block": 8,
+   "word": "prayers",
+   "start": 29.558,
+   "end": 30.112
+  },
+  {
+   "block": 8,
+   "word": "fall",
+   "start": 30.21,
+   "end": 30.392
+  },
+  {
+   "block": 8,
+   "word": "short,",
+   "start": 30.43,
+   "end": 30.732
+  },
+  {
+   "block": 8,
+   "word": "He",
+   "start": 30.754,
+   "end": 30.807
+  },
+  {
+   "block": 8,
+   "word": "will",
+   "start": 30.807,
+   "end": 30.994
+  },
+  {
+   "block": 8,
+   "word": "say:",
+   "start": 30.994,
+   "end": 31.272
+  },
+  {
+   "block": 8,
+   "word": "look,",
+   "start": 31.728,
+   "end": 31.778
+  },
+  {
+   "block": 8,
+   "word": "does",
+   "start": 31.884,
+   "end": 31.924
+  },
+  {
+   "block": 8,
+   "word": "My",
+   "start": 31.924,
+   "end": 32.164
+  },
+  {
+   "block": 8,
+   "word": "servant",
+   "start": 32.164,
+   "end": 32.432
+  },
+  {
+   "block": 8,
+   "word": "have",
+   "start": 32.518,
+   "end": 32.712
+  },
+  {
+   "block": 8,
+   "word": "voluntary",
+   "start": 32.804,
+   "end": 33.115
+  },
+  {
+   "block": 8,
+   "word": "prayers?",
+   "start": 33.115,
+   "end": 33.712
+  },
+  {
+   "block": 8,
+   "word": "And",
+   "start": 33.968,
+   "end": 34.052
+  },
+  {
+   "block": 8,
+   "word": "with",
+   "start": 34.052,
+   "end": 34.272
+  },
+  {
+   "block": 8,
+   "word": "them,",
+   "start": 34.276,
+   "end": 34.492
+  },
+  {
+   "block": 8,
+   "word": "what",
+   "start": 34.553,
+   "end": 34.652
+  },
+  {
+   "block": 8,
+   "word": "was",
+   "start": 34.672,
+   "end": 34.812
+  },
+  {
+   "block": 8,
+   "word": "missing",
+   "start": 34.831,
+   "end": 35.072
+  },
+  {
+   "block": 8,
+   "word": "is",
+   "start": 35.125,
+   "end": 35.332
+  },
+  {
+   "block": 8,
+   "word": "completed.",
+   "start": 35.347,
+   "end": 35.88
+  },
+  {
+   "block": 9,
+   "word": "So",
+   "start": 36.48,
+   "end": 36.52
+  },
+  {
+   "block": 9,
+   "word": "the",
+   "start": 36.52,
+   "end": 36.703
+  },
+  {
+   "block": 9,
+   "word": "question",
+   "start": 36.703,
+   "end": 36.937
+  },
+  {
+   "block": 9,
+   "word": "isn't",
+   "start": 36.937,
+   "end": 37.356
+  },
+  {
+   "block": 9,
+   "word": "whether",
+   "start": 37.39,
+   "end": 37.515
+  },
+  {
+   "block": 9,
+   "word": "you're",
+   "start": 37.515,
+   "end": 37.746
+  },
+  {
+   "block": 9,
+   "word": "perfect.",
+   "start": 37.746,
+   "end": 38.096
+  },
+  {
+   "block": 9,
+   "word": "It's",
+   "start": 38.319,
+   "end": 38.475
+  },
+  {
+   "block": 9,
+   "word": "whether",
+   "start": 38.475,
+   "end": 38.613
+  },
+  {
+   "block": 9,
+   "word": "you'll",
+   "start": 38.613,
+   "end": 38.876
+  },
+  {
+   "block": 9,
+   "word": "stand",
+   "start": 38.931,
+   "end": 39.076
+  },
+  {
+   "block": 9,
+   "word": "up",
+   "start": 39.142,
+   "end": 39.276
+  },
+  {
+   "block": 9,
+   "word": "for",
+   "start": 39.309,
+   "end": 39.349
+  },
+  {
+   "block": 9,
+   "word": "the",
+   "start": 39.349,
+   "end": 39.446
+  },
+  {
+   "block": 9,
+   "word": "next",
+   "start": 39.446,
+   "end": 39.685
+  },
+  {
+   "block": 9,
+   "word": "one.",
+   "start": 39.685,
+   "end": 39.996
+  },
+  {
+   "block": 9,
+   "word": "Your",
+   "start": 40.16,
+   "end": 40.236
+  },
+  {
+   "block": 9,
+   "word": "next",
+   "start": 40.236,
+   "end": 40.556
+  },
+  {
+   "block": 9,
+   "word": "prayer",
+   "start": 40.635,
+   "end": 40.836
+  },
+  {
+   "block": 9,
+   "word": "is",
+   "start": 40.9,
+   "end": 41.036
+  },
+  {
+   "block": 9,
+   "word": "closer",
+   "start": 41.063,
+   "end": 41.276
+  },
+  {
+   "block": 9,
+   "word": "than",
+   "start": 41.345,
+   "end": 41.415
+  },
+  {
+   "block": 9,
+   "word": "you",
+   "start": 41.415,
+   "end": 41.636
+  },
+  {
+   "block": 9,
+   "word": "think.",
+   "start": 41.652,
+   "end": 41.963
+  }
+ ],
+ "anchors": {
+  "money": 0.84,
+  "your2": 1.354,
+  "job": 1.394,
+  "your3": 1.736,
+  "followers": 1.927,
+  "freeze": 2.5822,
+  "first": 3.23,
+  "shatterEnd": 3.65,
+  "slam": 4.0012,
+  "about": 5.708,
+  "chase": 7.0594,
+  "deadlines": 7.407,
+  "notifications": 8.07,
+  "plans": 8.985,
+  "pushBack": 10.2082,
+  "back": 11.166,
+  "minute": 11.988,
+  "one1": 11.615,
+  "after": 12.308,
+  "call": 12.814,
+  "one2": 13.125,
+  "video": 13.585,
+  "matchCut": 14.3753,
+  "hadith": 14.9253,
+  "prophet": 15.107,
+  "told": 17.238,
+  "indeed": 17.819,
+  "deed": 18.622,
+  "account": 20.507,
+  "salat": 22.35,
+  "hadithEnd": 22.6432,
+  "weight": 23.2432,
+  "succeeded": 24.024,
+  "lacking": 24.749,
+  "failed": 25.428,
+  "lost": 26.06,
+  "lostEnd": 26.5459,
+  "mercy": 27.8459,
+  "allah": 27.886,
+  "merciful": 28.362,
+  "obligatory": 29.311,
+  "he": 30.754,
+  "look": 31.728,
+  "voluntary": 32.804,
+  "and8": 33.968,
+  "completed": 35.347,
+  "mercyEnd": 35.8798,
+  "turn": 36.4798,
+  "perfect": 37.746,
+  "its": 38.319,
+  "stand": 38.931,
+  "nextOne": 39.446,
+  "your9": 40.16,
+  "closer": 41.063,
+  "think": 41.652,
+  "voiceEnd": 41.9626,
+  "takbir": 41.702,
+  "ending": 42.3126,
+  "quiet": 45.8126,
+  "card": 50.8126,
+  "split": 16.0972,
+  "walk": 38.731,
+  "walkEnd": 40.46,
+  "turnQibla": 40.963
+ },
+ "shots": [
+  {
+   "kind": "crash",
+   "set": "street",
+   "from": 0.0,
+   "to": 0.84
+  },
+  {
+   "kind": "shopsTrack",
+   "set": "street",
+   "from": 0.84,
+   "to": 1.354
+  },
+  {
+   "kind": "officeDutch",
+   "set": "office",
+   "from": 1.354,
+   "to": 1.736
+  },
+  {
+   "kind": "feedOrbit",
+   "set": "feed",
+   "from": 1.736,
+   "to": 2.5822
+  },
+  {
+   "kind": "freeze",
+   "set": "feed",
+   "from": 2.5822,
+   "to": 4.0012
+  },
+  {
+   "kind": "voidLow",
+   "set": "void",
+   "from": 4.0012,
+   "to": 5.708
+  },
+  {
+   "kind": "voidHigh",
+   "set": "void",
+   "from": 5.708,
+   "to": 7.0594
+  },
+  {
+   "kind": "deadlinesTrack",
+   "set": "deadlines",
+   "from": 7.0594,
+   "to": 8.07
+  },
+  {
+   "kind": "phonePOV",
+   "set": "void",
+   "from": 8.07,
+   "to": 8.985
+  },
+  {
+   "kind": "airportBoard",
+   "set": "airport",
+   "from": 8.985,
+   "to": 10.2082
+  },
+  {
+   "kind": "bedLapse",
+   "set": "bedroom",
+   "from": 10.2082,
+   "to": 11.615
+  },
+  {
+   "kind": "bedClose",
+   "set": "bedroom",
+   "from": 11.615,
+   "to": 12.308
+  },
+  {
+   "kind": "carCall",
+   "set": "car",
+   "from": 12.308,
+   "to": 13.125
+  },
+  {
+   "kind": "sofaPhone",
+   "set": "sofa",
+   "from": 13.125,
+   "to": 14.3753
+  },
+  {
+   "kind": "lampClose",
+   "set": "courtyard",
+   "from": 14.3753,
+   "to": 16.0972
+  },
+  {
+   "kind": "archLow",
+   "set": "courtyard",
+   "from": 16.0972,
+   "to": 17.819
+  },
+  {
+   "kind": "orbitHead",
+   "set": "courtyard",
+   "from": 17.819,
+   "to": 20.507
+  },
+  {
+   "kind": "chestHand",
+   "set": "courtyard",
+   "from": 20.507,
+   "to": 23.2432
+  },
+  {
+   "kind": "poolLow",
+   "set": "courtyard",
+   "from": 23.2432,
+   "to": 25.428
+  },
+  {
+   "kind": "lampFlicker",
+   "set": "courtyard",
+   "from": 25.428,
+   "to": 27.8459
+  },
+  {
+   "kind": "wideSwirl",
+   "set": "courtyard",
+   "from": 27.8459,
+   "to": 30.754
+  },
+  {
+   "kind": "trackerUp",
+   "set": "courtyard",
+   "from": 30.754,
+   "to": 33.968
+  },
+  {
+   "kind": "healClose",
+   "set": "courtyard",
+   "from": 33.968,
+   "to": 36.4798
+  },
+  {
+   "kind": "mediumPush",
+   "set": "courtyard",
+   "from": 36.4798,
+   "to": 38.319
+  },
+  {
+   "kind": "walkTrack",
+   "set": "courtyard",
+   "from": 38.319,
+   "to": 40.16
+  },
+  {
+   "kind": "takbirSide",
+   "set": "courtyard",
+   "from": 40.16,
+   "to": 42.3126
+  },
+  {
+   "kind": "ending",
+   "set": "courtyard",
+   "from": 42.3126,
+   "to": 45.8126
+  },
+  {
+   "kind": "quiet",
+   "set": "courtyard",
+   "from": 45.8126,
+   "to": 50.8126
+  },
+  {
+   "kind": "card",
+   "set": "courtyard",
+   "from": 50.8126,
+   "to": 55.8126
+  }
+ ],
+ "transitions": [
+  {
+   "type": "crashLand",
+   "at": 0.84
+  },
+  {
+   "type": "whip",
+   "at": 1.354
+  },
+  {
+   "type": "zoom",
+   "at": 1.736,
+   "into": "laptop"
+  },
+  {
+   "type": "shatter",
+   "at": 3.23
+  },
+  {
+   "type": "slam",
+   "at": 4.0012
+  },
+  {
+   "type": "punch",
+   "at": 5.708
+  },
+  {
+   "type": "glitch",
+   "at": 7.0594
+  },
+  {
+   "type": "whip",
+   "at": 8.07,
+   "dir": "down"
+  },
+  {
+   "type": "zoom",
+   "at": 8.985,
+   "into": "ping"
+  },
+  {
+   "type": "glitch",
+   "at": 10.2082
+  },
+  {
+   "type": "punch",
+   "at": 11.615
+  },
+  {
+   "type": "whip",
+   "at": 12.308
+  },
+  {
+   "type": "glitch",
+   "at": 13.125
+  },
+  {
+   "type": "match",
+   "at": 14.3753,
+   "what": "phone glow -> lamp glow"
+  },
+  {
+   "type": "soft",
+   "at": 16.0972
+  },
+  {
+   "type": "soft",
+   "at": 17.819
+  },
+  {
+   "type": "soft",
+   "at": 20.507
+  },
+  {
+   "type": "iris",
+   "at": 23.2432
+  },
+  {
+   "type": "soft",
+   "at": 25.428
+  },
+  {
+   "type": "flash",
+   "at": 27.8659
+  },
+  {
+   "type": "soft",
+   "at": 30.754
+  },
+  {
+   "type": "soft",
+   "at": 33.968
+  },
+  {
+   "type": "match",
+   "at": 36.4798,
+   "what": "moon"
+  },
+  {
+   "type": "soft",
+   "at": 38.319
+  },
+  {
+   "type": "soft",
+   "at": 40.16
+  }
+ ],
+ "clock": [
+  [
+   0.0,
+   298
+  ],
+  [
+   10.2082,
+   302
+  ],
+  [
+   12.308,
+   580
+  ],
+  [
+   13.125,
+   1105
+  ],
+  [
+   14.3753,
+   1360
+  ]
+ ],
+ "prayers": [
+  [
+   "Fajr",
+   313
+  ],
+  [
+   "Dhuhr",
+   751
+  ],
+  [
+   "Asr",
+   948
+  ],
+  [
+   "Maghrib",
+   1084
+  ],
+  [
+   "Isha",
+   1172
+  ]
+ ],
+ "cracks": {
+  "0": 11.988,
+  "2": 12.814,
+  "4": 13.585
+ },
+ "mends": {
+  "0": 32.804,
+  "2": 33.968,
+  "4": 35.347
+ },
+ "pops": [
+  {
+   "kind": "coins",
+   "from": 0.84,
+   "to": 1.354
+  },
+  {
+   "kind": "papers",
+   "from": 1.3139999999999998,
+   "to": 1.736
+  },
+  {
+   "kind": "bubbles",
+   "from": 1.847,
+   "to": 2.5822
+  },
+  {
+   "kind": "notes",
+   "from": 7.357,
+   "to": 8.07
+  },
+  {
+   "kind": "pings",
+   "from": 8.07,
+   "to": 8.985
+  },
+  {
+   "kind": "tickets",
+   "from": 9.135,
+   "to": 10.2082
+  }
+ ],
+ "sfx": [
+  {
+   "t": 0.0,
+   "kind": "riser_short",
+   "gain": -4,
+   "pan": 0.0
+  },
+  {
+   "t": 0.82,
+   "kind": "impact_big",
+   "gain": 0,
+   "pan": 0.0
+  },
+  {
+   "t": 0.84,
+   "kind": "sub_drop",
+   "gain": -2,
+   "pan": 0.0
+  },
+  {
+   "t": 0.89,
+   "kind": "coin",
+   "gain": -9,
+   "pan": -0.6
+  },
+  {
+   "t": 0.945,
+   "kind": "coin",
+   "gain": -9,
+   "pan": -0.39999999999999997
+  },
+  {
+   "t": 1.0,
+   "kind": "coin",
+   "gain": -9,
+   "pan": -0.19999999999999996
+  },
+  {
+   "t": 1.055,
+   "kind": "coin",
+   "gain": -9,
+   "pan": 1.1102230246251565e-16
+  },
+  {
+   "t": 1.11,
+   "kind": "coin",
+   "gain": -9,
+   "pan": 0.20000000000000007
+  },
+  {
+   "t": 1.165,
+   "kind": "coin",
+   "gain": -9,
+   "pan": 0.4
+  },
+  {
+   "t": 1.22,
+   "kind": "coin",
+   "gain": -9,
+   "pan": 0.6000000000000002
+  },
+  {
+   "t": 1.234,
+   "kind": "whoosh_fast",
+   "gain": -4,
+   "pan": 0.0
+  },
+  {
+   "t": 1.354,
+   "kind": "impact",
+   "gain": -2,
+   "pan": 0.0
+  },
+  {
+   "t": 1.394,
+   "kind": "paper",
+   "gain": -10,
+   "pan": 0.5
+  },
+  {
+   "t": 1.444,
+   "kind": "keys",
+   "gain": -12,
+   "pan": 0.0
+  },
+  {
+   "t": 1.454,
+   "kind": "paper",
+   "gain": -10,
+   "pan": 0.25
+  },
+  {
+   "t": 1.514,
+   "kind": "paper",
+   "gain": -10,
+   "pan": 0.0
+  },
+  {
+   "t": 1.556,
+   "kind": "zoom_in",
+   "gain": -5,
+   "pan": 0.0
+  },
+  {
+   "t": 1.574,
+   "kind": "paper",
+   "gain": -10,
+   "pan": -0.25
+  },
+  {
+   "t": 1.634,
+   "kind": "paper",
+   "gain": -10,
+   "pan": -0.5
+  },
+  {
+   "t": 1.736,
+   "kind": "impact",
+   "gain": -2,
+   "pan": 0.0
+  },
+  {
+   "t": 1.927,
+   "kind": "ping",
+   "gain": -12,
+   "pan": -0.5
+  },
+  {
+   "t": 1.997,
+   "kind": "ping",
+   "gain": -12,
+   "pan": -0.3
+  },
+  {
+   "t": 2.067,
+   "kind": "ping",
+   "gain": -12,
+   "pan": -0.09999999999999998
+  },
+  {
+   "t": 2.137,
+   "kind": "ping",
+   "gain": -12,
+   "pan": 0.10000000000000009
+  },
+  {
+   "t": 2.207,
+   "kind": "ping",
+   "gain": -12,
+   "pan": 0.30000000000000004
+  },
+  {
+   "t": 2.277,
+   "kind": "ping",
+   "gain": -12,
+   "pan": 0.5
+  },
+  {
+   "t": 2.5822,
+   "kind": "freeze",
+   "gain": -3,
+   "pan": 0.0
+  },
+  {
+   "t": 2.6622,
+   "kind": "glass_crack",
+   "gain": -5,
+   "pan": -0.3
+  },
+  {
+   "t": 2.8306,
+   "kind": "glass_crack",
+   "gain": -4,
+   "pan": 0.0
+  },
+  {
+   "t": 2.9861,
+   "kind": "glass_crack",
+   "gain": -3,
+   "pan": 0.3
+  },
+  {
+   "t": 3.21,
+   "kind": "shatter",
+   "gain": 0,
+   "pan": 0.0
+  },
+  {
+   "t": 3.23,
+   "kind": "sub_drop",
+   "gain": -2,
+   "pan": 0.0
+  },
+  {
+   "t": 4.0012,
+   "kind": "slam",
+   "gain": 0,
+   "pan": 0.0
+  },
+  {
+   "t": 4.0012,
+   "kind": "spot_on",
+   "gain": -6,
+   "pan": 0.0
+  },
+  {
+   "t": 5.708,
+   "kind": "whoosh_soft",
+   "gain": -10,
+   "pan": 0.0
+  },
+  {
+   "t": 6.008,
+   "kind": "dots_on",
+   "gain": -12,
+   "pan": 0.0
+  },
+  {
+   "t": 6.9994,
+   "kind": "glitch",
+   "gain": -9,
+   "pan": 0.0
+  },
+  {
+   "t": 7.0594,
+   "kind": "impact",
+   "gain": -9,
+   "pan": 0.0
+  },
+  {
+   "t": 7.407,
+   "kind": "paper",
+   "gain": -11,
+   "pan": -0.5
+  },
+  {
+   "t": 7.527,
+   "kind": "paper",
+   "gain": -11,
+   "pan": -0.2
+  },
+  {
+   "t": 7.647,
+   "kind": "paper",
+   "gain": -11,
+   "pan": 0.09999999999999998
+  },
+  {
+   "t": 7.767,
+   "kind": "paper",
+   "gain": -11,
+   "pan": 0.3999999999999999
+  },
+  {
+   "t": 7.97,
+   "kind": "whoosh_fast",
+   "gain": -5,
+   "pan": 0.0
+  },
+  {
+   "t": 8.11,
+   "kind": "ping",
+   "gain": -10,
+   "pan": -0.6
+  },
+  {
+   "t": 8.175,
+   "kind": "ping",
+   "gain": -9,
+   "pan": -0.47
+  },
+  {
+   "t": 8.24,
+   "kind": "ping",
+   "gain": -8,
+   "pan": -0.33999999999999997
+  },
+  {
+   "t": 8.305,
+   "kind": "ping",
+   "gain": -10,
+   "pan": -0.20999999999999996
+  },
+  {
+   "t": 8.37,
+   "kind": "ping",
+   "gain": -9,
+   "pan": -0.07999999999999996
+  },
+  {
+   "t": 8.435,
+   "kind": "ping",
+   "gain": -8,
+   "pan": 0.050000000000000044
+  },
+  {
+   "t": 8.5,
+   "kind": "ping",
+   "gain": -10,
+   "pan": 0.18000000000000005
+  },
+  {
+   "t": 8.565,
+   "kind": "ping",
+   "gain": -9,
+   "pan": 0.31000000000000005
+  },
+  {
+   "t": 8.63,
+   "kind": "ping",
+   "gain": -8,
+   "pan": 0.44000000000000006
+  },
+  {
+   "t": 8.695,
+   "kind": "ping",
+   "gain": -10,
+   "pan": 0.57
+  },
+  {
+   "t": 8.805,
+   "kind": "zoom_in",
+   "gain": -6,
+   "pan": 0.0
+  },
+  {
+   "t": 8.985,
+   "kind": "impact",
+   "gain": -4,
+   "pan": 0.0
+  },
+  {
+   "t": 9.085,
+   "kind": "board_flap",
+   "gain": -8,
+   "pan": 0.0
+  },
+  {
+   "t": 10.1482,
+   "kind": "glitch",
+   "gain": -7,
+   "pan": 0.0
+  },
+  {
+   "t": 10.2082,
+   "kind": "lapse",
+   "gain": -8,
+   "pan": 0.0
+  },
+  {
+   "t": 11.615,
+   "kind": "punch_hit",
+   "gain": -6,
+   "pan": 0.0
+  },
+  {
+   "t": 12.008,
+   "kind": "dot_crack",
+   "gain": -3,
+   "pan": 0.0
+  },
+  {
+   "t": 12.188,
+   "kind": "whoosh_fast",
+   "gain": -5,
+   "pan": 0.0
+  },
+  {
+   "t": 12.308,
+   "kind": "impact",
+   "gain": -5,
+   "pan": 0.0
+  },
+  {
+   "t": 12.834,
+   "kind": "dot_crack",
+   "gain": -3,
+   "pan": 0.0
+  },
+  {
+   "t": 13.065,
+   "kind": "glitch",
+   "gain": -8,
+   "pan": 0.0
+  },
+  {
+   "t": 13.125,
+   "kind": "impact",
+   "gain": -6,
+   "pan": 0.0
+  },
+  {
+   "t": 13.605,
+   "kind": "dot_crack",
+   "gain": -3,
+   "pan": 0.0
+  },
+  {
+   "t": 13.8753,
+   "kind": "riser",
+   "gain": -10,
+   "pan": 0.0
+  },
+  {
+   "t": 14.3753,
+   "kind": "lamp_whoosh",
+   "gain": -8,
+   "pan": 0.0
+  },
+  {
+   "t": 16.0972,
+   "kind": "whoosh_soft",
+   "gain": -14,
+   "pan": 0.0
+  },
+  {
+   "t": 17.819,
+   "kind": "whoosh_soft",
+   "gain": -14,
+   "pan": 0.0
+  },
+  {
+   "t": 20.507,
+   "kind": "whoosh_soft",
+   "gain": -14,
+   "pan": 0.0
+  },
+  {
+   "t": 22.9932,
+   "kind": "iris",
+   "gain": -10,
+   "pan": 0.0
+  },
+  {
+   "t": 24.024,
+   "kind": "hit_soft",
+   "gain": -10,
+   "pan": 0.0
+  },
+  {
+   "t": 25.428,
+   "kind": "whoosh_soft",
+   "gain": -14,
+   "pan": 0.0
+  },
+  {
+   "t": 25.478,
+   "kind": "hit_soft",
+   "gain": -9,
+   "pan": 0.0
+  },
+  {
+   "t": 25.728,
+   "kind": "flicker",
+   "gain": -12,
+   "pan": 0.0
+  },
+  {
+   "t": 26.06,
+   "kind": "snuff",
+   "gain": -2,
+   "pan": 0.0
+  },
+  {
+   "t": 26.06,
+   "kind": "sub_drop",
+   "gain": -4,
+   "pan": 0.0
+  },
+  {
+   "t": 27.0459,
+   "kind": "riser_soft",
+   "gain": -12,
+   "pan": 0.0
+  },
+  {
+   "t": 27.8659,
+   "kind": "relight",
+   "gain": -6,
+   "pan": 0.0
+  },
+  {
+   "t": 28.362,
+   "kind": "shimmer_soft",
+   "gain": -12,
+   "pan": 0.0
+  },
+  {
+   "t": 30.754,
+   "kind": "whoosh_soft",
+   "gain": -15,
+   "pan": 0.0
+  },
+  {
+   "t": 32.804,
+   "kind": "mend",
+   "gain": -9,
+   "pan": 0.0
+  },
+  {
+   "t": 33.968,
+   "kind": "mend",
+   "gain": -9,
+   "pan": 0.0
+  },
+  {
+   "t": 33.968,
+   "kind": "whoosh_soft",
+   "gain": -15,
+   "pan": 0.0
+  },
+  {
+   "t": 35.347,
+   "kind": "mend",
+   "gain": -9,
+   "pan": 0.0
+  },
+  {
+   "t": 36.4798,
+   "kind": "whoosh_soft",
+   "gain": -15,
+   "pan": 0.0
+  },
+  {
+   "t": 38.319,
+   "kind": "whoosh_soft",
+   "gain": -15,
+   "pan": 0.0
+  },
+  {
+   "t": 38.931,
+   "kind": "steps",
+   "gain": -14,
+   "pan": 0.0
+  },
+  {
+   "t": 40.16,
+   "kind": "whoosh_soft",
+   "gain": -15,
+   "pan": 0.0
+  },
+  {
+   "t": 41.702,
+   "kind": "cloth",
+   "gain": -12,
+   "pan": 0.0
+  },
+  {
+   "t": 42.3126,
+   "kind": "rise_air",
+   "gain": -12,
+   "pan": 0.0
+  },
+  {
+   "t": 50.8126,
+   "kind": "card_in",
+   "gain": -12,
+   "pan": 0.0
+  }
+ ],
+ "beds": [
+  {
+   "kind": "city_night",
+   "from": 0.0,
+   "to": 1.354
+  },
+  {
+   "kind": "office",
+   "from": 1.354,
+   "to": 1.736
+  },
+  {
+   "kind": "feed",
+   "from": 1.736,
+   "to": 2.5822
+  },
+  {
+   "kind": "void",
+   "from": 4.0012,
+   "to": 7.0594
+  },
+  {
+   "kind": "deadlines",
+   "from": 7.0594,
+   "to": 8.07
+  },
+  {
+   "kind": "phone",
+   "from": 8.07,
+   "to": 8.985
+  },
+  {
+   "kind": "airport",
+   "from": 8.985,
+   "to": 10.2082
+  },
+  {
+   "kind": "bedroom",
+   "from": 10.2082,
+   "to": 12.308
+  },
+  {
+   "kind": "traffic",
+   "from": 12.308,
+   "to": 13.125
+  },
+  {
+   "kind": "sofa",
+   "from": 13.125,
+   "to": 14.3753
+  },
+  {
+   "kind": "courtyard",
+   "from": 14.3753,
+   "to": 50.8126
+  },
+  {
+   "kind": "courtyard_soft",
+   "from": 50.8126,
+   "to": 55.8126
+  }
+ ],
+ "silences": [
+  [
+   3.65,
+   4.0012
+  ],
+  [
+   26.56,
+   27.0459
+  ]
+ ],
+ "quiet": [
+  45.8126,
+  50.8126
+ ]
+}

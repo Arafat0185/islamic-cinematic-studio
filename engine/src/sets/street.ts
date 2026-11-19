@@ -1,13 +1,15 @@
 // A city street: a sidewalk along x (z 0..2.2, kerb 0.14 m), a two-lane road (z 2.2..9), a row of buildings with
 // window facades and awnings behind the sidewalk, distant towers, street lamps, trees, a bus stop and a crossing.
 // Local coordinates: he walks along +x on the sidewalk (z ~ 0.9); cameras stand in the road (z ~ 7.5) looking -z.
-// States: "morning" (cool, high sun from the front left), "afternoon" (warm, lower sun from the right).
+// States: "morning" (cool, high sun from the front left), "afternoon" (warm, lower sun from the right), "night" (a dark
+// sky, every shop window glowing with its display, the street lamps lit, warm light spilling onto the pavement).
 // Traffic: setTraffic([...]) - each vehicle is at x = passX + speed * (t - passAt), in lane z, so a car can be timed
 // to cross the frame exactly on a sound effect.
 import * as THREE from "three";
 import { ctex, rep } from "../draw/paint";
 import type { V3 } from "../camera/ease";
-import { StorySet, SetLook, GRADE_DAY, GRADE_DUSK, mat, box, cyl, sun, skyDome, facade, lightBeam, dust } from "./common";
+import { StorySet, SetLook, GRADE_DAY, GRADE_DUSK, mat, glow, box, cyl, sun, skyDome, facade, lightBeam, dust } from "./common";
+import { GRADE_NIGHT } from "../render/grade";
 
 export const STREET = { WALK_Z: 0.9, KERB: 0.14, LANE_NEAR: 3.4, LANE_FAR: 5.3 };
 export type Vehicle = { kind: "car" | "bus"; passAt: number; passX: number; speed: number; lane: number; colour?: string };
@@ -38,6 +40,17 @@ const vehicleMesh = (kind: "car" | "bus", colour: string) => {
   return g;
 };
 
+/** a lit shop window at night: a warm interior, shelves of goods, a price banner (no people) */
+const SHOP_SIGNS = ["SALE", "-50%", "NEW", "GOLD", "LUXE", "DEALS"];
+const shopWindow = (k: number) => ctex("shopWin|" + k, 512, 256, (g, r) => {
+  const warm = ["#ffcf8a", "#ffd9a8", "#ffe6c4", "#ffc06a"][k % 4];
+  const gr = g.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, warm); gr.addColorStop(1, "#c9783a");
+  g.fillStyle = gr; g.fillRect(0, 0, 512, 256);
+  for (let y = 70; y < 256; y += 70) { g.fillStyle = "#6b4630"; g.fillRect(0, y, 512, 8);
+    for (let x = 12; x < 500;) { const w = 18 + r() * 40, h = 20 + r() * 34; g.fillStyle = ["#4D312C", "#FB5606", "#2f5d8a", "#e9e1cf", "#7a2f2c", "#3f6b4b"][Math.floor(r() * 6)]; g.fillRect(x, y - h, w, h); x += w + 8; } }
+  g.fillStyle = "#FB5606"; g.fillRect(150, 14, 212, 40); g.fillStyle = "#ffffff"; g.font = "900 30px Inter, Arial"; g.textAlign = "center"; g.fillText(SHOP_SIGNS[k % SHOP_SIGNS.length], 256, 45);
+});
+
 export const buildStreet = (offset: V3) => {
   const root = new THREE.Group(); root.position.set(...offset);
   const road = new THREE.Mesh(new THREE.PlaneGeometry(240, 7.6), mat("#ffffff", { map: asphalt() }));
@@ -49,6 +62,7 @@ export const buildStreet = (offset: V3) => {
   box(root, [-120, -0.02, 9.0], [120, STREET.KERB - 0.02, 11.0], mat("#8e8b84"));
   // buildings: fronts at z = -0.2, varied widths, heights and colours; awnings on some shop fronts
   const walls = ["#c8b9a2", "#b9c2c9", "#d2b49a", "#a9b6a4", "#c9a9a3", "#bfb7c9"];
+  const shops: { mesh: THREE.Mesh; day: THREE.Material; night: THREE.Material }[] = [];
   let s = 5; const r = () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
   for (let x = -70; x < 70;) {
     const w = 6 + Math.floor(r() * 7), h = 7 + Math.floor(r() * 4) * 3, i = Math.floor(r() * walls.length);
@@ -56,7 +70,8 @@ export const buildStreet = (offset: V3) => {
     const plain = mat(walls[i]);
     const m = new THREE.Mesh(new THREE.BoxGeometry(w - 0.15, h, 6), [plain, plain, mat("#6f6a64"), plain, front, plain]);
     m.position.set(x + w / 2, h / 2 - 0.02, -3.2); m.castShadow = true; m.receiveShadow = true; root.add(m);
-    box(root, [x + 0.1, -0.02, -0.25], [x + w - 0.25, 2.7, -0.15], mat("#7d8fa8"), false); // ground floor shop window
+    const sw = box(root, [x + 0.1, -0.02, -0.25], [x + w - 0.25, 2.7, -0.15], mat("#7d8fa8"), false); // ground floor shop window
+    shops.push({ mesh: sw, day: sw.material as THREE.Material, night: glow("#ffffff", 1.25, shopWindow(shops.length)) });
     box(root, [x + 0.1, 2.6, -0.26], [x + w - 0.25, 2.75, -0.14], mat("#4a4f5c"), false); // its frame
     box(root, [x + w / 2 - 0.5, -0.02, -0.27], [x + w / 2 + 0.5, 2.2, -0.13], mat("#5a4636"), false); // a door
     if (r() < 0.6) box(root, [x + 0.3, 2.78, -0.2], [x + w - 0.45, 2.93, 0.9], mat(["#9c3d38", "#2f5d73", "#c79c48", "#3f6b4b"][Math.floor(r() * 4)]));
@@ -67,11 +82,13 @@ export const buildStreet = (offset: V3) => {
     box(root, [x, -0.02, -40 - r() * 15], [x + w, h, -32], mat(["#aeb9cc", "#c3c4cf", "#b6b2bf"][Math.floor(r() * 3)]), false);
   }
   // street furniture
+  const lampHeads: { mesh: THREE.Mesh; day: THREE.Material }[] = [], lampGlow = glow("#ffe2a8", 2.4);
   const iron = mat("#2d3138"), leaf = mat("#4b7a4f"), bark = mat("#6a5038");
   for (let x = -60; x < 60; x += 10) {
     cyl(root, 0.06, 0.08, 4.2, iron, [x, 2.1, 1.95], 8);
     box(root, [x - 0.05, 4.1, 1.95], [x + 0.05, 4.18, 2.9], iron);
-    box(root, [x - 0.2, 3.95, 2.7], [x + 0.2, 4.12, 3.0], mat("#e9e1c9"));
+    const head = box(root, [x - 0.2, 3.95, 2.7], [x + 0.2, 4.12, 3.0], mat("#e9e1c9"));
+    lampHeads.push({ mesh: head, day: head.material as THREE.Material });
     cyl(root, 0.1, 0.13, 2.6, bark, [x + 5, 1.3, 1.85], 8);
     const c = new THREE.Mesh(new THREE.IcosahedronGeometry(1.25, 1), leaf); c.position.set(x + 5, 3.3, 1.85); c.castShadow = true; c.receiveShadow = true; root.add(c);
   }
@@ -102,8 +119,21 @@ export const buildStreet = (offset: V3) => {
     for (const t of traffic) root.remove(t.mesh);
     traffic = list.map((v, i) => { const m = vehicleMesh(v.kind, v.colour ?? ["#b8423b", "#e6e1d4", "#2f5d8a", "#3a3d45", "#c79c48"][i % 5]); m.userData.moving = true; root.add(m); return { v, mesh: m }; });
   };
+  // night: warm light from the shop windows onto the pavement (a few lights that follow the action) and lamp pools
+  const nightLights = [0, 1, 2, 3].map(() => { const l = new THREE.PointLight("#ffb866", 0, 9, 1.6); root.add(l); return l; });
+  const lampBeams = [-20, -10, 0, 10, 20].map((x) => lightBeam(root, [x, 4.0, 2.85], [x + 0.2, 0, 2.5], 0.3, 2.6, "#ffe2a8", 0.2));
+  let followX = 0;
   const apply = (state: string, t: number): SetLook => {
-    motes.update(t); for (const s3 of shafts) s3.setLevel(state === "afternoon" ? 1.2 : 0.9);
+    const night = state === "night";
+    for (const sh of shops) sh.mesh.material = night ? sh.night : sh.day;
+    for (const lh of lampHeads) lh.mesh.material = night ? lampGlow : lh.day;
+    nightLights.forEach((l, i) => { l.intensity = night ? 7 : 0; l.position.set(followX - 6 + i * 4.5, 1.6, 0.4); });
+    for (const b of lampBeams) b.setLevel(night ? 1 : 0);
+    motes.update(t); for (const s3 of shafts) s3.setLevel(night ? 0 : state === "afternoon" ? 1.2 : 0.9);
+    if (night) {
+      sky.setColours("#060a1c", "#1c2448"); s2.setFrom([0.3, 1.3, 0.8]);
+      return { lit: [0.12, 0.13, 0.22], shade: [0.04, 0.045, 0.09], lift: [0.008, 0.008, 0.018], sat: 1.0, charTint: [0.95, 0.9, 0.86], cardGain: 0.9, cardPointK: 1.4, pointK: 1.3, grade: GRADE_NIGHT, fog: ["#141a36", 10, 60] };
+    }
     for (const { v, mesh } of traffic) { mesh.position.set(v.passX + v.speed * (t - v.passAt), 0, v.lane); mesh.rotation.y = v.speed < 0 ? Math.PI : 0; }
     if (state === "afternoon") {
       sky.setColours("#5e8fcf", "#f2cf9c"); s2.setFrom([1.0, 0.75, 0.7]);
@@ -113,6 +143,6 @@ export const buildStreet = (offset: V3) => {
     return { lit: [1.12, 1.08, 0.98], shade: [0.34, 0.36, 0.52], lift: [0.02, 0.025, 0.05], sat: 1.0, charTint: [1, 0.98, 0.95], cardGain: 1.0, grade: GRADE_DAY, fog: ["#cfe0ef", 14, 75] };
   };
   // the sun's shadow box follows the action along the street
-  const follow = (x: number) => s2.aim([x, 0, 1]);
+  const follow = (x: number) => { s2.aim([x, 0, 1]); followX = x; };
   return { set: { id: "street", root, offset, apply } as StorySet, setTraffic, follow, sun: s2 };
 };

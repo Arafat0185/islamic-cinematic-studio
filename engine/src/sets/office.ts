@@ -37,7 +37,7 @@ export const buildOffice = (offset: V3) => {
   // desk, laptop, mug, papers
   box(root, [0.45, 0.71, -1.35], [1.45, 0.75, -0.25], wood);
   for (const [x, z] of [[0.5, -1.3], [1.4, -1.3], [0.5, -0.3], [1.4, -0.3]]) box(root, [x - 0.03, 0, z - 0.03], [x + 0.03, 0.71, z + 0.03], dark);
-  const laptop = new THREE.Group(); laptop.position.set(0.82, 0.75, -0.8); laptop.rotation.y = 0.6; // its screen turned toward him and the camera root.add(laptop);
+  const laptop = new THREE.Group(); laptop.position.set(0.82, 0.75, -0.8); laptop.rotation.y = 0.6; root.add(laptop); // its screen turned toward him and the camera
   box(laptop, [-0.17, 0, -0.24], [0.17, 0.02, 0.24], mat("#8e939b"));
   const lid = new THREE.Group(); lid.position.set(0.17, 0.02, 0); lid.rotation.z = 0.28; laptop.add(lid);
   box(lid, [0, 0, -0.24], [0.02, 0.32, 0.24], mat("#8e939b"));

@@ -27,7 +27,11 @@
     "video001-d3-plan": ".venv-tts/Scripts/python tools/plan_video001_d3.py ../videos/001-the-first-question",
     "video001-d3-mix": ".venv-tts/Scripts/python tools/mix_d3.py ../videos/001-the-first-question public/audio/video001_d3_mix.wav",
     "video001-d3": "node tools/render-chunks.mjs Video001D3 out/video001_draft3.mp4 --chunk 600 --audio public/audio/video001_d3_mix.wav",
-    "render-chunks": "node tools/render-chunks.mjs"
+    "render-chunks": "node tools/render-chunks.mjs",
+    "final001-voice": ".venv-tts/Scripts/python tools/narrate_final.py ../videos/001-the-first-question",
+    "final001-plan": ".venv-tts/Scripts/python tools/plan_final001.py ../videos/001-the-first-question",
+    "final001-mix": ".venv-tts/Scripts/python tools/mix_final001.py ../videos/001-the-first-question public/audio/final001_mix.wav",
+    "final001": "node tools/render-chunks.mjs TheFirstQuestionFinal out/The_First_Question_FINAL.mp4 --chunk 600 --audio public/audio/final001_mix.wav"
   },
   "dependencies": {
     "@fontsource/amiri": "5.3.0",

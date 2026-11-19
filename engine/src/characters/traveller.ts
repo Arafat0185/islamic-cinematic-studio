@@ -21,16 +21,16 @@ export type P2 = [number, number];
 
 // ---- palette (from the brief) ----
 export const SKIN_T = "#C08A5E";
-export const THOBE = "#CDB58C";
-export const SHAWL = "#363C58";   // deep dusty indigo (v2): greyer than #24346A on purpose, because the card light + grade push saturation up
+export const THOBE = "#7B5238";   // warm brown (Maktabatu Al-Ilm brand, 2026-11-19)
+export const SHAWL = "#EE5A0A";   // brand orange scarf (2026-11-19); earlier versions: deep dusty indigo #363C58
 export const KUFI = "#F2EEE3";
 export const SANDAL = "#6b4a33";
 export const BEARD = "#1A1416";   // near-black
 export const BEARD_STRAND = "#3A3236"; // subtle lighter strands so the beard doesn't merge with the ink outline
 // shadow ratios, same values as toon.ts uses for skin and cloth
 export const SH_SKIN: [number, number, number] = [0.96, 0.86, 0.84];
-export const SH_CLOTH: [number, number, number] = [0.64, 0.66, 0.74];
-export const SH_SHAWL: [number, number, number] = [0.72, 0.72, 0.76]; // shawl shade: darker, not bluer (dusty)
+export const SH_CLOTH: [number, number, number] = [0.66, 0.66, 0.74]; // the brown thobe: shade darker, a touch cooler
+export const SH_SHAWL: [number, number, number] = [0.74, 0.68, 0.66]; // the orange scarf: shade darker and a little deeper red
 
 // ---- proportions (design units) ----
 export const SOLE = 975;

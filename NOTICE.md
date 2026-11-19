@@ -42,3 +42,6 @@ OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO 
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
+
+Also copied from Claude Animated Shorts (MIT): `engine/tools/short_qa.py` (from `templates/scripts/short_qa.py`, adapted
+to use Remotion's bundled ffmpeg and to skip intended dark spans).

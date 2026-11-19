@@ -159,3 +159,7 @@ vite.config.ts.timestamp-*
 # Generated audio (narration, mixes): kept out of git
 videos/*/voice/
 engine/public/audio/
+
+# rendered narration tracks (rebuilt by the planner)
+videos/*/final/*.wav
+__pycache__/

@@ -7,7 +7,7 @@ import React, { useEffect, useMemo } from "react";
 import * as THREE from "three";
 import { AbsoluteFill, Audio, getInputProps, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { ThreeCanvas } from "@remotion/three";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer } from "@react-three/postprocessing";
 import { BlendFunction, BloomEffect, ToneMappingEffect, ToneMappingMode } from "postprocessing";
 import { InkPass, noInkFallback, NOINK } from "../render/ink";
@@ -25,8 +25,14 @@ import { buildBedroom } from "../sets/bedroom";
 import { buildStreet, Vehicle } from "../sets/street";
 import { buildOffice } from "../sets/office";
 import { buildGym } from "../sets/gym";
-import type { SetLook } from "../sets/common";
-import { SET_OFFSET, SetId, StoryFilm, FrameFx } from "./story";
+import { buildFeed } from "../sets/feed";
+import { buildVoid } from "../sets/void";
+import { buildDeadlines } from "../sets/deadlines";
+import { buildAirport } from "../sets/airport";
+import { buildCar } from "../sets/car";
+import { buildSofa } from "../sets/sofa";
+import type { SetLook, StorySet } from "../sets/common";
+import { SET_OFFSET, SetId, StoryFilm, FrameFx, Shatter } from "./story";
 import { buildCourtyardFx } from "../brand/courtyardFx";
 import { Pen } from "../draw/toon";
 import { SU, WIDE } from "../render/card";
@@ -43,21 +49,33 @@ const makeBloom = () => {
 };
 const fwd = new THREE.Vector3(), fpt = new THREE.Vector3();
 
-/** all the sets, built once */
-const buildWorld = (traffic: Vehicle[]) => {
+/** the sets a film uses, each built once at its own offset (the courtyard with its brand effects) */
+const DEFAULT_SETS: SetId[] = ["courtyard", "bedroom", "street", "office", "gym"];
+const buildWorld = (traffic: Vehicle[], ids: SetId[] = DEFAULT_SETS) => {
   const root = new THREE.Group();
-  const court = buildBeautyWorld();
-  const fx = new FloorFx(0.5, 0, 30); court.root.add(fx.mesh);
-  const courtFx = buildCourtyardFx(court.root);
-  const levels = new Levels(court.root, MAIN, { mist: court.mist.group, dust: court.dust.points });
-  const bedroom = buildBedroom(SET_OFFSET.bedroom);
-  const street = buildStreet(SET_OFFSET.street); street.setTraffic(traffic);
-  const office = buildOffice(SET_OFFSET.office);
-  const gym = buildGym(SET_OFFSET.gym);
-  root.add(court.root, bedroom.root, street.set.root, office.set.root, gym.root);
+  const has = (id: SetId) => ids.includes(id);
+  const roots: Partial<Record<SetId, THREE.Object3D>> = {};
+  const sets: Partial<Record<SetId, StorySet>> = {};
+  let court: ReturnType<typeof buildBeautyWorld> | null = null, fx: FloorFx | null = null, courtFx: ReturnType<typeof buildCourtyardFx> | null = null, levels: Levels | null = null;
+  if (has("courtyard")) {
+    court = buildBeautyWorld();
+    fx = new FloorFx(0.5, 0, 30); court.root.add(fx.mesh);
+    courtFx = buildCourtyardFx(court.root);
+    levels = new Levels(court.root, MAIN, { mist: court.mist.group, dust: court.dust.points });
+    roots.courtyard = court.root;
+  }
+  let street: ReturnType<typeof buildStreet> | null = null, office: ReturnType<typeof buildOffice> | null = null;
+  if (has("street")) { street = buildStreet(SET_OFFSET.street); street.setTraffic(traffic); sets.street = street.set; }
+  if (has("office")) { office = buildOffice(SET_OFFSET.office); sets.office = office.set; }
+  const simple: [SetId, (o: [number, number, number]) => StorySet][] = [
+    ["bedroom", buildBedroom], ["gym", buildGym], ["feed", buildFeed], ["void", buildVoid], ["deadlines", buildDeadlines],
+    ["airport", buildAirport], ["car", buildCar], ["sofa", buildSofa],
+  ];
+  for (const [id, b] of simple) if (has(id)) sets[id] = b(SET_OFFSET[id]);
+  for (const [id, st] of Object.entries(sets) as [SetId, StorySet][]) roots[id] = st.root;
+  for (const r of Object.values(roots)) root.add(r!);
   const cast = new Cast(); root.add(cast.root);
-  const roots: Record<SetId, THREE.Object3D> = { courtyard: court.root, bedroom: bedroom.root, street: street.set.root, office: office.set.root, gym: gym.root };
-  return { root, roots, court, fx, courtFx, levels, bedroom, street, office, gym, cast };
+  return { root, roots: roots as Record<SetId, THREE.Object3D>, sets, court, fx, courtFx, levels, street, office, cast };
 };
 type World = ReturnType<typeof buildWorld>;
 
@@ -127,7 +145,7 @@ const Inner: React.FC<{ film: StoryFilm; outgoing?: boolean; traffic: Vehicle[] 
   const f = useCurrentFrame();
   const { camera, scene } = useThree();
   const on = useMemo(toggles, []);
-  const w = useMemo(() => buildWorld(traffic), [traffic]);
+  const w = useMemo(() => buildWorld(traffic, film.sets), [traffic, film]);
   const post = useMemo(() => ({
     ink: new InkPass(scene, camera as THREE.PerspectiveCamera),
     lens: new LensBlur({ maxCoC: 24, nearScale: 1.6 }),
@@ -150,6 +168,8 @@ const Inner: React.FC<{ film: StoryFilm; outgoing?: boolean; traffic: Vehicle[] 
     </EffectComposer>
   ), [post, on, film]);
   useMemo(() => { if (on.camReport && !outgoing) { cameraReport(film, w); intersectReport(film, w); } }, [on, outgoing, film, w]);
+  const gl = useThree((s3) => s3.gl);
+  useFrame(() => { if (!outgoing) drawShatter(gl.domElement, film.shatterAt?.(f) ?? null); }, 2); // after the composer (priority 1)
   post.grain.seed = f;
 
   const fr = film.frameAt(f, !!outgoing);
@@ -158,18 +178,19 @@ const Inner: React.FC<{ film: StoryFilm; outgoing?: boolean; traffic: Vehicle[] 
   let look: SetLook;
   if (fr.set === "courtyard") {
     const c = fr.courtyard ?? { levels: { main: 1, lanterns: 1, night: 1 } };
-    w.fx.grooves(...(c.grooves ?? [0, 0, 0, 0, 0.4]));
-    w.fx.mark(...(c.mark ?? [0, 0, 1, 0, 0]));
+    w.fx!.grooves(...(c.grooves ?? [0, 0, 0, 0, 0.4]));
+    w.fx!.mark(...(c.mark ?? [0, 0, 1, 0, 0]));
     const tp = fr.traveller?.pos ?? [0, 0, 0];
-    w.courtFx.update(c.rays === false ? { main: 0, lanterns: 0, night: 0 } : c.levels, c.swirl ?? 0, fr.t, [tp[0], 0, tp[2]]);
-    const o = w.levels.set(c.levels, LOOK);
+    w.courtFx!.update(c.rays === false ? { main: 0, lanterns: 0, night: 0 } : c.levels, c.swirl ?? 0, fr.t, [tp[0], 0, tp[2]]);
+    const o = w.levels!.set(c.levels, LOOK);
     look = { lit: o.lit, shade: o.shade, lift: o.lift, sat: NIGHT.sat, charTint: NIGHT.charTint, cardGain: o.cardGain, grade: GRADE_NIGHT };
-    w.court.dust.update(fr.t); w.court.mist.update(fr.t);
+    w.court!.dust.update(fr.t); w.court!.mist.update(fr.t);
   } else {
-    if (fr.hooks?.streetX !== undefined) w.street.follow(fr.hooks.streetX as number);
-    if (fr.set === "office") w.office.setBanner((fr.hooks?.officeBanner as string | null) ?? null);
-    const sets = { bedroom: w.bedroom, street: w.street.set, office: w.office.set, gym: w.gym };
-    look = sets[fr.set].apply(fr.state, fr.t);
+    if (fr.hooks?.streetX !== undefined) w.street?.follow(fr.hooks.streetX as number);
+    if (fr.set === "office") w.office?.setBanner((fr.hooks?.officeBanner as string | null) ?? null);
+    const st = w.sets[fr.set];
+    if (!st) throw new Error(`set "${fr.set}" is not built for this film (add it to film.sets)`);
+    look = st.apply(fr.state, fr.t);
   }
   applyLook({
     ...(fr.set === "courtyard" ? LOOK : {}), lit: look.lit, shade: look.shade, lift: look.lift, sat: look.sat,
@@ -220,6 +241,80 @@ const View: React.FC<{ film: StoryFilm; outgoing?: boolean; traffic: Vehicle[]; 
   );
 };
 
+// ---------------- the shatter ----------------
+/** the 2D layer the shatter draws on (one per player, above the 3D view) */
+let shatterCanvas: HTMLCanvasElement | null = null;
+type Piece = { poly: [number, number][]; c: [number, number]; dir: [number, number]; speed: number; grow: number; spin: number };
+let pieces: { key: string; list: Piece[]; rays: { a: number; pts: [number, number][] }[] } | null = null;
+/** the pieces: rays from the impact point crossed with rings (jittered, deterministic) */
+const makePieces = (x: number, y: number) => {
+  const key = `${x}|${y}`;
+  if (pieces?.key === key) return pieces;
+  let sd = 77; const r = () => { sd = (sd * 16807) % 2147483647; return (sd - 1) / 2147483646; };
+  const N = 15, RINGS = [0, 70, 170, 320, 520, 800, 1150, 2600];
+  const angs = Array.from({ length: N }, (_, i) => ((i + 0.25 + 0.5 * r()) / N) * Math.PI * 2);
+  const pt = (i: number, k: number): [number, number] => {
+    const a = angs[i % N] + (k > 0 ? (r() - 0.5) * 0.05 : 0), rad = RINGS[k] * (k > 0 && k < RINGS.length - 1 ? 0.85 + 0.3 * r() : 1);
+    return [x + Math.cos(a) * rad, y + Math.sin(a) * rad];
+  };
+  const grid = RINGS.map((_, k) => angs.map((_, i) => pt(i, k)));
+  const list: Piece[] = [];
+  for (let k = 0; k < RINGS.length - 1; k++) for (let i = 0; i < N; i++) {
+    const a = grid[k][i], b = grid[k][(i + 1) % N], c = grid[k + 1][(i + 1) % N], d = grid[k + 1][i];
+    const poly: [number, number][] = k === 0 ? [a, c, d] : [a, b, c, d];
+    const cx = poly.reduce((m, p) => m + p[0], 0) / poly.length, cy = poly.reduce((m, p) => m + p[1], 0) / poly.length;
+    const len = Math.hypot(cx - x, cy - y) || 1;
+    list.push({ poly, c: [cx, cy], dir: [(cx - x) / len, (cy - y) / len], speed: 500 + 900 * r() + len * 0.6, grow: 0.8 + 2.4 * r() * (1 - k / RINGS.length) + 0.6, spin: (r() - 0.5) * 1.4 });
+  }
+  const rays = angs.map((a, i) => ({ a, pts: RINGS.map((_, k) => grid[k][i]) }));
+  pieces = { key, list, rays };
+  return pieces;
+};
+const drawShatter = (src: HTMLCanvasElement, s: Shatter | null) => {
+  const cv = shatterCanvas; if (!cv) return;
+  const g = cv.getContext("2d")!;
+  g.clearRect(0, 0, cv.width, cv.height);
+  if (!s) return;
+  const W = cv.width, H = cv.height, pc = makePieces(s.x, s.y);
+  if (s.fly <= 0) {
+    // the cracks running out from the impact: along each ray to crack * the frame's reach, then the rings
+    const reach = s.crack * 2300;
+    g.lineCap = "round"; g.lineJoin = "round";
+    for (const pass of [0, 1]) {
+      g.strokeStyle = pass ? "rgba(255,255,255,0.92)" : "rgba(10,12,20,0.55)"; g.lineWidth = pass ? 2.2 : 5;
+      for (const ry of pc.rays) {
+        g.beginPath(); g.moveTo(s.x, s.y);
+        for (const p of ry.pts.slice(1)) { const d = Math.hypot(p[0] - s.x, p[1] - s.y); if (d > reach) { const k = reach / d; g.lineTo(s.x + (p[0] - s.x) * k, s.y + (p[1] - s.y) * k); break; } g.lineTo(p[0], p[1]); }
+        g.stroke();
+      }
+      const rings = Math.max(0, (s.crack - 0.35) / 0.65);
+      for (const pce of pc.list) {
+        const d = Math.hypot(pce.c[0] - s.x, pce.c[1] - s.y);
+        if (d > rings * 1400 || pce.poly.length < 4) continue;
+        g.beginPath(); g.moveTo(...pce.poly[2]); g.lineTo(...pce.poly[3]); g.stroke();
+      }
+    }
+    const glow = g.createRadialGradient(s.x, s.y, 0, s.x, s.y, 120); glow.addColorStop(0, `rgba(255,255,255,${0.6 * s.crack})`); glow.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = glow; g.fillRect(s.x - 120, s.y - 120, 240, 240);
+    return;
+  }
+  // the pieces fly toward the lens: outward from the impact, growing (closer), spinning; the dark behind them
+  g.fillStyle = `rgba(3,3,6,${s.black})`; g.fillRect(0, 0, W, H);
+  const v = s.fly, ord = [...pc.list].sort((a, b) => a.grow - b.grow);
+  for (const pce of ord) {
+    const sc = 1 + v * v * pce.grow * 2.2, off = Math.pow(v, 1.5) * pce.speed;
+    g.save();
+    g.translate(pce.c[0] + pce.dir[0] * off, pce.c[1] + pce.dir[1] * off); g.rotate(pce.spin * v); g.scale(sc, sc); g.translate(-pce.c[0], -pce.c[1]);
+    g.beginPath(); g.moveTo(...pce.poly[0]); for (const p of pce.poly.slice(1)) g.lineTo(...p); g.closePath();
+    g.save(); g.clip(); g.globalAlpha = 1 - 0.35 * v; g.drawImage(src, 0, 0, src.width, src.height, 0, 0, W, H); g.restore();
+    g.strokeStyle = `rgba(255,255,255,${0.85 - 0.5 * v})`; g.lineWidth = 2.5 / sc; g.stroke();
+    g.restore();
+  }
+};
+const ShatterLayer: React.FC = () => (
+  <canvas ref={(c) => { shatterCanvas = c; }} width={1080} height={1920} style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "100%", pointerEvents: "none" }} />
+);
+
 /** one SVG filter for the frame's picture effects: directional motion blur, then chromatic aberration (the red and blue
  *  channels pushed apart) and, in the day only, a glitch (horizontal slices displaced) */
 const FxDefs: React.FC<{ fx: FrameFx; whipBlur: number; f: number }> = ({ fx, whipBlur, f }) => {
@@ -247,7 +342,9 @@ const FxDefs: React.FC<{ fx: FrameFx; whipBlur: number; f: number }> = ({ fx, wh
   );
 };
 
-export const StoryPlayer: React.FC<{ film: StoryFilm; traffic?: Vehicle[] }> = ({ film, traffic = [] }) => {
+/** one shared empty traffic list: a new [] on every render would rebuild the whole world every frame */
+const NO_TRAFFIC: Vehicle[] = [];
+export const StoryPlayer: React.FC<{ film: StoryFilm; traffic?: Vehicle[] }> = ({ film, traffic = NO_TRAFFIC }) => {
   const f = useCurrentFrame(), { width: wd, height: h } = useVideoConfig();
   const fx = film.fxAt?.(f);
   const whip = film.whips.map((w) => whipAt(f, w.from, w.len)).find((x) => x) ?? null;
@@ -265,6 +362,7 @@ export const StoryPlayer: React.FC<{ film: StoryFilm; traffic?: Vehicle[] }> = (
         : whip ? { filter: "url(#whipBlur)" } : undefined} />
       {ir && iris ? <View film={film} outgoing traffic={traffic} style={{ clipPath: irisClip(iris.R, iris.rot, wd, h) }} /> : null}
       {iris ? <IrisRim R={iris.R} rot={iris.rot} u={iris.u} /> : null}
+      {film.shatterAt ? <ShatterLayer /> : null}
       {acc.flash > 0 ? (
         <AbsoluteFill style={{
           pointerEvents: "none", mixBlendMode: "screen", opacity: acc.flash * (acc.warm ? 0.32 : 0.22),
