@@ -162,14 +162,15 @@ export const inkHand = (p: Pen, x: number, y: number, ang: number, thumb: 1 | -1
 /** Open hand in skin tone, palm toward the viewer: fingers together, thumb apart, a soft palm crease, the same
  *  thinner head ink. Used where an open palm must read (takbir). (x, y) = palm centre, ang = direction the fingers
  *  point (canvas radians), thumb = +1 / -1: which side of the fingers the thumb is on (as for inkHand), s = scale. */
-export const skinHand = (p: Pen, x: number, y: number, ang: number, thumb: 1 | -1, light: number, s = 1) => {
+export const skinHand = (p: Pen, x: number, y: number, ang: number, thumb: 1 | -1, light: number, s = 1, squash = 1) => {
   // local: fingers toward +x, wrist at -x, thumb on the -y side for thumb = +1
   const loc: P2[] = [
     [-26, 13], [-6, 16], [14, 16], [32, 15], [42, 11], [46, 4], [45, -4], [41, -11], [30, -14], [16, -14],
     [8, -17], [14, -25], [18, -33], [14, -38], [6, -35], [-6, -25], [-16, -16], [-26, -12],
   ];
   const c = Math.cos(ang), sn = Math.sin(ang);
-  const tr = ([lx, ly]: P2): P2 => { const yy = ly * thumb; return [x + s * (lx * c - yy * sn), y + s * (lx * sn + yy * c)]; };
+  // squash < 1 narrows the hand across the fingers (a hand seen partly edge-on, e.g. from the side)
+  const tr = ([lx, ly]: P2): P2 => { const yy = ly * thumb * squash; return [x + s * (lx * c - yy * sn), y + s * (lx * sn + yy * c)]; };
   let pts = loc.map(tr);
   const a2 = pts.reduce((acc, q, i) => { const r = pts[(i + 1) % pts.length]; return acc + q[0] * r[1] - r[0] * q[1]; }, 0);
   if (a2 < 0) pts = pts.reverse(); // clockwise on screen for inkRing

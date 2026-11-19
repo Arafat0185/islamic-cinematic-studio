@@ -1,7 +1,9 @@
 // The Traveller's other views and poses, in the same flat style as his front view (traveller.ts): same palette,
 // proportions, thick-thin plum ink, light-driven shading, blank face, beard B, snug kufi, sand thobe and the dusty
 // indigo shawl over his LEFT shoulder. Same design space: 600 x 1000 units, soles / floor at y = 975.
-// Side views face screen right, so we see his left side (and the shawl over that shoulder).
+// Side views face screen right. Facing right, we see his RIGHT side, so his left shoulder (with the shawl) is the far
+// one: the shawl is drawn behind the body and shows mainly as its front end along the chest. A drawing that will be
+// MIRRORED to face left (we then see his left side) passes shawlNear: true, so the shawl lies over the near shoulder.
 //
 //   travellerSide      standing, side view
 //   travellerBack      standing, back view
@@ -16,10 +18,11 @@
 import { Pen, INK, mul, mix, blobPts, Blob, thickAngle } from "../draw/toon";
 import {
   P2, SKIN_T, THOBE, SHAWL, KUFI, SANDAL, BEARD, BEARD_STRAND, SH_SKIN, SH_CLOTH, SH_SHAWL,
-  SOLE, TALL, HH, OW, OW_HEAD, BEARD_LEN, SLEEVE, SLEEVE_W, qc, join, frontHeadShape, frontKufi, inkHand,
+  SOLE, TALL, HH, OW, OW_HEAD, BEARD_LEN, SLEEVE, SLEEVE_W, qc, join, frontHeadShape, frontBeard, frontKufi, inkHand, skinHand,
 } from "./traveller";
 
-export type PoseOpts = { light?: number; seed?: number };
+/** shawlNear: draw the shawl over the NEAR shoulder (only for drawings that will be mirrored to face left) */
+export type PoseOpts = { light?: number; seed?: number; shawlNear?: boolean };
 const DEF_LIGHT = (-120 * Math.PI) / 180;
 
 // ---------------- geometry helpers ----------------
@@ -233,7 +236,8 @@ const drapeShawl = (sx: number, sy: number, frontLen: number, light: number) => 
 
 // ---------------- standing and walking, side view ----------------
 type Foot = { heel: P2; ang: number };
-type UprightCfg = { near: Foot; far: Foot; armNear: number; armFar: number; bob: number; light: number; seed: number };
+/** raise: 0 = arms down, 1 = takbir (hands at ear level, open palms facing forward) */
+type UprightCfg = { near: Foot; far: Foot; armNear: number; armFar: number; bob: number; light: number; seed: number; raise?: number; shawlNear?: boolean };
 
 /** upright body from the side (standing and walking). Feet given as sandals; the thobe skirt spans the feet. */
 const uprightSide = (p: Pen, c: UprightCfg) => {
@@ -244,20 +248,37 @@ const uprightSide = (p: Pen, c: UprightCfg) => {
   const xs = [ankle(c.near), ankle(c.far)];
   const hb = Math.min(...xs) - 34, hf = Math.max(...xs) + 40;
 
-  // arm geometry: shoulder joint, swing angle a (radians, + = forward)
+  // arm geometry: shoulder joint, swing angle a (radians, + = forward); `raise` lifts it into takbir: elbow forward
+  // and down, forearm up, the hand at ear level in front of the ear
+  const r = Math.max(0, Math.min(1, c.raise ?? 0)), re = r * r * (3 - 2 * r);
+  const lerp = (a: P2, b: P2, t: number): P2 => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
   const arm = (a: number, dx: number) => {
     const S: P2 = [302 + dx, shY + 20];
     const rot = (q: P2, k: number): P2 => { const x = q[0] - S[0], y = q[1] - S[1], cs = Math.cos(k), sn = Math.sin(-k); return [S[0] + x * cs - y * sn, S[1] + x * sn + y * cs]; };
-    const E = rot([298 + dx, shY + 1.1 * HH], a), W = rot([304 + dx, crown + 3.55 * HH - 6], a * 1.3);
+    const E0 = rot([298 + dx, shY + 1.1 * HH], a), W0 = rot([304 + dx, crown + 3.55 * HH - 6], a * 1.3);
+    const E = lerp(E0, [334 + dx, shY + 0.62 * HH], re);
+    // the wrist swings forward and up (through a point in front of the chest), not straight through the body
+    const Wm: P2 = [372 + dx, shY + 0.9 * HH];
+    const W = re < 0.5 ? lerp(W0, Wm, re * 2) : lerp(Wm, [300 + dx, hc + 0.52 * HH], (re - 0.5) * 2); // ends below the ear
     return { S, E, W };
+  };
+  /** the hand: an ink dot with the arms down; an open skin-tone hand once they rise (fingers turn from down,
+   *  through forward, to up; palm facing forward, seen partly edge-on from the side, thumb toward the ear) */
+  const hand = (w: P2) => {
+    if (r <= 0) { p.dot(w[0], w[1] + 6, 12.5); return; }
+    const ang = Math.PI / 2 - Math.PI * re, off = 30 * 0.95;
+    skinHand(p, w[0] + Math.cos(ang) * off, w[1] + Math.sin(ang) * off, ang, 1, light, 0.95, 0.62); // by the ear, not over the face
   };
 
   // far side first: far arm, far sandal (behind the skirt)
   const fa = arm(c.armFar, -6);
   sleeve(p, fa.S, fa.E, fa.W);
-  p.dot(fa.W[0], fa.W[1] + 6, 12.5);
+  hand(fa.W);
   sandal(p, c.far.heel, c.far.ang);
   sandal(p, c.near.heel, c.near.ang);
+  // shawl on the far shoulder: drawn behind the body (the front end shows along the chest)
+  const shawl = drapeShawl(300, shY, waistY - shY, light);
+  if (!c.shawlNear) { shawl.panel(p); shawl.cap(p); }
 
   neck(p, [302, neckY + 14], [308, chin - 18], light);
 
@@ -281,20 +302,19 @@ const uprightSide = (p: Pen, c: UprightCfg) => {
   });
   p.inkRing(bp, OW, thick);
 
-  // shawl front end (falls down the chest), near arm, shawl over the shoulder, head
-  const shawl = drapeShawl(300, shY, waistY - shY, light);
-  shawl.panel(p);
+  // near shoulder: shawl front end (falls down the chest), near arm, shawl over the shoulder; then the head
+  if (c.shawlNear) shawl.panel(p);
   const na = arm(c.armNear, 0);
   sleeve(p, na.S, na.E, na.W);
-  p.dot(na.W[0], na.W[1] + 6, 12.5);
-  shawl.cap(p);
+  if (c.shawlNear) shawl.cap(p);
   profileHead(p, 312, hc, 0, light, c.seed);
+  hand(na.W); // after the head: the near hand is in front of the ear
 };
 
 /** standing, side view (facing screen right) */
 export const travellerSide = (p: Pen, o: PoseOpts = {}) => {
   const light = o.light ?? DEF_LIGHT;
-  uprightSide(p, { near: { heel: [262, SOLE], ang: 0 }, far: { heel: [254, SOLE - 2], ang: 0 }, armNear: 0, armFar: 0, bob: 0, light, seed: o.seed ?? 1 });
+  uprightSide(p, { near: { heel: [262, SOLE], ang: 0 }, far: { heel: [254, SOLE - 2], ang: 0 }, armNear: 0, armFar: 0, bob: 0, light, seed: o.seed ?? 1, shawlNear: o.shawlNear });
 };
 
 /** walk cycle, side view: key 0 = contact (right / far foot forward), 1 = passing, 2 = contact (left / near foot
@@ -312,7 +332,194 @@ export const travellerWalkSide = (p: Pen, key: number, o: PoseOpts = {}) => {
     { near: front, far: back, armNear: -0.26, armFar: 0.26, bob: bobA },
     { near: planted, far: lifted, armNear: 0.0, armFar: 0.0, bob: -bobA },
   ][k];
-  uprightSide(p, { ...cfg, light, seed: o.seed ?? 1 });
+  uprightSide(p, { ...cfg, light, seed: o.seed ?? 1, shawlNear: o.shawlNear });
+};
+
+/** Continuous walk, side view, for animation. phase: walk cycle (1 = two steps), k: 0..1 how much the walk is
+ *  "on" (0 = standing still with the feet together, used to start and stop), stride: step length in design units,
+ *  raise: takbir arms (0..1). Each foot is planted for half the cycle and slides BACK in the card exactly as fast as
+ *  the body moves forward (one stride per half cycle), so if the card moves forward by `stride` per half cycle the
+ *  planted foot stays still on the floor. Heel strike pivots on the heel, toe-off on the toe. phase 0.25 + n/2 =
+ *  feet together. */
+/** o.bob: extra body drop in design units (+ = down), e.g. a settle after a turn */
+export const travellerWalkPhase = (p: Pen, phase: number, k: number, stride: number, o: PoseOpts & { raise?: number; bob?: number } = {}) => {
+  const light = o.light ?? DEF_LIGHT, A = stride, LEN = 104, LIFT = 30 * k;
+  const sm = (x: number) => { const t = Math.max(0, Math.min(1, x)); return t * t * (3 - 2 * t); };
+  const foot = (u0: number): Foot => {
+    const u = ((u0 % 1) + 1) % 1;
+    let xh: number, ang: number, lift = 0;
+    if (u < 0.5) {                                   // stance: flat-heel position moves back at body speed
+      xh = A / 2 - (u / 0.5) * A;
+      ang = -0.25 * k * (1 - sm(u / 0.08)) + 0.45 * k * sm((u - 0.4) / 0.1);
+    } else {                                         // swing: forward again, lifted
+      const v = (u - 0.5) / 0.5;
+      xh = -A / 2 + A * sm(v);
+      lift = LIFT * Math.sin(Math.PI * v);
+      ang = 0.45 * k * (1 - sm(v * 3)) - 0.25 * k * sm((v - 0.7) / 0.3);
+    }
+    // toe-down angles pivot on the toe (where the flat toe would be), heel-down angles on the heel
+    const heel: P2 = ang > 0
+      ? [262 + xh + LEN - LEN * Math.cos(ang), SOLE - lift - LEN * Math.sin(ang)]
+      : [262 + xh, SOLE - lift];
+    return { heel, ang };
+  };
+  const un = phase, uf = phase + 0.5;
+  uprightSide(p, {
+    near: foot(un), far: foot(uf),
+    armNear: -0.26 * k * Math.cos(2 * Math.PI * un), armFar: 0.26 * k * Math.cos(2 * Math.PI * un),
+    bob: 0.006 * TALL * k * Math.cos(4 * Math.PI * phase) + (o.bob ?? 0), light, seed: o.seed ?? 1, raise: o.raise, shawlNear: o.shawlNear,
+  });
+};
+
+// ---------------- three-quarter views (turned 45 degrees toward screen right) ----------------
+/** head outline for a three-quarter view: a little wider than the front view (between front 0.75 and profile 0.92),
+ *  fuller on the side it faces; same structure as frontHeadShape so frontBeard / frontKufi can use it */
+const head34 = (hc: number, seed: number, faceSign: 1 | -1) => {
+  const headB = 0.5 * HH, headA = 0.84 * headB;
+  const H: Blob = { a: headA, b: headB, nTop: 2.0, nBot: 1.8, egg: -0.12, asym: 0.05 * faceSign, rot: 0, noise: 0, seed };
+  const hp = blobPts(300, hc, H);
+  const edgeX = (y: number) => {
+    const r = hp.filter(([x]) => x > 300).sort((a, b) => a[1] - b[1]);
+    for (let i = 1; i < r.length; i++) if (r[i][1] >= y) {
+      const [x0, y0] = r[i - 1], [x1, y1] = r[i], t = (y - y0) / Math.max(1e-6, y1 - y0);
+      return x0 + (x1 - x0) * t - 300;
+    }
+    return r[r.length - 1][0] - 300;
+  };
+  return { hp, edgeX, headA, headB };
+};
+
+/** shared body of both three-quarter views: one thobe shape, slightly narrower than the front view, the neckline
+ *  centred `nx` units toward the side he faces (front view) or a high back neckline (back view) */
+const body34 = (p: Pen, light: number, crown: number, back: boolean) => {
+  const thick = thickAngle(light);
+  const chin = crown + HH, neckY = chin + 12, shY = neckY + 38, hemY = SOLE - 24;
+  const nx = back ? -8 : 10; // neckline centre offset
+  const thobe = cw(join(
+    qc([300 + nx + 20, neckY], [300 + 50, neckY + 6], [300 + 62, shY]),                 // far shoulder (narrower)
+    qc([300 + 62, shY], [300 + 78, (shY + hemY) / 2], [300 + 86, hemY]),                // far side / chest edge
+    qc([300 + 86, hemY], [300 - 2, hemY + 10], [300 - 92, hemY]),                       // hem
+    qc([300 - 92, hemY], [300 - 76, (shY + hemY) / 2], [300 - 70, shY]),                // near side
+    qc([300 - 70, shY], [300 - 56, neckY + 4], [300 + nx - 20, neckY]),                 // near shoulder
+    qc([300 + nx - 20, neckY], [300 + nx, neckY + (back ? 6 : 16)], [300 + nx + 20, neckY]), // neckline
+  ));
+  p.gradFill(thobe, THOBE, mul(THOBE, SH_CLOTH), light);
+  p.clip(thobe, () => {
+    const fold = mix(THOBE, INK, 0.28);
+    p.stroke(qc([300 - 34, shY + 1.4 * HH], [300 - 42, (shY + hemY) / 2 + 60], [300 - 50, hemY + 4]), 3.5, fold);
+    p.stroke(qc([300 + 34, shY + 2.2 * HH], [300 + 40, hemY - 120], [300 + 48, hemY + 4]), 3.5, fold);
+    if (!back) p.stroke([[300 + nx, neckY + 12], [300 + nx + 2, neckY + 70]], 3.5, fold); // collar placket
+  });
+  p.inkRing(thobe, OW, thick);
+  return { chin, neckY, shY, hemY, waistY: crown + 2.75 * HH };
+};
+
+/** arms of the three-quarter views: hanging, ink-dot hands; the near arm a little in front of the body's edge */
+const arms34 = (p: Pen, crown: number, shY: number) => {
+  const hy = crown + 3.55 * HH;
+  sleeve(p, [300 - 60, shY + 4], [300 - 82, shY + 1.1 * HH], [300 - 84, hy]);
+  p.dot(300 - 84, hy + 6, 12.5);
+  sleeve(p, [300 + 54, shY + 4], [300 + 72, shY + 1.1 * HH], [300 + 76, hy - 4]);
+  p.dot(300 + 76, hy + 2, 12.5);
+};
+
+/** feet of the three-quarter views: sandals pointing diagonally toward the facing side (front) or away (back) */
+const feet34 = (p: Pen, back: boolean) => {
+  const d = back ? -1 : 1;
+  for (const [x, y] of [[322, SOLE - 9], [278, SOLE - 4]] as P2[]) {
+    const a: P2 = [x - 16, y + 3 * d], b: P2 = [x + 18, y - 3 * d];
+    p.stroke([a, b], 20, INK); p.stroke([a, b], 16, SANDAL);
+  }
+};
+
+/** Three-quarter FRONT view, turned toward screen right (between the front and the side view). Facing right we see
+ *  his front and his right side, so the shawl's shoulder (his left) is the far one: its front end lies on the far
+ *  part of the chest. shawlNear (for a mirrored, left-facing card) puts it over the near shoulder instead. */
+export const travellerThreeQuarterFront = (p: Pen, o: PoseOpts = {}) => {
+  const light = o.light ?? DEF_LIGHT, thick = thickAngle(light), seed = o.seed ?? 1;
+  const crown = SOLE - TALL, hc = crown + 0.5 * HH;
+  const shawlDark = mul(SHAWL, SH_SHAWL), near = !!o.shawlNear;
+  const chin = crown + HH, neckY = chin + 12, shY = neckY + 38, waistY = crown + 2.75 * HH;
+  // shawl back end: only shows behind the shoulder it hangs from (far: right edge; near: left edge)
+  const bs = near ? -1 : 1, bx = 300 + bs * 62;
+  const backEnd = cw(join(
+    qc([bx - bs * 28, shY - 20], [bx + bs * 10, shY - 24], [bx + bs * 26, shY - 2]),
+    qc([bx + bs * 26, shY - 2], [bx + bs * 32, shY + 0.4 * HH], [bx + bs * 26, shY + 0.85 * HH]),
+    qc([bx + bs * 26, shY + 0.85 * HH], [bx + bs * 12, shY + 0.9 * HH], [bx, shY + 0.82 * HH]),
+    qc([bx, shY + 0.82 * HH], [bx - bs * 6, shY + 0.3 * HH], [bx - bs * 28, shY - 20]),
+  ));
+  p.gradFill(backEnd, shawlDark, mul(shawlDark, [0.85, 0.85, 0.88]), light);
+  p.inkRing(backEnd, OW * 0.85, thick);
+  feet34(p, false);
+  p.poly([[300 + 10 - 14, chin - 20], [300 + 10 + 14, chin - 20], [300 + 10 + 16, neckY + 16], [300 + 10 - 16, neckY + 16]], mul(SKIN_T, SH_SKIN), 0);
+  arms34(p, crown, shY);
+  body34(p, light, crown, false);
+  // shawl front end on the chest: over the far shoulder (right) or the near shoulder (left), down to the waist
+  const s = near ? -1 : 1, ix = 300 + 10 + s * 16, ox = near ? 300 - 62 : 300 + 56;
+  const front = cw(join(
+    qc([ix, neckY - 4], [(ix + ox) / 2, neckY - 12], [ox + s * 10, shY + 8]),
+    qc([ox + s * 10, shY + 8], [ox - s * 4, shY + 0.7 * HH], [ox - s * 4, waistY]),
+    qc([ox - s * 4, waistY], [(ix + ox) / 2, waistY + 12], [ix + s * 4, waistY + 4]),
+    qc([ix + s * 4, waistY + 4], [ix - s * 2, shY + 0.8 * HH], [ix, neckY - 4]),
+  ));
+  p.gradFill(front, SHAWL, shawlDark, light, 0.3);
+  p.clip(front, () => p.stroke(qc([(ix + ox) / 2, neckY + 18], [(ix + ox) / 2 + s * 2, shY + 0.9 * HH], [(ix + ox) / 2, waistY + 8]), 4, mix(shawlDark, INK, 0.35)));
+  p.inkRing(front, OW, thick);
+  for (let k = 0; k < 6; k++) { const x = Math.min(ix, ox) + 6 + k * (Math.abs(ox - ix) - 12) / 5; p.stroke([[x, waistY + 6], [x + 1, waistY + 19]], 3.2); }
+  // head: wider outline, the face turned toward screen right (beard shifted that way and foreshortened)
+  const h = head34(hc, seed, 1), hf = frontHeadShape(hc, seed);
+  const faceFill = () => p.shadedFill(h.hp, SKIN_T, mul(SKIN_T, SH_SKIN), light, h.headA);
+  faceFill();
+  p.inkRing(h.hp, OW_HEAD, thick);
+  const g = p.g;
+  g.save(); g.translate(300 + 0.34 * h.headA, 0); g.scale(0.82, 1); g.translate(-300, 0);
+  frontBeard(p, hf, hc, light, faceFill);
+  g.restore();
+  frontKufi(p, h, crown, light);
+};
+
+/** Three-quarter BACK view, turned away toward screen right (between the side and the back view): his back and right
+ *  side. Back of the head (skin, hair band under the kufi) with the cheek, jaw and a sliver of beard at the right
+ *  edge; the shawl's back end hangs down the far (left) part of his back. shawlNear: on the near part instead. */
+export const travellerThreeQuarterBack = (p: Pen, o: PoseOpts = {}) => {
+  const light = o.light ?? DEF_LIGHT, thick = thickAngle(light), seed = o.seed ?? 1;
+  const crown = SOLE - TALL, hc = crown + 0.5 * HH;
+  const shawlDark = mul(SHAWL, SH_SHAWL), near = !!o.shawlNear;
+  const chin = crown + HH, neckY = chin + 12, shY = neckY + 38;
+  feet34(p, true);
+  p.poly([[300 - 6 - 16, chin - 30], [300 - 6 + 16, chin - 30], [300 - 6 + 18, neckY + 16], [300 - 6 - 18, neckY + 16]], mul(SKIN_T, SH_SKIN), 0);
+  arms34(p, crown, shY);
+  body34(p, light, crown, true);
+  // shawl back end hanging down the back from the far (left) or near (right) shoulder
+  const s = near ? 1 : -1, bx = 300 + s * 52;
+  const back = cw(join(
+    qc([bx - s * 46, neckY - 6], [bx - s * 6, neckY - 12], [bx + s * 14, shY + 10]),
+    qc([bx + s * 14, shY + 10], [bx + s * 8, shY + 0.6 * HH], [bx - s * 2, shY + 1.15 * HH]),
+    qc([bx - s * 2, shY + 1.15 * HH], [bx - s * 24, shY + 1.25 * HH], [bx - s * 46, shY + 1.15 * HH]),
+    qc([bx - s * 46, shY + 1.15 * HH], [bx - s * 44, shY + 0.5 * HH], [bx - s * 46, neckY - 6]),
+  ));
+  p.gradFill(back, SHAWL, shawlDark, light, 0.3);
+  p.clip(back, () => p.stroke(qc([bx - s * 22, shY], [bx - s * 20, shY + 0.6 * HH], [bx - s * 24, shY + 1.15 * HH]), 4, mix(shawlDark, INK, 0.35)));
+  p.inkRing(back, OW, thick);
+  for (let k = 0; k < 6; k++) { const x = Math.min(bx, bx - s * 46) + 4 + k * 7.5; p.stroke([[x, shY + 1.2 * HH], [x + 1, shY + 1.2 * HH + 13]], 3.2); }
+  // head: the far cheek and jaw show at the right edge with a sliver of beard; hair band under the kufi, offset left
+  const h = head34(hc, seed, 1), v = h.headB;
+  const ys = [0.15, 0.35, 0.55, 0.72, 0.86].map((k) => hc + k * v);
+  const sl = cw([...ys.map((y): P2 => [300 + h.edgeX(y) + 6, y]), ...ys.slice().reverse().map((y): P2 => [300 + h.edgeX(y) - 12, y])]);
+  p.gradFill(sl, BEARD, mul(BEARD, [0.72, 0.72, 0.76]), light, 0.35);
+  p.inkRing(sl, OW_HEAD * 0.55, thick);
+  p.shadedFill(h.hp, SKIN_T, mul(SKIN_T, SH_SKIN), light, h.headA);
+  const top = crown + 0.13 * HH - 4, side0 = hc + 0.08 * v, nape = hc + 0.36 * v;
+  p.clip(h.hp, () => {
+    // hair from the far side across to ~1/4 of the way into the near (face) side; the cheek in front stays skin
+    const band = cw([
+      [300 - h.headA - 10, top], [300 + 0.28 * h.headA, top], [300 + 0.22 * h.headA, side0],
+      ...qc([300 + 0.22 * h.headA, side0], [300 - 0.3 * h.headA, nape + 0.25 * v], [300 - h.headA - 10, side0], 12).slice(1),
+    ]);
+    p.gradFill(band, BEARD, mul(BEARD, [0.75, 0.75, 0.8]), light, 0.35);
+  });
+  p.inkRing(h.hp, OW_HEAD, thick);
+  frontKufi(p, h, crown, light);
 };
 
 // ---------------- back view ----------------
@@ -381,10 +588,12 @@ export const travellerRuku = (p: Pen, o: PoseOpts = {}) => {
   inkHand(p, 244, 768, Math.PI / 2 + 0.15, 1, 0.95);
   sandal(p, [176, SOLE - 2], 0); sandal(p, [184, SOLE], 0);
   neck(p, [430, 546], [470, 540], light);
+  const shawl = () => sideShawl(p, sh, [-1, 0], [0, 52], light, 120);
+  if (!o.shawlNear) shawl(); // far shoulder: behind the body
   const torso = cap(hip, sh, 60, 52);
   const skirt: P2[] = [[146, 560], [150, 760], [158, 951], [264, 951], [250, 800], [252, 660], [300, 600], [240, 520]];
   unionFill(p, [torso, skirt], THOBE, thobeDark, light);
-  sideShawl(p, sh, [-1, 0], [0, 52], light, 120);
+  if (o.shawlNear) shawl();
   profileHead(p, head[0], head[1], 1.48, light, o.seed ?? 1); // crown forward, a touch above level: not hanging
   // near arm: straight from the shoulder to the knee, hand over the kneecap
   sleeve(p, [414, 566], [334, 656], [256, 746]);
@@ -402,10 +611,12 @@ export const travellerSujood = (p: Pen, o: PoseOpts = {}) => {
   sleeve(p, [408, 838], [430, 880], [462, 960]);
   flatHand(p, [466, 963], 0.05);
   neck(p, [430, 850], [480, 892], light);
+  const B = unit(sub(hip, sh)), F: P2 = [-B[1] * 50, B[0] * 50]; // chest side faces the floor
+  const shawl = () => sideShawl(p, sh, B, F[1] > 0 ? F : [-F[0], -F[1]], light, 200);
+  if (!o.shawlNear) shawl(); // far shoulder: behind the body
   const parts = [cap(knee, hip, 48, 56), cap(knee, ankle, 40, 30), cap(hip, sh, 58, 50)];
   unionFill(p, parts, THOBE, thobeDark, light);
-  const B = unit(sub(hip, sh)), F: P2 = [-B[1] * 50, B[0] * 50]; // chest side faces the floor
-  sideShawl(p, sh, B, F[1] > 0 ? F : [-F[0], -F[1]], light, 200);
+  if (o.shawlNear) shawl();
   profileHead(p, 505, 905, 1.75, light, o.seed ?? 1);
   // near arm on top: elbow raised clear of the floor, palm flat on the floor beside the head
   sleeve(p, [422, 846], [446, 878], [476, 958]);
@@ -417,20 +628,21 @@ export const travellerSujood = (p: Pen, o: PoseOpts = {}) => {
 export const travellerJalsa = (p: Pen, o: PoseOpts = {}) => {
   const light = o.light ?? DEF_LIGHT;
   const seat: P2 = [238, 880], knee: P2 = [432, 944], ankle: P2 = [226, 957], sh: P2 = [252, 652];
-  // right foot (far side) upright behind him; left foot laid flat under the seat
+  // right foot (the near side, facing right) upright behind him; left foot laid flat under the seat
   sandal(p, [166, 884], 1.42);
   sandal(p, [146, SOLE - 2], 0.0);
   // far arm and hand
   sleeve(p, [246, 668], [262, 790], [356, 882]);
   flatHand(p, [352, 880], 0.32, 58);
   neck(p, [256, 630], [264, 590], light);
+  const shawl = drapeShawl(254, 648, 150, light);
+  if (!o.shawlNear) { shawl.panel(p); shawl.cap(p); } // far shoulder: behind the body
   const parts = [cap(seat, sh, 64, 52), cap(seat, knee, 52, 38), cap(knee, ankle, 34, 26)];
   unionFill(p, parts, THOBE, thobeDark, light);
-  const shawl = drapeShawl(254, 648, 150, light);
-  shawl.panel(p);
+  if (o.shawlNear) shawl.panel(p);
   // near arm: hand resting on the thigh, fingers toward the knee
   sleeve(p, [258, 668], [276, 800], [366, 886]);
   flatHand(p, [364, 884], 0.3, 60);
-  shawl.cap(p);
+  if (o.shawlNear) shawl.cap(p);
   profileHead(p, 266, 548, 0.06, light, o.seed ?? 1);
 };

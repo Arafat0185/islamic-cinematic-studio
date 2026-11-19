@@ -3,6 +3,7 @@ import React from "react";
 import { Composition } from "remotion";
 import { CourtyardTest, COURTYARD_FRAMES, COURTYARD_FPS } from "./scenes/courtyard-test/CourtyardTest";
 import { PoseSheet, POSE_SHEET_W, POSE_SHEET_H } from "./scenes/pose-sheet/PoseSheet";
+import { TravellerMotionTest, MOTION_FRAMES, MOTION_FPS } from "./scenes/motion-test/TravellerMotionTest";
 
 export const RemotionRoot: React.FC = () => (
   <>
@@ -12,6 +13,15 @@ export const RemotionRoot: React.FC = () => (
       component={CourtyardTest}
       durationInFrames={COURTYARD_FRAMES}
       fps={COURTYARD_FPS}
+      width={1080}
+      height={1920}
+    />
+    {/* 12 s: the Traveller's poses animated in the courtyard (stand, turn, walk to the mat, turn to the qibla, takbir) */}
+    <Composition
+      id="TravellerMotionTest"
+      component={TravellerMotionTest}
+      durationInFrames={MOTION_FRAMES}
+      fps={MOTION_FPS}
       width={1080}
       height={1920}
     />

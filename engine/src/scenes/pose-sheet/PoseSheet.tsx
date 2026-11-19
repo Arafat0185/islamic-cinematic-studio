@@ -4,10 +4,13 @@ import React, { useLayoutEffect, useRef, useState } from "react";
 import { AbsoluteFill, continueRender, delayRender } from "remotion";
 import { Pen } from "../../draw/toon";
 import { traveller } from "../../characters/traveller";
-import { travellerSide, travellerBack, travellerWalkSide, travellerRuku, travellerSujood, travellerJalsa } from "../../characters/travellerPoses";
+import {
+  travellerSide, travellerBack, travellerWalkSide, travellerRuku, travellerSujood, travellerJalsa,
+  travellerThreeQuarterFront, travellerThreeQuarterBack,
+} from "../../characters/travellerPoses";
 
 const BG = "#DADADA";
-const COLS = 6, PANEL_W = 600, ROW_H = 900;
+const COLS = 7, PANEL_W = 600, ROW_H = 900;
 const K = 0.8;            // px per design unit (the figure is ~700 px tall)
 const TOP_Y = 60;         // design y shown at the top of the drawing area
 const DRAW_TOP = 130;     // px below the row top where TOP_Y lands (room for the labels)
@@ -16,7 +19,9 @@ const LIGHT = (-120 * Math.PI) / 180; // key light from the upper left, as in th
 type Panel = { label: string; note: string; draw: (p: Pen) => void };
 const PANELS: Panel[] = [
   { label: "1  Standing", note: "front view", draw: (p) => traveller(p, { mode: "stand", light: LIGHT, seed: 1 }) },
+  { label: "1b  Standing", note: "three-quarter front", draw: (p) => travellerThreeQuarterFront(p, { light: LIGHT }) },
   { label: "2  Standing", note: "side view", draw: (p) => travellerSide(p, { light: LIGHT }) },
+  { label: "2b  Standing", note: "three-quarter back", draw: (p) => travellerThreeQuarterBack(p, { light: LIGHT }) },
   { label: "3  Standing", note: "back view", draw: (p) => travellerBack(p, { light: LIGHT }) },
   { label: "4a  Walk", note: "contact: right foot forward", draw: (p) => travellerWalkSide(p, 0, { light: LIGHT }) },
   { label: "4b  Walk", note: "passing", draw: (p) => travellerWalkSide(p, 1, { light: LIGHT }) },
