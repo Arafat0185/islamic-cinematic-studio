@@ -26,7 +26,8 @@
     "video001-d3-voice": ".venv-tts/Scripts/python tools/narrate_blocks.py ../videos/001-the-first-question",
     "video001-d3-plan": ".venv-tts/Scripts/python tools/plan_video001_d3.py ../videos/001-the-first-question",
     "video001-d3-mix": ".venv-tts/Scripts/python tools/mix_d3.py ../videos/001-the-first-question public/audio/video001_d3_mix.wav",
-    "video001-d3": "remotion render src/index.ts Video001D3 out/video001_draft3.mp4 --codec=h264 --crf=16 --audio-codec=aac --audio-bitrate=192k --timeout=600000"
+    "video001-d3": "node tools/render-chunks.mjs Video001D3 out/video001_draft3.mp4 --chunk 600 --audio public/audio/video001_d3_mix.wav",
+    "render-chunks": "node tools/render-chunks.mjs"
   },
   "dependencies": {
     "@fontsource/amiri": "5.3.0",
