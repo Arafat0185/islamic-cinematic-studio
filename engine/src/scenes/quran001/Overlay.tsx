@@ -30,7 +30,8 @@ const toScreen = (f: number, p: [number, number, number]) => {
 };
 
 // ---------------- caption layout ----------------
-const AR_SIZE = 88, AR_LH = 1.62, EN_SIZE = 40, EN_LH = 1.3, MAXW = 940, GAP = 26;
+// the caption safe zone: 760 px wide, its centre 40 px left of the middle (clear of TikTok's buttons on the right)
+const AR_SIZE = 88, AR_LH = 1.62, EN_SIZE = 40, EN_LH = 1.3, MAXW = 760, GAP = 26, CAP_CX = W / 2 - 40;
 const arFont = `700 ${AR_SIZE}px ${FONT.arabic}`, enFont = `600 ${EN_SIZE}px ${FONT.caption}`;
 /** greedy line breaking (the browser breaks the same way within the same width) */
 const lineCount = (text: string, font: string, maxw: number) => {
@@ -38,7 +39,7 @@ const lineCount = (text: string, font: string, maxw: number) => {
   for (const w of text.split(" ")) { const t = cur ? cur + " " + w : w; if (measure(t, font) > maxw && cur) { n++; cur = w; } else cur = t; }
   return n;
 };
-const blockHeight = (p: Phrase) => lineCount(p.ar, arFont, MAXW) * AR_SIZE * AR_LH + GAP + lineCount(p.en, enFont, 900) * EN_SIZE * EN_LH;
+const blockHeight = (p: Phrase) => lineCount(p.ar, arFont, MAXW) * AR_SIZE * AR_LH + GAP + lineCount(p.en, enFont, MAXW) * EN_SIZE * EN_LH;
 
 /** his head (and neck) on screen over frames [from, to): fractions of the frame, only what is inside it */
 const headRange = (from: number, to: number) => {
@@ -98,16 +99,19 @@ const Caption: React.FC<{ p: Phrase; f: number; y: number }> = ({ p, f, y }) => 
   const ra = reveal(d), re = reveal(d - 4);
   const words = p.ar.split(" ");
   return (
-    <div style={{ position: "absolute", left: 0, right: 0, top: H * y, transform: "translateY(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: GAP, opacity: out }}>
-      {/* a soft dark glow behind the text keeps it legible over the lamps */}
-      <div style={{ position: "absolute", left: 40, right: 40, top: -40, bottom: -40, borderRadius: 120, background: "radial-gradient(ellipse at center, rgba(8,10,26,0.52) 0%, rgba(8,10,26,0.3) 55%, rgba(8,10,26,0) 75%)", opacity: ra.e, filter: "blur(18px)" }} />
+    <div style={{ position: "absolute", left: CAP_CX - MAXW / 2, width: MAXW, top: H * y, transform: "translateY(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: GAP, opacity: out }}>
+      {/* behind the text the busy background is softened (blurred and dimmed, fading out at the edges), so it reads easily */}
+      <div style={{ position: "absolute", left: -(CAP_CX - MAXW / 2), width: W, top: -90, bottom: -90, backdropFilter: "blur(7px)", WebkitBackdropFilter: "blur(7px)",
+        background: "linear-gradient(rgba(8,10,26,0), rgba(8,10,26,0.34) 30%, rgba(8,10,26,0.34) 70%, rgba(8,10,26,0))",
+        maskImage: "linear-gradient(rgba(0,0,0,0), #000 28%, #000 72%, rgba(0,0,0,0))", WebkitMaskImage: "linear-gradient(rgba(0,0,0,0), #000 28%, #000 72%, rgba(0,0,0,0))", opacity: ra.e }} />
+      <div style={{ position: "absolute", left: -40, right: -40, top: -40, bottom: -40, borderRadius: 120, background: "radial-gradient(ellipse at center, rgba(8,10,26,0.45) 0%, rgba(8,10,26,0.25) 55%, rgba(8,10,26,0) 75%)", opacity: ra.e, filter: "blur(18px)" }} />
       <div dir="rtl" lang="ar" style={{ position: "relative", maxWidth: MAXW, textAlign: "center", fontFamily: FONT.arabic, fontWeight: 700, fontSize: AR_SIZE, lineHeight: AR_LH,
         color: "#FBF6EC", textShadow: SHADOW, opacity: Math.min(1, ra.e * 1.4), transform: `scale(${ra.sc})`, filter: `blur(${ra.blur.toFixed(1)}px)` }}>
         {words.map((w, i) => (
           <React.Fragment key={i}>{p.arKeys.includes(i) ? <span style={keySpan(1, f, p.from + 4)}>{w}</span> : w}{i < words.length - 1 ? " " : ""}</React.Fragment>
         ))}
       </div>
-      <div style={{ position: "relative", maxWidth: 900, textAlign: "center", fontFamily: FONT.caption, fontWeight: 600, fontSize: EN_SIZE, lineHeight: EN_LH,
+      <div style={{ position: "relative", maxWidth: MAXW, textAlign: "center", fontFamily: FONT.caption, fontWeight: 600, fontSize: EN_SIZE, lineHeight: EN_LH,
         color: BRAND.white, textShadow: SHADOW, opacity: Math.min(1, re.e * 1.4), transform: `scale(${re.sc})`, filter: `blur(${(re.blur * 0.7).toFixed(1)}px)` }}>
         {englishParts(p.en, p.keys).map((x, i) => (x.key ? <span key={i} style={keySpan(0.8, f, p.from + 8)}>{x.s}</span> : <React.Fragment key={i}>{x.s}</React.Fragment>))}
       </div>
@@ -201,6 +205,66 @@ const PhoneDown: React.FC<{ f: number }> = ({ f }) => {
   );
 };
 
+// ---------------- the busy opening: rain on the lens, notifications piling up around him ----------------
+const STREET_SHOT = SHOTS.find((x) => x.kind === "street")!;
+const RAIN_DROPS = (() => {
+  let sd = 31; const r = () => { sd = (sd * 16807) % 2147483647; return (sd - 1) / 2147483646; };
+  return Array.from({ length: 18 }, () => {
+    const top = r() < 0.72, y = top ? 0.04 + 0.36 * r() : 0.84 + 0.12 * r();
+    return { x: 0.03 + 0.94 * r(), y, r: 9 + 22 * r(), at: r() * 3.2, slide: r() < 0.3 ? 0.012 + 0.02 * r() : 0 };
+  });
+})();
+const LensRain: React.FC<{ f: number }> = ({ f }) => {
+  if (f >= STREET_SHOT.to) return null;
+  const t = f / FPS, out = 1 - smooth((f - STREET_SHOT.to + 8) / 8);
+  return (
+    <AbsoluteFill>
+      {RAIN_DROPS.map((d, i) => {
+        const k = smooth((t - d.at) / 0.25) * out;
+        if (k <= 0) return null;
+        const y = (d.y + d.slide * Math.max(0, t - d.at)) * H, rr = d.r * (1 + 0.15 * smooth((t - d.at) / 0.25));
+        return <div key={i} style={{ position: "absolute", left: d.x * W - rr, top: y - rr, width: rr * 2, height: rr * 2.15, borderRadius: "50% 50% 48% 48%", opacity: 0.75 * k,
+          backdropFilter: "blur(2.5px) brightness(1.12)", WebkitBackdropFilter: "blur(2.5px) brightness(1.12)",
+          background: "radial-gradient(circle at 50% 70%, rgba(255,255,255,0) 45%, rgba(220,232,255,0.28) 64%, rgba(255,255,255,0) 74%), radial-gradient(circle at 38% 30%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 18%)" }} />;
+      })}
+    </AbsoluteFill>
+  );
+};
+const NOTES: { at: number; txt: string; c: string }[] = [
+  { at: 0.45, txt: "12 new messages", c: "#3a7be0" }, { at: 1.05, txt: "+48 likes", c: "#e0445a" }, { at: 1.65, txt: "Asr · prayer time", c: "#3FB37F" },
+  { at: 2.2, txt: "Live now", c: "#7a5ad6" }, { at: 2.8, txt: "Sale ends tonight", c: BRAND.orange }, { at: 3.4, txt: "You were mentioned", c: "#3a7be0" },
+];
+const Notifications: React.FC<{ f: number }> = ({ f }) => {
+  if (f >= STREET_SHOT.to) return null;
+  const t = f / FPS, out = 1 - smooth((f - STREET_SHOT.to + 14) / 12), sh = shotAt(f), hd = toScreen(f, sh.head);
+  const right = hd.x < W * 0.55, left0 = right ? hd.x + 95 : hd.x - 95 - 310;
+  const shown = NOTES.filter((n) => t >= n.at), bottom = Math.min(860, hd.y + 70);
+  return (
+    <AbsoluteFill>
+      {shown.map((n, i) => {
+        const slot = shown.length - 1 - i, d = (t - n.at) * FPS, pop = clamp01(d / 8), sc = 0.55 + 0.45 * pop + 0.06 * Math.sin(Math.PI * pop);
+        const yTarget = bottom - slot * 70, y = yTarget + (1 - pop) * 40, k = Math.min(pop, 1 - smooth(slot - 2.6)) * out;
+        if (k <= 0.01 || y < 470) return null;
+        return (
+          <div key={n.txt} style={{ position: "absolute", left: left0, top: y, width: 310, transform: `scale(${sc})`, transformOrigin: right ? "left center" : "right center", opacity: 0.88 * k,
+            display: "flex", alignItems: "center", gap: 12, background: "rgba(246,247,250,0.9)", borderRadius: 20, padding: "10px 14px", boxShadow: "0 6px 18px rgba(0,0,0,0.35)",
+            fontFamily: FONT.caption, fontWeight: 700, fontSize: 21, color: "#141824" }}>
+            <div style={{ width: 30, height: 30, borderRadius: 9, background: n.c, flex: "none" }} />{n.txt}
+          </div>
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
+
+// ---------------- the warning: the light slowly dying around him ----------------
+const VOID_SHOT = SHOTS.find((x) => x.kind === "void")!;
+const VoidDim: React.FC<{ f: number }> = ({ f }) => {
+  if (f < VOID_SHOT.from || f >= VOID_SHOT.to) return null;
+  const u = smooth((f - VOID_SHOT.from) / (VOID_SHOT.to - VOID_SHOT.from - 7)), k = u * (1 - smooth((f - VOID_SHOT.to + 9) / 9));
+  return <AbsoluteFill style={{ background: `radial-gradient(ellipse 62% 48% at 50% 46%, rgba(2,3,8,0) 30%, rgba(2,3,8,${(0.62 * k).toFixed(3)}) 100%)` }} />;
+};
+
 // ---------------- the end card ----------------
 // crossfades in over the last 1.5 s: the brown panel (0.8 s), the logo, then the credit line one part per row; all
 // fully visible for the last ~0.5 s
@@ -245,6 +309,9 @@ export const Overlay: React.FC = () => {
   const pi = PHRASES.findIndex((p) => f >= p.from && f < p.to);
   return (
     <AbsoluteFill style={{ pointerEvents: "none" }}>
+      <VoidDim f={f} />
+      <LensRain f={f} />
+      <Notifications f={f} />
       <PhoneDown f={f} />
       <Tracker f={f} />
       {pi >= 0 ? <Caption p={PHRASES[pi]} f={f} y={ys[pi]} /> : null}

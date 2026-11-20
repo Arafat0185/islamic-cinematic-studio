@@ -7,10 +7,11 @@ import { StoryPlayer } from "../../story/StoryPlayer";
 import type { StoryFilm } from "../../story/story";
 import { FPS, FRAMES, shotAt, accentAt, fxAt, IRISES, SETS } from "./timeline";
 import { Overlay } from "./Overlay";
+import { buildLife } from "./life";
 
 const FILM: StoryFilm = {
   frames: FRAMES, fps: FPS, frameAt: (f, outgoing) => shotAt(f, outgoing).frame, irises: IRISES, whips: [], accentAt, fxAt,
-  Overlay, audio: "audio/quran001_mix.wav", sets: SETS,
+  Overlay, audio: "audio/quran001_mix.wav", sets: SETS, life: buildLife,
 };
 export { FRAMES as QURAN001_FRAMES, FPS as QURAN001_FPS };
 export const Quran001: React.FC = () => <StoryPlayer film={FILM} />;

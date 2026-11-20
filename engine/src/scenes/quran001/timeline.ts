@@ -74,7 +74,7 @@ type Shot = { set: SetId; state: string; plan: Plan; trav: TravellerCard | null;
 // he walks x -4.45 .. -0.3, between the tree at x -5 and the lamp post at x 0, so neither ever comes between the
 // camera and him (the camera stands in the road beyond the parked cars, z 2.45-3.95, above their roofs' line)
 const STREET_WALK = { x0: -4.45, speed: 0.85, stride: 0.48 };
-const streetX = (t: number) => STREET_WALK.x0 + STREET_WALK.speed * t;
+export const streetX = (t: number) => STREET_WALK.x0 + STREET_WALK.speed * t;
 const walkCard = (x: number, x0: number, stride: number, light: number, o: { swing?: number; phone?: number; k?: number } = {}): Omit<TravellerCard, "pos"> => {
   const ph = q(0.25 + (x - x0) / (2 * stride), 240), k = o.k ?? 1, phone = q(o.phone ?? 0, 10);
   return { key: `walk|${ph}|${k}|${phone}|${o.swing ?? 1}|${light}`, draw: (p: Pen) => travellerWalkPhase(p, ph, k, stride / SU, { light, swing: o.swing, phone }), roll: -0.03 * k };
@@ -123,7 +123,7 @@ const dayAt = (f: number, sh: PShot): Shot => {
 };
 
 // ---------------- the courtyard ----------------
-const P1: V3 = [0.15, 0, -0.6], P2: V3 = [1.3, 0, -1.55], MARK: V3 = [0.75, 0, -0.7];
+export const P1: V3 = [0.15, 0, -0.6], P2: V3 = [1.3, 0, -1.55], MARK: V3 = [0.75, 0, -0.7];
 const HEAD2: V3 = [P2[0], 1.72, P2[2]];
 const LAMP: V3 = [MAIN, 2.45, -3.5], LAMP_AIM: V3 = [MAIN, 2.4, -2.95];
 const STEPS = 4, STRIDE_M = (P2[0] - P1[0]) / STEPS;
@@ -140,7 +140,8 @@ const shotCam = (sh: PShot): CB => {
     case "walk": return { cInf: 5, cam: (f) => { const x = lerp3(P1, P2, walkProgress(f)); const e = smooth(U(f, sh)); return cam([x[0] - 1.5 + 0.4 * e, 1.85 - 0.3 * e, 4.4 - 0.5 * e], [x[0] + 0.35, 1.35, x[2]], 46); }, focus: (f) => chest(lerp3(P1, P2, walkProgress(f))) };
     case "takbir": return { cInf: 6, cam: move(cam([0.15, 0.95, 2.6], [1.25, 1.55, -1.55], 44), cam([0.45, 1.05, 1.85], [1.25, 1.62, -1.55], 40), a, b), focus: () => chest(P2) };
     case "qiyamClose": return { cInf: 9, cam: orbit(HEAD2, 2.5, 1.5, 22, 42, a, b, 36, -0.3), focus: () => HEAD2 };
-    case "wideGold": return { cInf: 3, cam: move(cam([-3.0, 2.05, 4.9], [0.5, 1.35, -1.3], 52), cam([-1.5, 1.9, 5.1], [0.8, 1.4, -1.4], 50), a, b), focus: () => chest(P2) };
+    // tilted up a little so a strip of sky shows above the arcade (the clouds, a shooting star, birds at dawn)
+    case "wideGold": return { cInf: 3, cam: move(cam([-3.0, 2.05, 4.9], [0.5, 2.0, -1.3], 52), cam([-1.5, 1.9, 5.1], [0.8, 2.0, -1.4], 50), a, b), focus: () => chest(P2) };
     case "lampGold": return { cInf: 10, nearScale: 1.2, cam: move(cam([0.55, 1.7, -0.9], LAMP_AIM, 38), cam([0.95, 1.9, -1.55], LAMP_AIM, 32), a, b), focus: () => LAMP };
     case "archLow": return { cInf: 6, cam: move(cam([-1.5, 0.62, 0.85], [1.3, 1.95, -2.0], 46), cam([-1.15, 0.68, 0.55], [1.3, 2.0, -2.0], 44), a, b), focus: () => chest(P2) };
     case "poolLow": return { cInf: 5, nearScale: 1.2, cam: move(cam([-1.5, 0.85, 3.35], [1.1, 1.3, -1.5], 50), cam([-1.15, 0.9, 3.0], [1.15, 1.35, -1.5], 48), a, b), focus: () => chest(P2) };

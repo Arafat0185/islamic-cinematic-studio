@@ -1,6 +1,7 @@
 // A story film: several sets (bedroom, street, office, gym, courtyard) and one Traveller, everything a pure function of
 // the frame. The player (StoryPlayer.tsx) builds every set once and shows only the one the frame is in.
 import type React from "react";
+import type * as THREE from "three";
 import type { Cam, V3 } from "../camera/ease";
 import type { Pen } from "../draw/toon";
 import type { Accent } from "../film/film";
@@ -46,6 +47,9 @@ export type StoryFilm = {
   sets?: SetId[];
   /** the shatter: the rendered frame breaks into pieces that fly at the lens (see StoryPlayer) */
   shatterAt?: (f: number) => Shatter | null;
+  /** extra background life for this film only (built once per view into the set roots; update runs every frame after
+   *  the set's own light, before the camera). Things it adds should sit on the NOINK layer so collision ignores them. */
+  life?: (roots: Partial<Record<SetId, THREE.Object3D>>) => { update: (fr: Frame, f: number) => void };
 };
 
 /** crack: 0..1 the cracks spreading from (x, y) over the frame; fly: 0..1 the pieces flying toward the lens and past
