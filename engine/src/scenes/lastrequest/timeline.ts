@@ -9,7 +9,7 @@ import { SU, light2D } from "../../render/card";
 import type { Pen } from "../../draw/toon";
 import { withLook } from "../../characters/traveller";
 import { travellerLying, travellerBedPhoneWide, travellerChair } from "../../characters/travellerPoses";
-import { walker, stoop, LOOKS, type Card } from "../../characters/people";
+import { walker, stoop, LOOKS, duaArms, reachArm, pigeon, type Card } from "../../characters/people";
 import { BEDROOM } from "../../sets/bedroom";
 import { STREET } from "../../sets/street";
 import { HOSPITAL } from "../../sets/hospital";
@@ -30,6 +30,8 @@ export const EV = {
   lightning: (EVJ.lightning as number[]).map(F), soil: (EVJ.soil as number[]).map(F), flicker: (EVJ.flicker as number[]).map(F),
   phoneDrop: F(EVJ.phoneDrop as number), stumble: F(EVJ.stumble as number), fall: F(EVJ.fall as number), collapseBed: F(EVJ.collapseBed as number),
   beads: F(EVJ.beads as number), flat: F(EVJ.flat as number),
+  phonePick: F(EVJ.phonePick as number), blow: F(EVJ.blow as number), wallet: F(EVJ.wallet as number), kufi: F(EVJ.kufi as number), crows: F(EVJ.crows as number),
+  laptop: (EVJ.laptopClose as number[]).map(F), familyLightOut: F(EVJ.familyLightOut as number),
 };
 export const TRANSITIONS = (EVJ.transitions as [number, string][]).map(([t, k]) => ({ f: F(t), kind: k }));
 export type PShot = { kind: string; set: SetId; from: number; to: number };
@@ -74,6 +76,20 @@ const mourners = (c: Cam, leave: number, oneByOne = false): TravellerCard[] => {
     return put("cemetery", d > 0 ? walkC(lk, d, L, mir, { umbrella: um[i] }) : walker(lk, { light: L, shawlNear: mir, umbrella: um[i], headRot: 0.15 }), [x + dir * d, 0, z], { mirror: mir });
   });
 };
+
+// ---------------- the people at the grave and in his room ----------------
+/** the man holding the lantern (life.ts hangs the lantern from his hand: LANTERN_HAND below); leave = seconds since he turned to go */
+export const LANTERN_MAN = { x: -0.95, z: 0.95 };
+export const lanternHand = (f: number): V3 => { const sh = shotOf(f); const leave = sh.kind === "walkAway" ? Math.max(0, (f - sh.from) / FPS - 0.3) : 0; return [LANTERN_MAN.x - 0.45 * leave + 0.12, 0.62, LANTERN_MAN.z + 0.05]; };
+const lanternMan = (c: Cam, leave: number): TravellerCard => {
+  const d = Math.max(0, leave) * 0.45, dir = d > 0 ? -1 : 1, mir = mirrorFor(c, dir, 0), L = lightOf("cem", c, mir);
+  const arm = { E: [306, 470] as [number, number], W: [318, 618] as [number, number], hand: "dot" as const };
+  return put("cemetery", d > 0 ? walkC("m6", d, L, mir, { armN: arm }) : walker("m6", { light: L, shawlNear: mir, armN: arm, headRot: 0.2 }), [LANTERN_MAN.x - d, 0, LANTERN_MAN.z], { mirror: mir });
+};
+const DUA_MEN: [string, number, number, number][] = [["m3", -1.55, -0.95, 1], ["m1", -0.65, -1.25, 1], ["m2", 0.6, -1.25, -1], ["m4", 1.5, -0.95, -1], ["m5", 1.7, 0.75, -1]];
+const CROW_X = [-5.2, -4.6, -4.1, -3.5, -2.9];
+export const MUSHAF_BOY: V3 = [-2.5, 0.013, -1.45];
+const lerp3v = (a: V3, b: V3, k: number): V3 => [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(a[2], b[2], k)];
 
 // ---------------- the shots ----------------
 type Shot = { set: SetId; state: string; cam: Cam; focus: V3; cInf: number; trav: TravellerCard | null; others?: TravellerCard[]; head: V3; hooks?: Frame["hooks"] };
@@ -164,6 +180,42 @@ export const shotAt0 = (f: number): Shot => {
       return { set: "hospital", state: `mon:${q(beatPhase(f), 100)}:${q(amp, 20)}`, cam: c, focus: sh.kind === "bedRail" ? [0.5, 0.85, -1.4] : [0.95, 1.45, -2.04], cInf: 5, trav, head: sh.kind === "bedRail" ? [0, 0.95, -2.1] : NOHEAD };
     }
     case "emptyCurtain": return { set: "hospital", state: "dark", cam: mv(cam([-0.3, 1.35, 1.3], [-0.6, 0.9, -1.6], 44), cam([-0.3, 1.32, 1.0], [-0.7, 0.95, -1.8], 42)), focus: [-0.4, 0.8, -1.5], cInf: 4, trav: null, head: NOHEAD };
+    // ---- the people he left behind (no empty rooms) ----
+    case "fatherBed": case "lightning2": { // his father on the bed in the dark, his prayer beads in his hands, shoulders shaking
+      const c = sh.kind === "fatherBed" ? mv(cam([0.85, 1.1, 1.3], [-0.5, 0.82, -0.25], 44), cam([0.55, 1.05, 0.95], [-0.52, 0.85, -0.25], 40))
+        : (f >= EV.lightning[1] - 1 ? cam([-1.6, 1.7, 1.6], [0.2, 0.8, -1.4], 46) : cam([1.6, 1.6, 2.2], [-0.6, 0.9, -1.3], 46));
+      const L = lightOf("room", c), shake = q(0.006 * Math.sin(t * 21) * Math.abs(Math.sin(t * 2.3)), 1000), E = BEDROOM.EDGE;
+      const dad = put("bedroom", { key: `fbeads|${L}`, draw: (p) => withLook(LOOKS.father, () => travellerChair(p, { light: L, arms: "beads", tilt: -0.35, chair: false })) }, [E[0], E[1] + shake, E[2]], { yaw: 0, blob: null });
+      return { set: "bedroom", state: "nightOff", cam: c, focus: [E[0], 0.95, E[2]], cInf: 5, trav: null, others: [dad], head: [E[0] + 0.05, 1.15, E[2]] };
+    }
+    case "phoneMat": { // his little brother picks the buzzing phone up off the mat and looks at it
+      const c = mv(cam([1.95, 0.95, 1.55], [0.95, 0.42, 0.4], 44), cam([1.8, 0.95, 1.4], [0.95, 0.5, 0.42], 42)), mir = mirrorFor(c, -1, 0), L = lightOf("room", c, mir);
+      const P0: V3 = [1.55, 0.013, 0.75], P1: V3 = [1.3, 0.013, 0.45], k = smooth((f - a) / (EV.phonePick - a - 4)), pos: V3 = [lerp(P0[0], P1[0], k), 0.013, lerp(P0[2], P1[2], k)];
+      const pick = clamp01((f - EV.phonePick) / 8) * (1 - clamp01((f - EV.phonePick - 12) / 8));
+      const card = f < EV.phonePick - 4 ? walkC("brother", Math.hypot(pos[0] - P0[0], pos[2] - P0[2]), L, mir, {}) : f < EV.phonePick + 20 ? stoop("brother", 0.8 * pick, L) : walker("brother", { light: L, shawlNear: mir, phone: 1 });
+      return { set: "bedroom", state: "nightOff", cam: c, focus: [1.1, 0.4, 0.4], cInf: 5, trav: null, others: [put("bedroom", card, pos, { mirror: mir, scale: 0.68 })], head: [pos[0], 1.15, pos[2]] };
+    }
+    case "mushafBlow": { // he reaches the dusty mushaf down from the shelf and blows the dust off
+      const c = mv(cam([-1.35, 1.25, -0.15], [-2.5, 1.2, -1.75], 42), cam([-1.5, 1.2, -0.3], [-2.5, 1.15, -1.75], 40)), mir = mirrorFor(c, -0.3, -1), L = lightOf("room", c, mir);
+      const up = smooth((f - a) / 10) * (1 - smooth((f - a - 18) / 8));
+      const card = walker("brother", { light: L, shawlNear: mir, armN: reachArm(0, up), headRot: f > EV.blow - 6 ? 0.2 : -0.3 });
+      return { set: "bedroom", state: "nightOff", cam: c, focus: [-2.5, 1.2, -1.5], cInf: 5, trav: null, others: [put("bedroom", card, MUSHAF_BOY, { mirror: mir, scale: 0.8 })], head: [MUSHAF_BOY[0], 1.4, MUSHAF_BOY[2]] };
+    }
+    case "laptopClose": { // his father opens the laptop (the balance still there) and slowly closes it
+      const c = mv(cam([0.55, 1.2, 0.65], [-0.15, 0.72, -0.75], 40), cam([0.45, 1.15, 0.45], [-0.3, 0.82, -0.4], 40)), L = lightOf("room", c), E = BEDROOM.EDGE;
+      const dad = put("bedroom", { key: `ftype|${L}`, draw: (p) => withLook(LOOKS.father, () => travellerChair(p, { light: L, arms: "type", tilt: -0.3, chair: false })) }, E, { yaw: 0, blob: null });
+      return { set: "bedroom", state: "nightOff", cam: c, focus: lerp3v([-0.1, 0.65, -0.7], [E[0], 1.0, E[2]], smooth(u * 1.4 - 0.2)), cInf: 7, trav: null, others: [dad], head: [E[0] + 0.05, 1.15, E[2]] };
+    }
+    case "walletBox": { // his wallet goes into a box with his things
+      const c = mv(cam([1.45, 0.95, 2.1], [0.4, 0.45, 0.72], 44), cam([1.3, 0.9, 1.9], [0.38, 0.42, 0.72], 42)), mir = mirrorFor(c, 1, 0), L = lightOf("room", c, mir);
+      const k = smooth((f - a) / 12) * (1 - smooth((f - EV.wallet - 8) / 14));
+      return { set: "bedroom", state: "nightOff", cam: c, focus: [0.6, 0.35, 0.75], cInf: 6, trav: null, others: [put("bedroom", stoop("father", 0.75 * k, L), [0.0, 0.013, 0.7], { mirror: mir })], head: [0.0, 1.7 - 0.6 * k, 0.7] };
+    }
+    case "kufiDoor": { // his kufi is hung on the door, and the light goes out
+      const c = mv(cam([-1.55, 1.5, 1.75], [-2.9, 1.45, 0.4], 42), cam([-1.7, 1.48, 1.55], [-2.92, 1.5, 0.4], 40)), mir = mirrorFor(c, -1, 0), L = lightOf("room", c, mir);
+      const up = smooth((f - a) / 10) * (1 - smooth((f - EV.kufi - 6) / 10));
+      return { set: "bedroom", state: "nightOff", cam: c, focus: [-2.9, 1.5, 0.4], cInf: 5, trav: null, others: [put("bedroom", walker("father", { light: L, shawlNear: mir, armN: reachArm(0, 0.85 * up), headRot: 0.15 }), [-2.45, 0.013, 0.42], { mirror: mir })], head: [-2.45, 1.8, 0.42] };
+    }
     case "matPhone": return { set: "bedroom", state: "nightOff", cam: mv(cam([1.75, 0.65, 1.05], [1.0, 0.05, 0.25], 42), cam([1.6, 0.58, 0.9], [1.0, 0.04, 0.25], 38)), focus: [1.0, 0.05, 0.25], cInf: 6, trav: null, head: NOHEAD };
     case "matBuzz": return { set: "bedroom", state: "nightOff", cam: mv(cam([1.4, 0.44, 0.66], [1.12, 0.04, 0.3], 34), cam([1.36, 0.41, 0.6], [1.12, 0.04, 0.3], 30)), focus: [1.12, 0.04, 0.3], cInf: 8, trav: null, head: NOHEAD };
     case "windowRain": return { set: "bedroom", state: "nightOff", cam: mv(cam([1.08, 1.6, -0.8], [1.05, 1.58, -2.2], 40), cam([1.06, 1.6, -1.2], [1.05, 1.58, -2.2], 36)), focus: [1.05, 1.6, -2.18], cInf: 3, trav: null, head: NOHEAD };
@@ -178,12 +230,29 @@ export const shotAt0 = (f: number): Shot => {
     case "graveSoil": { const c = mv(cam([0.65, 1.65, 2.05], [0.0, 0.05, 0.2], 46), cam([0.55, 1.6, 1.9], [0.0, 0.05, 0.2], 44));
       const [s0, s1] = EV.soil, fill = 0.85 * smooth((f - s0) / (s1 - s0));
       const dig = (x: number, dir: number, ph: number) => { const k = 0.35 + 0.25 * Math.max(0, Math.sin(t * 2.4 + ph)), mir = mirrorFor(c, dir, 0); return put("cemetery", stoop(["m1", "m4"][ph], k, lightOf("cem", c, mir)), [x, 0, -0.05], { mirror: mir }); };
-      return { set: "cemetery", state: "rain", cam: c, focus: [0, 0, 0], cInf: 4, trav: null, others: [dig(-1.45, 1, 0), dig(1.45, -1, 1), ...mourners(c, 0).slice(0, 4)], head: NOHEAD, hooks: { graveFill: fill } }; }
+      return { set: "cemetery", state: "rain", cam: c, focus: [0, 0, 0], cInf: 4, trav: null, others: [dig(-1.45, 1, 0), dig(1.45, -1, 1), ...mourners(c, 0).slice(0, 4), lanternMan(c, 0)], head: NOHEAD, hooks: { graveFill: fill } }; }
+    case "duaGrave": { // men round the grave raise their hands in du'a, in the rain
+      const c = mv(cam([1.7, 1.3, 2.5], [0.0, 0.95, -0.5], 46), cam([1.25, 1.35, 2.7], [-0.1, 0.95, -0.5], 46)), d = duaArms();
+      const men = DUA_MEN.map(([lk, x, z, dir]) => { const mir = mirrorFor(c, dir, 0); return put("cemetery", walker(lk, { light: lightOf("cem", c, mir), shawlNear: mir, armN: d.N, armF: d.F, headRot: 0.2 }), [x, 0, z], { mirror: mir }); });
+      return { set: "cemetery", state: "rain", cam: c, focus: [0, 0.9, -0.6], cInf: 4, trav: null, others: [...men, lanternMan(c, 0)], head: NOHEAD, hooks: { graveFill: 1 } };
+    }
+    case "waterGrave": { // a man sprinkles water on the grave, then smooths the soil with his hands
+      const c = mv(cam([1.0, 0.75, 1.55], [0.05, 0.2, 0.05], 42), cam([0.85, 0.72, 1.35], [0.05, 0.18, 0.05], 40)), mir = mirrorFor(c, -1, 0), L = lightOf("cem", c, mir);
+      const k = 0.55 + 0.35 * smooth((f - a - 26) / 10) + 0.04 * Math.sin(t * 6);
+      return { set: "cemetery", state: "rain", cam: c, focus: [0.1, 0.2, 0.1], cInf: 6, trav: null, others: [put("cemetery", stoop("m2", k, L), [0.95, 0, 0.55], { mirror: mir }), lanternMan(c, 0)], head: [0.95, 1.2, 0.55], hooks: { graveFill: 1 } };
+    }
+    case "gravesTrack": { // slowly along the rows of graves, the wind driving the rain sideways; crows on a wall fly off
+      const x = -1.2 - 1.4 * u, c = cam([x, 0.95, -3.65], [x - 2.2, 0.95, -8.1], 44);
+      const crows = [0, 1, 2, 3, 4].map((i) => { const s = (f - EV.crows) / FPS - 0.12 * i, mir = mirrorFor(c, i % 2 ? 1 : -1, 0);
+        return s > 0 ? put("cemetery", pigeon("fly", (t * 3.4 + i * 0.3) % 1, 0, true), [CROW_X[i] + (i % 2 ? 1 : -1) * 1.4 * s, 1.15 + 1.6 * s * s, -8.25 + 0.6 * s], { mirror: mir, blob: null, scale: 1.4 })
+          : put("cemetery", pigeon("peck", (t * 0.7 + i * 0.37) % 1, 0, true), [CROW_X[i], 1.15, -8.25], { mirror: mir, blob: null, scale: 1.4 }); });
+      return { set: "cemetery", state: "rain", cam: c, focus: [x - 1.5, 0.9, -7.5], cInf: 3, trav: null, others: crows, head: NOHEAD };
+    }
     case "walkAway": { const c = mv(cam([0.8, 1.45, 3.0], [0, 0.4, 0.2], 44), cam([0.7, 1.5, 3.3], [0, 0.35, 0.2], 44));
-      return { set: "cemetery", state: "rain", cam: c, focus: [0, 0.3, 0.3], cInf: 3, trav: null, others: mourners(c, (f - a) / FPS * 1.3 - 0.2, true), head: NOHEAD, hooks: { graveFill: 1 } }; }
+      return { set: "cemetery", state: "rain", cam: c, focus: [0, 0.3, 0.3], cInf: 3, trav: null, others: [...mourners(c, (f - a) / FPS * 1.3 - 0.2, true), lanternMan(c, (f - a) / FPS - 0.3)], head: NOHEAD, hooks: { graveFill: 1 } }; }
     default: { // fogPullback: the camera pulls far back and up into the dark
       const e = Math.pow(u, 0.8), c = cam([lerp(0.5, 0.3, e), lerp(1.2, 3.6, e), lerp(2.6, 17, e)], [0, 0.15, 0.3], lerp(42, 40, e));
-      return { set: "cemetery", state: "fog", cam: c, focus: [0, 0.2, 0], cInf: 2, trav: null, head: NOHEAD, hooks: { graveFill: 1 } };
+      return { set: "cemetery", state: `fog:${q(smooth(u * 1.2), 50)}`, cam: c, focus: [0, 0.2, 0], cInf: 2, trav: null, head: NOHEAD, hooks: { graveFill: 1 } };
     }
   }
 };

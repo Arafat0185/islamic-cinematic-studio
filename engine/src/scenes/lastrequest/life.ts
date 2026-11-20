@@ -14,13 +14,15 @@ import { mat, box, cyl, glow, liveCanvas } from "../../sets/common";
 import { buildMat } from "../motion-test/mat";
 import { applyCam } from "../../camera/ease";
 import type { Frame, SetId } from "../../story/story";
-import { FPS, F, EV, SHOTS, shotOf, procX, PROC, FRAMES, runX, BUS } from "./timeline";
+import { FPS, F, EV, SHOTS, shotOf, procX, PROC, FRAMES, runX, BUS, lanternHand, MUSHAF_BOY } from "./timeline";
 import { CEMETERY } from "../../sets/cemetery";
 
 const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
 void clamp01;
 const sm = (x: number) => { const u = clamp01(x); return u * u * (3 - 2 * u); };
 const fract = (x: number) => x - Math.floor(x);
+const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
+const smooth = (x: number) => { const u = Math.max(0, Math.min(1, x)); return u * u * (3 - 2 * u); };
 const rnd = (seed: number) => { let s = seed; return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; };
 const softDot = () => ctex("lifeDot", 64, 64, (g) => { const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, "rgba(255,255,255,1)"); gr.addColorStop(0.3, "rgba(255,255,255,0.55)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); });
 const kindAt = (f: number) => shotOf(f).kind;
@@ -144,9 +146,25 @@ const bedroomLife = (root: THREE.Object3D) => {
   const flash = new THREE.PointLight("#c8d8ff", 0, 12, 1.2); flash.position.set(1.05, 1.8, -1.6); root.add(flash);
   const bedside = new THREE.PointLight("#ffc890", 0, 4, 1.5); bedside.position.set(-2.3, 0.95, -1.6); root.add(bedside);
   const sillL = new THREE.PointLight("#c8d4ec", 0, 2.5, 1.6); sillL.position.set(1.05, 1.6, -1.6); root.add(sillL);
+  const boxL = new THREE.PointLight("#d8c8b0", 0, 3.5, 1.5); boxL.position.set(0.85, 1.3, 1.3); root.add(boxL);
   const clock = root.getObjectByName("wallClock"), hourC = root.getObjectByName("clockHour"), minC = root.getObjectByName("clockMin");
   const sec = new THREE.Group(); sec.position.z = 0.062; clock?.add(sec); box(sec, [-0.004, -0.03, 0], [0.004, 0.17, 0.006], mat("#7a2a26"), false);
-  const [l0, l1] = EV.lightning, dw = span("drainWave"), dc = span("drainClose"), mp = span("matPhone"), mb = span("matBuzz"), gp = span("grabPhone"), ps = span("pastShelf"), bp2 = span("bankPanic");
+  // a box of his things on the floor (his folded clothes); his wallet goes in
+  const boxG = new THREE.Group(); boxG.position.set(0.5, 0, 0.78); root.add(boxG);
+  const card = mat("#8a6a46");
+  box(boxG, [-0.24, 0, -0.17], [0.24, 0.02, 0.17], card); box(boxG, [-0.24, 0, -0.17], [-0.22, 0.3, 0.17], card); box(boxG, [0.22, 0, -0.17], [0.24, 0.3, 0.17], card);
+  box(boxG, [-0.24, 0, -0.17], [0.24, 0.3, -0.15], card); box(boxG, [-0.24, 0, 0.15], [0.24, 0.3, 0.17], card);
+  box(boxG, [-0.2, 0.02, -0.13], [0.2, 0.2, 0.13], mat("#5a4232"), false);                                   // his folded thobe
+  const wallet = new THREE.Group(); root.add(wallet); box(wallet, [-0.05, 0, -0.035], [0.05, 0.02, 0.035], mat("#2a1e18"));
+  // a door in the side wall, a hook on it; his kufi hung there
+  box(root, [-2.99, 0, -0.08], [-2.95, 2.08, 0.9], mat("#5e3f2a")); box(root, [-2.99, 2.08, -0.12], [-2.93, 2.14, 0.94], mat("#e8e2d6"));
+  box(root, [-2.95, 1.0, 0.75], [-2.92, 1.06, 0.8], mat("#c79c48"), false);
+  box(root, [-2.95, 1.7, 0.38], [-2.9, 1.72, 0.42], mat("#c79c48"), false);                                 // the hook
+  const kufi = new THREE.Mesh(new THREE.SphereGeometry(0.085, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), mat("#d9d6cf")); kufi.scale.set(1, 0.75, 1); root.add(kufi);
+  // dust blown off the mushaf
+  const NP = 60, puff = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ map: softDot(), color: new THREE.Color("#c8c4b8"), size: 0.03, transparent: true, opacity: 0.8, depthWrite: false, fog: false }));
+  const pp = new Float32Array(NP * 3); puff.geometry.setAttribute("position", new THREE.BufferAttribute(pp, 3)); puff.layers.set(NOINK); puff.frustumCulled = false; root.add(puff);
+  const [l0, l1] = EV.lightning, dw = span("drainWave"), dc = span("drainClose"), mp = span("phoneMat"), mb = mp, gp = span("grabPhone"), ps = span("pastShelf"), bp2 = span("bankPanic"), mbl = span("mushafBlow"), lc = span("laptopClose");
   return (_fr: Frame, f: number) => {
     const t = f / FPS, kind = kindAt(f), gone = f >= span("walkHome").from;
     rainOn(t, kind === "windowRain" ? 1.6 : 1);
@@ -155,7 +173,9 @@ const bedroomLife = (root: THREE.Object3D) => {
     ceil.intensity = f >= EV.lightOut ? 0 : 1.1 * (1 - 0.55 * dr) * (f >= dw.from ? 1 - 0.35 * sm((Math.sin(t * 2.3) * Math.sin(t * 0.9 + 1) - 0.2) / 0.5) : 1);
     cold.intensity = kind === "matPhone" || kind === "matBuzz" ? 3.2 : kind === "lightning2" ? 2.4 : gone ? 1.4 : 0.7;
     shelfL.intensity = kind === "pastShelf" || kind === "leftBehind" ? 1.6 : 0;
-    bedside.intensity = kind === "beadsFall" ? 3.0 : 0; sillL.intensity = kind === "drainClose" ? 2.4 : 0;
+    const family = f >= span("fatherBed").from && f < EV.familyLightOut;
+    boxL.intensity = kind === "walletBox" ? 2.6 : 0;
+    bedside.intensity = kind === "beadsFall" ? 3.0 : family ? 1.4 * (f > EV.familyLightOut - 10 ? clamp01((EV.familyLightOut - f) / 10) : 1) : 0; sillL.intensity = kind === "drainClose" ? 2.4 : 0;
     // the clock: 03:12 ticking; racing while the barakah drains; stopped once he is gone
     const race = f >= dw.from && f < dc.to ? Math.pow((f - dw.from) / FPS, 2) * 900 : 0;
     const secs = gone ? 47 * 60 : 12 * 60 + Math.floor(t) + race;
@@ -163,7 +183,12 @@ const bedroomLife = (root: THREE.Object3D) => {
     sec.rotation.z = -((gone ? 31 : Math.floor(t + race)) % 60) / 60 * Math.PI * 2;
     // the mat goes darker when he grabs his phone; the mushaf's dust thickens as he walks past
     (shade.material as THREE.MeshBasicMaterial).opacity = 0.55 * sm((f - gp.from) / (gp.to - gp.from)) * (gone ? 0.4 : 1);
-    const thick = 0.35 + 0.65 * sm((f - ps.from) / (ps.to - ps.from));
+    const take = kind === "mushafBlow" ? smooth((f - mbl.from - 8) / 10) : 0;
+    if (take > 0) book.position.set(lerp(-2.63, MUSHAF_BOY[0], take), lerp(1.9, 0.95, take), lerp(-2.03, MUSHAF_BOY[2] - 0.22, take)); else book.position.set(-2.63, 1.9, -2.03);
+    const blown = kind === "mushafBlow" && f >= EV.blow ? smooth((f - EV.blow) / 10) : f > mbl.to && mbl.to > 0 ? 1 : 0;
+    puff.visible = kind === "mushafBlow" && f >= EV.blow && f < EV.blow + 30;
+    if (puff.visible) { const s2 = (f - EV.blow) / FPS; for (let i = 0; i < NP; i++) { const a2 = i * 2.4, v = 0.2 + 0.25 * ((i * 7) % 5) / 5; pp.set([book.position.x + Math.cos(a2) * v * s2, book.position.y + 0.06 + 0.3 * s2 * (0.5 + 0.5 * Math.sin(i)), book.position.z - 0.3 * s2 + Math.sin(a2) * 0.1 * s2], i * 3); } puff.geometry.attributes.position.needsUpdate = true; (puff.material as THREE.PointsMaterial).opacity = 0.8 * (1 - clamp01(s2 / 1.0)); }
+    const thick = (0.35 + 0.65 * sm((f - ps.from) / (ps.to - ps.from))) * (1 - blown);
     bdust.forEach((m, i) => { (m.material as THREE.MeshBasicMaterial).opacity = Math.min(1, thick * (1.2 - 0.25 * i)); });
     // the beads: on the nightstand, then slipping off its edge (string first), falling, bouncing, scattering
     bead.forEach(({ m, a }, i) => {
@@ -175,9 +200,16 @@ const bedroomLife = (root: THREE.Object3D) => {
       m.position.set(x, Math.max(0.013, y + 0.013), z);
     });
     // the laptop: the bank screen (money ticking down while the barakah drains; red and falling in the panic)
-    const lapOn = kind === "drainWave" || kind === "bankPanic";
-    lap.visible = lapOn; lapL.intensity = lapOn ? 0.8 : 0;
-    if (lapOn) drawBank(kind === "bankPanic" ? Math.max(-1240, 812.4 - (f - bp2.from) / FPS * 690) : 24812.4 - Math.pow((f - dw.from) / FPS, 1.6) * 3100, kind === "bankPanic");
+    const lapOn = kind === "drainWave" || kind === "bankPanic" || kind === "laptopClose";
+    lap.visible = lapOn;
+    if (kind === "laptopClose") {                                                     // his father opens it, the balance still there, and slowly closes it
+      lap.position.set(-0.12, 0.55, -0.72); lap.rotation.y = 1.0;
+      const open = smooth((f - lc.from) / 8) * (1 - smooth((f - EV.laptop[0] - 18) / (EV.laptop[1] - EV.laptop[0] - 18)));
+      lid.rotation.x = 1.52 - (1.52 + 0.32) * open; lapL.intensity = 0.8 * open; drawBank(24812.4, false);
+    } else {
+      lap.position.set(0.18, 0.55, -0.85); lap.rotation.y = 0.75; lid.rotation.x = -0.32; lapL.intensity = lapOn ? 0.8 : 0;
+      if (lapOn) drawBank(kind === "bankPanic" ? Math.max(-1240, 812.4 - (f - bp2.from) / FPS * 690) : 24812.4 - Math.pow((f - dw.from) / FPS, 1.6) * 3100, kind === "bankPanic");
+    }
     // the plant wilts and browns; the food's steam stops and it greys
     const w = sm((f - dc.from) / (dc.to - dc.from)) * (f >= dc.from ? 1 : 0) + (f >= dc.to ? 1 : 0) * 0;
     const wl = f >= dc.to ? 1 : w;
@@ -190,8 +222,8 @@ const bedroomLife = (root: THREE.Object3D) => {
       s.position.set(x0 + (1.05 - x0) * life, 1.2 + 0.5 * life + 0.1 * Math.sin(t + i), z0 + (-2.25 - z0) * life); s.scale.setScalar(0.5 + 0.4 * (1 - life));
       s.material.opacity = lk * 0.35 * Math.sin(Math.PI * life); });
     // the phone on the mat: dark until he is gone; it lights with each notification; it buzzes in the close shot
-    const onMat = f >= mp.from;
-    phone.visible = onMat;
+    const onMat = f >= mp.from && f < EV.phonePick + 8;
+    phone.visible = onMat; phone.position.y = 0.032 + (f > EV.phonePick ? 0.06 * clamp01((f - EV.phonePick) / 8) : 0);
     const blinks = [0.15, 0.95, 1.7, 2.6, 3.4, 4.2];
     const blink = onMat ? Math.max(0, ...blinks.map((d) => { const x = (f - mp.from) / FPS - d; return x >= 0 && x < 0.9 ? (x < 0.08 ? x / 0.08 : 1 - (x - 0.08) / 0.82) : 0; })) : 0;
     (scr.material as THREE.MeshBasicMaterial).color.set("#cfe6ff").multiplyScalar(0.12 + 1.6 * blink); phL.intensity = 0.15 + 0.7 * blink;
@@ -200,6 +232,12 @@ const bedroomLife = (root: THREE.Object3D) => {
     // lightning: two cold flashes
     const lp = (x: number) => (x >= 0 && x < 5 ? Math.exp(-x / 1.4) : 0);
     flash.intensity = 10 * Math.max(lp(f - l0), lp(f - l1));
+    // the box, his wallet going in; his kufi going onto the hook
+    boxG.visible = f >= span("walletBox").from;
+    const wk = smooth((f - EV.wallet + 6) / 14);
+    wallet.visible = boxG.visible; wallet.position.set(lerp(0.33, 0.5, wk), lerp(0.62, 0.22, wk), lerp(0.72, 0.78, wk)); wallet.rotation.z = 0.8 * (1 - wk);
+    const kk = smooth((f - EV.kufi + 8) / 12), kufiOn = f >= span("kufiDoor").from;
+    kufi.visible = kufiOn; kufi.position.set(lerp(-2.62, -2.88, kk), lerp(1.58, 1.62, kk), lerp(0.48, 0.4, kk)); kufi.rotation.z = (Math.PI / 2) * kk;
   };
 };
 
@@ -246,17 +284,25 @@ const cemeteryLife = (root: THREE.Object3D) => {
   const handle = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.008, 6, 16, Math.PI), mat("#2a2622")); handle.position.y = 0.33; lan.add(handle);
   const lanHalo = new THREE.Sprite(new THREE.SpriteMaterial({ map: softDot(), color: new THREE.Color(1.0, 0.6, 0.25), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, fog: false })); lanHalo.scale.set(1.1, 1.1, 1); lanHalo.position.y = 0.17; lan.add(lanHalo);
   lan.traverse((o) => o.layers.set(NOINK));
-  const lanL = new THREE.PointLight("#ffb866", 0, 6, 1.5); lanL.position.set(0.15, 0.45, 0.72); root.add(lanL);
-  const cl = new THREE.Vector3(), fp = span("fogPullback");
+  const lanL = new THREE.PointLight("#ffb866", 0, 6, 1.5); root.add(lanL);
+  // water sprinkled on the grave from a jug; a low wall where the crows sit
+  const NW = 70, water = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ map: softDot(), color: new THREE.Color("#c8d6ec"), size: 0.03, transparent: true, depthWrite: false, fog: false }));
+  const wp = new Float32Array(NW * 3); water.geometry.setAttribute("position", new THREE.BufferAttribute(wp, 3)); water.layers.set(NOINK); water.frustumCulled = false; root.add(water);
+  box(root, [-6.2, 0, -8.45], [-1.8, 1.1, -8.1], mat("#5a5c58"));
+  const cl = new THREE.Vector3(), fp = span("fogPullback"), wg = span("waterGrave");
   return (fr: Frame, f: number) => {
     const t = f / FPS, kind = kindAt(f), proc = kind === "janazahTrack" || kind === "mudFeet" || kind === "umbrellaLine";
     cl.set(...fr.plan.cam.pos).sub(root.position);
-    rain(cl, t, 1.2); spl(cl, t);
+    rain(cl, t, kind === "gravesTrack" || kind === "walkAway" || kind === "fogPullback" ? 4.5 : 1.2); spl(cl, t);
     const kx = proc ? procX(t) : 0; key.position.set(kx + 0.4, kind === "graveSoil" ? 2.6 : 3.2, proc ? PROC.z + 1.2 : 0.8);
     key.intensity = kind === "graveSoil" ? 5.0 : kind === "fogPullback" ? 2.4 - 1.4 * sm((f - fp.from) / (fp.to - fp.from)) : 3.0;
     // the lantern flickers in the wind
-    const lanOn = kind === "graveSoil" || kind === "walkAway" || kind === "fogPullback", gust = 0.75 + 0.25 * Math.sin(t * 7.3) * Math.sin(t * 2.9 + 1) + 0.1 * Math.sin(t * 23);
-    lan.visible = lanOn; lanL.intensity = lanOn ? 2.6 * gust : 0; flame.scale.set(1, 0.85 + 0.2 * gust, 1); lanHalo.material.color.setRGB(1.0 * gust, 0.6 * gust, 0.25 * gust);
+    // the lantern hangs from the man's hand, swinging a little, its flame bending in the wind
+    const lanOn = kind === "graveSoil" || kind === "duaGrave" || kind === "waterGrave" || kind === "walkAway", gust = 0.75 + 0.25 * Math.sin(t * 7.3) * Math.sin(t * 2.9 + 1) + 0.1 * Math.sin(t * 23);
+    lan.visible = lanOn; lanL.intensity = lanOn ? 2.4 * gust : 0; flame.scale.set(1, 0.85 + 0.2 * gust, 1); lanHalo.material.color.setRGB(0.8 * gust, 0.48 * gust, 0.2 * gust);
+    if (lanOn) { const h = lanternHand(f); lan.position.set(h[0], h[1] - 0.36, h[2]); lan.rotation.set(0.08 * Math.sin(t * 2.1), 0, 0.1 * Math.sin(t * 1.7)); lanL.position.set(h[0], h[1] - 0.2, h[2]); }
+    water.visible = kind === "waterGrave" && f < wg.from + 30;
+    if (water.visible) { const s0 = (f - wg.from) / FPS; for (let i = 0; i < NW; i++) { const life = fract(s0 * 2.4 + i / NW), a2 = i * 2.4; wp.set([0.62 - 0.5 * life + 0.06 * Math.cos(a2), 0.62 - 1.6 * life * life + 0.6 * life * 0.2, 0.5 + 0.08 * Math.sin(a2)], i * 3); } water.geometry.attributes.position.needsUpdate = true; }
     bier.visible = proc;
     if (proc) { const x = procX(t); bier.position.set(x, 1.47 + 0.02 * Math.sin(t * 5.2), PROC.z); bier.rotation.z = 0.015 * Math.sin(t * 2.6); }
     mud.visible = proc;
@@ -268,8 +314,8 @@ const cemeteryLife = (root: THREE.Object3D) => {
         sp.set([side * (1.05 - 0.6 * life) + (ss[i * 3 + 1] - 0.5) * 0.25, 0.75 - 1.4 * drop, (ss[i * 3 + 2] - 0.5) * 0.4], i * 3); }
       soil.geometry.attributes.position.needsUpdate = true;
     }
-    const thick = kind === "fogPullback" ? 1.25 : 1;
-    mists.forEach((m, i) => { m.position.x = Math.sin(t * 0.05 + i) * 1.5; m.rotation.set(0, Math.atan2(cl.x - m.position.x, cl.z - m.position.z), 0); const up = Math.max(0, Math.min(1, (cl.y - 1.8) / 2.5)); (m.material as THREE.MeshBasicMaterial).opacity = 0.5 * thick * (1 - 0.7 * up); });
+    const thick = kind === "fogPullback" ? 1.0 + 0.8 * clamp01((f - fp.from) / (fp.to - fp.from)) : 1;
+    mists.forEach((m, i) => { m.position.x = Math.sin(t * 0.05 + i) * 1.5; m.rotation.set(0, Math.atan2(cl.x - m.position.x, cl.z - m.position.z), 0); const up = Math.max(0, Math.min(1, (cl.y - 1.8) / 2.5)); (m.material as THREE.MeshBasicMaterial).opacity = Math.min(0.9, 0.5 * thick * (1 - 0.7 * up)); if (kind === "fogPullback") m.position.z = -1 - i * 2.4 + 3.0 * clamp01((f - fp.from) / (fp.to - fp.from)); });
   };
 };
 

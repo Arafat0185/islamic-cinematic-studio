@@ -34,7 +34,7 @@ const CHUNKS = (() => {
 const VoiceCaption: React.FC<{ f: number; ys: number[] }> = ({ f, ys }) => {
   const t = f / FPS;
   const ci = CHUNKS.findIndex((c, i) => t >= c[0].start - 0.05 && (i + 1 >= CHUNKS.length ? t < c[c.length - 1].end + 1.2 : t < CHUNKS[i + 1][0].start - 0.05));
-  if (ci < 0 || t > TIMING.voiceEnd) return null;
+  if (ci < 0 || f >= EV.phoneOff) return null;                                     // gone with the hard cut on "up"
   const c = CHUNKS[ci], last = c[c.length - 1], out = ci + 1 >= CHUNKS.length ? 1 - smooth((t - last.end - 0.6) / 0.6) : 1 - smooth((t - CHUNKS[ci + 1][0].start + 0.2) / 0.15);
   return (
     <div style={{ position: "absolute", left: CAP_CX - MAXW / 2, width: MAXW, top: H * (ys[ci] ?? 0.72), transform: "translateY(-50%)", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 11px", opacity: out }}>
@@ -119,14 +119,14 @@ const Tracker0: React.FC<{ f: number }> = ({ f }) => {
     </div>
   );
 };
-const NOTES = ["Mum: are you awake?", "12 missed calls", "Mum: please call me", "Are you okay?", "Missed call", "Mum: answer please"];
+const NOTES = ["12 missed calls", "Mum: are you awake?", "Mum: please call me", "Are you okay?"];
 const MatNotes: React.FC<{ f: number }> = ({ f }) => {
-  const s = span("matPhone"), e = span("matBuzz"); if (!s || !e || f < s.from || f >= e.to) return null;
+  const s = span("phoneMat"), e = s; if (!s || !e || f < s.from || f >= e.to) return null;
   const tt = (f - s.from) / FPS, ph = toScreen(f, [SET_OFFSET.bedroom[0] + 1.12, 0.04, 0.3]);
   const out = 1 - smooth((f - e.to + 6) / 6);
   return (
     <AbsoluteFill style={{ opacity: out }}>
-      {[0.15, 0.95, 1.7, 2.6, 3.4, 4.2].map((d, i) => {
+      {[0.05, 0.35, 0.65, 0.95].map((d, i) => {
         const x = tt - d; if (x < 0) return null;
         const k = smooth(x / 0.25) * (1 - 0.5 * smooth((x - 0.8) / 0.6));
         return <div key={i} style={{ position: "absolute", left: Math.min(W - 420, Math.max(60, ph.x - 170 + 14 * (i % 2))), top: Math.max(300, ph.y - 160 - i * 58), width: 340, opacity: 0.8 * k, transform: `scale(${0.85 + 0.15 * smooth(x / 0.25)})`,
@@ -198,7 +198,7 @@ const EndCard: React.FC<{ f: number }> = ({ f }) => {
   const k = smooth((f - CARD_FROM) / 24), lk = smooth((f - CARD_FROM - 8) / 20);
   const line = (s: string, i: number) => <div key={s} style={{ fontFamily: FONT.caption, fontWeight: 600, fontSize: 34, lineHeight: 1.55, color: "#c9c9c4", opacity: smooth((f - CARD_FROM - 16 - 4 * i) / 12) }}>{s}</div>;
   return (
-    <AbsoluteFill style={{ background: `rgba(6,7,10,${Math.max(0.85 * pre, k)})`, alignItems: "center", justifyContent: "center" }}>
+    <AbsoluteFill style={{ background: `rgba(16,20,27,${Math.max(0.6 * pre, k)})`, alignItems: "center", justifyContent: "center" }}>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", opacity: k }}>
         <Img src={staticFile(LOGO)} style={{ width: 400, height: 400, objectFit: "contain", opacity: 0.75 * lk, filter: "grayscale(0.75) brightness(0.8)" }} />
         <div style={{ height: 60 }} />

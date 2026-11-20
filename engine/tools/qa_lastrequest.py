@@ -50,6 +50,23 @@ n = min(len(env(u)), len(env(g)), len(env(pv)))
 cu, cp = float(np.corrcoef(env(u)[:n], env(g)[:n])[0, 1]), float(np.corrcoef(env(pv)[:n], env(g)[:n])[0, 1])
 lines.append(f"## audio\nrecitation span {m.integrated_loudness(u[a:b]):.1f} LUFS (target -14); ambience under the voice part {m.integrated_loudness(u[:v]):.1f} LUFS (target ~-24); peak {20 * np.log10(np.abs(u).max()):.1f} dBFS\n"
              f"envelope correlation with the guide voice (0-{timing['voiceEnd']} s): upload {cu:+.3f} (should be low), preview {cp:+.3f} (should be high): guide voice in the upload file: {'NO' if cu < 0.3 and cp > 0.6 else 'CHECK'} (negative = the rain dips under the voice, the voice itself is absent)")
+# no black stretch longer than 0.5 s anywhere (mean brightness under 4 %), and no silence longer than 0.5 s
+lum = np.frombuffer(subprocess.run(["ffmpeg", "-v", "error", "-i", str(UP), "-vf", "scale=54:96,format=gray", "-f", "rawvideo", "-"], capture_output=True).stdout, np.uint8).reshape(-1, 96 * 54).mean(1) / 255
+runs, cur = [], None
+for i, x in enumerate(lum < 0.04):
+    if x: cur = [cur[0], i] if cur else [i, i]
+    elif cur: runs.append(cur); cur = None
+if cur: runs.append(cur)
+long_black = [(round(a0 / FPS, 2), round((b0 - a0 + 1) / FPS, 2)) for a0, b0 in runs if b0 - a0 + 1 > 0.5 * FPS]
+w = int(0.05 * 48000); mono = u.mean(axis=1); rms = 20 * np.log10(np.sqrt(np.array([np.mean(mono[i:i + w] ** 2) for i in range(0, len(mono) - w, w)])) + 1e-9)
+sil, cur = [], None
+for i, x in enumerate(rms < -55):
+    if x: cur = [cur[0], i] if cur else [i, i]
+    elif cur: sil.append(cur); cur = None
+if cur: sil.append(cur)
+long_sil = [(round(a0 * 0.05, 2), round((b0 - a0 + 1) * 0.05, 2)) for a0, b0 in sil if (b0 - a0 + 1) * 0.05 > 0.5]
+lines.append(f"## black and silence
+black stretches over 0.5 s: {long_black or 'none'}; quietest 50 ms window {rms.min():.1f} dBFS; silences over 0.5 s (< -55 dBFS): {long_sil or 'none'}")
 bad = []
 for p in timing["phrases"]:
     vv = int(p["verse"].split(":")[1]); d = json.loads((VDIR / "quran" / f"63_{vv}.json").read_text(encoding="utf-8"))["verse"]

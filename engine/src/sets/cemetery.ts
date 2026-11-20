@@ -61,9 +61,11 @@ export const buildCemetery = (offset: V3) => {
     top.scale.y = 0.001 + 0.22 * Math.max(0, (e - 0.85) / 0.15);
   };
   setFill(0);
-  const apply = (_state: string, t: number): SetLook => {
+  /** state "fog:<k>": fog rolling in (k 0..1 brings the far fog in from 22 m to 6 m) */
+  const apply = (state: string, t: number): SetLook => {
     for (const [i, lp] of lamps.entries()) lp.l.intensity = 1.2 * (0.9 + 0.1 * Math.sin(t * 1.3 + i * 2));
-    return { lit: [0.3, 0.33, 0.4], shade: [0.1, 0.11, 0.15], lift: [0.02, 0.024, 0.032], sat: 0.7, charTint: [0.8, 0.84, 0.92], cardGain: 0.85, cardPointK: 1.3, pointK: 1.2, grade: GRADE_NIGHT, fog: ["#4a5462", 3, 22] };
+    const k = state.startsWith("fog:") ? Math.max(0, Math.min(1, Number(state.slice(4)))) : 0;
+    return { lit: [0.3, 0.33, 0.4], shade: [0.1, 0.11, 0.15], lift: [0.02, 0.024, 0.032], sat: 0.7, charTint: [0.8, 0.84, 0.92], cardGain: 0.85, cardPointK: 1.3, pointK: 1.2, grade: GRADE_NIGHT, fog: ["#4a5462", 3 - 1.5 * k, 22 - 16 * k] };
   };
   return { set: { id: "cemetery", root, offset, apply } as StorySet, setFill };
 };

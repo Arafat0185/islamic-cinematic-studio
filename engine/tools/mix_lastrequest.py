@@ -145,6 +145,12 @@ def bark():
 def umbrella_rain(d):
     n = int(d * SR); x = np.zeros(n); idx = r.integers(0, n, int(d * 500)); x[idx] = r.uniform(0.2, 1.0, idx.size)
     return stereo(bp(x, 600, 2500) * 1.4)
+def wings():
+    """crows taking off: a flurry of wing beats (noise bursts), thinning out"""
+    n = int(1.8 * SR); t = np.arange(n) / SR; beat = np.maximum(0, np.sin(2 * np.pi * 7.5 * t)) ** 3
+    return stereo(bp(noise(n), 300, 2600) * beat * np.exp(-t / 0.8) * 0.9, -0.3)
+def latch_soft():
+    t = tt(0.25); return verb(stereo(lp(noise(t.size), 900) * np.exp(-t / 0.02) * 0.8), ROOM)
 def soil():
     t = tt(0.9); thud = lp(noise(t.size), 300) * np.exp(-t / 0.06) * 0.8
     scatter = bp(noise(t.size), 600, 4000) * np.exp(-np.maximum(0, t - 0.03) / 0.25) * (t > 0.03) * 0.35
@@ -163,7 +169,7 @@ def main():
     room = mask([(s["at"], s["to"]) for s in SHOTS if s["set"] == "bedroom"])
     rn = rain(N)
     amb = rn * (1 - indoor) * 0.9 + lp(rn, 1100) * indoor * 0.55 + glass(N) * indoor * 0.35
-    amb += glass(N, 160) * mask([(S["windowRain"]["at"], S["windowRain"]["to"]), (S["bedRail"]["at"], S["flatline"]["to"])]) * 0.6
+    amb += glass(N, 160) * mask([(S["bedRail"]["at"], S["flatline"]["to"])]) * 0.6
     amb += wind(N) * (0.35 + 0.65 * (1 - indoor))
     # ---------------- the story ----------------
     fx = np.zeros((2, N))
@@ -183,6 +189,7 @@ def main():
     rt, gap = S["drainWave"]["at"], 0.5
     while rt < S["collapseBed"]["at"]: put(fx, tick(0.9), rt, -4); rt += gap; gap = max(0.07, gap * 0.9)
     put(fx, body_fall(), E["collapseBed"] + 0.25, 0); put(fx, rumble(1.6, 1.3), E["collapseBed"] + 0.1, -2)
+    put(fx, heartbeat(1.6), E["phoneOff"], 0); put(fx, thunder(close=True), E["phoneOff"] + 0.02, -2)   # the hard cut on "up": a heavy heartbeat, a crack of thunder
     for k in range(4): put(fx, buzz(0.5), S["bankPanic"]["at"] + 0.2 + 0.65 * k, -10)   # 63:10
     for at, g, w in steps(S["walkHome"]["at"] + 0.1, 8, 0.36, -4, 1.0): put(fx, splash_step(0.7, w), at, g)
     put(fx, splash_step(1.2, 1.6), E["phoneDrop"] + 0.3, 0); put(fx, crack(), E["phoneDrop"] + 0.32, -2)
@@ -193,8 +200,15 @@ def main():
     fl = beep(1000, 2.4); fl[:, -int(0.8 * SR):] *= np.linspace(1, 0, int(0.8 * SR)); put(fx, fl, E["flat"], -12)
     put(fx, rumble(2.2, 1.0), E["flat"] - 0.1, -6)
     put(fx, howl(2.8), S["emptyCurtain"]["at"], -8); put(fx, bark(), S["emptyCurtain"]["at"] + 0.9, -14)
-    for d in [0.15, 0.95, 1.7, 2.6, 3.4, 4.2]: put(fx, buzz(0.6), S["matPhone"]["at"] + d, -8)
-    put(fx, howl(3.0), S["leftBehind"]["at"], -8); put(fx, creak(1.8), S["leftBehind"]["at"] + 1.0, -14)
+    # the people he left behind: his father's beads, the phone picked up, the mushaf, the laptop, the box, the door
+    for k in range(5): put(fx, tick(0.6), S["fatherBed"]["at"] + 0.3 + 0.38 * k, -10)
+    for d in [0.05, 0.35]: put(fx, buzz(0.3), S["phoneMat"]["at"] + d, -8)
+    put(fx, tick(1.0), E["phonePick"] + 0.15, -4)
+    put(fx, sheets(0.5), S["mushafBlow"]["at"] + 0.35, -8); put(fx, breath(0.5, 2.0), E["blow"], -6)
+    put(fx, tick(0.9), S["laptopClose"]["at"] + 0.2, -6); put(fx, latch_soft(), E["laptopClose"][1] - 0.1, -2)
+    put(fx, body_fall() * 0.25, E["wallet"] + 0.15, -10)
+    put(fx, tick(1.0), E["kufi"] + 0.25, -4); put(fx, creak(1.6), S["kufiDoor"]["at"] + 0.3, -12)
+    put(fx, howl(3.0), S["fatherBed"]["at"], -10)
     for at in [2.2, 12.0, 26.0, 38.5, 47.0, 58.0, 68.5]: put(fx, thunder(), at, -6)
     for at in E["lightning"]: put(fx, thunder(close=True), at + 0.05, 0)
     jz0, jz1 = S["janazahTrack"]["at"], S["graveSoil"]["at"]                 # the janazah
@@ -203,7 +217,9 @@ def main():
     s0, s1 = E["soil"]; st = s0
     while st < s1: put(fx, soil(), st, -2); st += 0.75 + 0.2 * r.random()
     for at, g, w in steps(S["walkAway"]["at"] + 0.2, 10, 0.34, -2, 1.1, fade=True): put(fx, splash_step(0.8, w), at, g)
-    put(fx, rumble(4.0, 0.8), S["fogPullback"]["at"], -6)
+    put(fx, umbrella_rain(1.0) * 1.5, S["waterGrave"]["at"] + 0.1, -6)
+    put(fx, wings(), E["crows"], -2); put(fx, howl(4.0), S["gravesTrack"]["at"], -4)
+    put(fx, rumble(2.4, 0.8), S["fogPullback"]["at"], -6)
     for k in range(int(TOTAL)): put(amb, tick() * (0.2 + 0.8 * room[min(N - 1, int(k * SR))]), k + 0.3, -8)   # the slow clock
     sfx = amb + fx
     cut = (t >= E["phoneOff"]) & (t < timing["recStart"]); sfx[:, cut] *= 0.35  # the hard cut to black: only a little rain

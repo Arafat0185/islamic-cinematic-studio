@@ -66,6 +66,8 @@ const umbrellaFront = (c: string) => (p: Pen) => {
   p.poly(cw(pts), c, OW * 0.7);
   for (const k of [-0.6, -0.2, 0.2, 0.6]) p.stroke([[334, 20], [334 + 200 * k, 96]], 3, mul(c, [0.6, 0.6, 0.66]));
 };
+/** du'a: both hands raised in front of the chest, palms up and open */
+export const duaArms = (): { N: ArmPose; F: ArmPose } => ({ N: { E: [350, 452], W: [404, 392], hand: "open", ang: -1.2 }, F: { E: [340, 456], W: [392, 400], hand: "open", ang: -1.35 } });
 /** an arm round a friend's back (hug): forward and a little up */
 const hugArm: ArmPose = { E: [372, 400], W: [470, 360], hand: "dot" };
 
@@ -73,19 +75,19 @@ export type Card = { key: string; draw: (p: Pen) => void };
 const k3 = (x: number) => Math.round(x * 1000) / 1000;
 
 /** standing still or walking (phase, k = how much the walk is on, stride in design units), with options */
-export const walker = (look: string, o: { phase?: number; k?: number; stride?: number; light?: number; shawlNear?: boolean; armN?: ArmPose; armF?: ArmPose; headRot?: number; bags?: string; swing?: number; fold?: number; barefoot?: boolean; tag?: string; umbrella?: string } = {}): Card => {
+export const walker = (look: string, o: { phase?: number; k?: number; stride?: number; light?: number; shawlNear?: boolean; armN?: ArmPose; armF?: ArmPose; headRot?: number; bags?: string; swing?: number; fold?: number; barefoot?: boolean; tag?: string; umbrella?: string; phone?: number } = {}): Card => {
   const ph = k3(o.phase ?? 0.25), k = k3(o.k ?? 0), L = o.light ?? DEF_LIGHT;
   const lk = { ...LOOKS[look], ...(o.barefoot ? { sandal: LOOKS[look].skin ?? SKIN_T } : {}) };
   return {
-    key: `walker|${look}|${ph}|${k}|${o.stride ?? 0}|${L}|${!!o.shawlNear}|${JSON.stringify(o.armN ?? 0)}|${JSON.stringify(o.armF ?? 0)}|${k3(o.headRot ?? 0)}|${o.bags ?? ""}|${o.swing ?? 1}|${k3(o.fold ?? 0)}|${!!o.barefoot}|${o.tag ?? ""}|${o.umbrella ?? ""}`,
+    key: `walker|${look}|${ph}|${k}|${o.stride ?? 0}|${L}|${!!o.shawlNear}|${JSON.stringify(o.armN ?? 0)}|${JSON.stringify(o.armF ?? 0)}|${k3(o.headRot ?? 0)}|${o.bags ?? ""}|${o.swing ?? 1}|${k3(o.fold ?? 0)}|${!!o.barefoot}|${o.tag ?? ""}|${o.umbrella ?? ""}|${o.phone ?? 0}`,
     draw: (p) => withLook(lk, () => {
       const um = o.umbrella ? umbrellaFront(o.umbrella) : undefined, armN = o.umbrella ? UMBRELLA_ARM : o.armN;
-      if (!armN && !o.armF && !o.headRot && !o.bags) { travellerWalkPhase(p, ph, k, o.stride ?? 90, { light: L, shawlNear: o.shawlNear, swing: o.swing, fold: o.fold }); return; }
+      if (!armN && !o.armF && !o.headRot && !o.bags && !o.phone) { travellerWalkPhase(p, ph, k, o.stride ?? 90, { light: L, shawlNear: o.shawlNear, swing: o.swing, fold: o.fold }); return; }
       if (k > 0) {
         // walking with posed arms: the walk's own feet, the arms posed
-        const cfg: Partial<UprightCfg> = { armN, armF: o.armF, headRot: o.headRot, bags: o.bags, front: um };
+        const cfg: Partial<UprightCfg> = { armN, armF: o.armF, headRot: o.headRot, bags: o.bags, front: um, phone: o.phone };
         walkWith(p, ph, k, o.stride ?? 90, L, !!o.shawlNear, cfg);
-      } else uprightSide(p, { near: STAND_N, far: STAND_F, armNear: 0, armFar: 0, bob: 0, light: L, seed: 1, shawlNear: o.shawlNear, armN, armF: o.armF, headRot: o.headRot, bags: o.bags, fold: o.fold, front: um });
+      } else uprightSide(p, { near: STAND_N, far: STAND_F, armNear: 0, armFar: 0, bob: 0, light: L, seed: 1, shawlNear: o.shawlNear, armN, armF: o.armF, headRot: o.headRot, bags: o.bags, fold: o.fold, front: um, phone: o.phone });
     }),
   };
 };
@@ -262,12 +264,12 @@ const catHead = (p: Pen, x: number, y: number, rot: number, fur: string, dark: s
 // ---------------- a pigeon ----------------
 /** a pigeon, side view facing right, on y = 975: "peck" (phase: the head bobs down), "fly" (phase: wings beat; lift in
  *  design units raises it off the ground) */
-export const pigeon = (mode: "peck" | "fly", phase = 0, lift = 0): Card => {
+export const pigeon = (mode: "peck" | "fly", phase = 0, lift = 0, crow = false): Card => {
   const ph = Math.round(phase * 8) / 8, lq = Math.round(lift / 10) * 10;
   return {
-    key: `pigeon|${mode}|${ph}|${lq}`,
+    key: `pigeon|${mode}|${ph}|${lq}|${crow}`,
     draw: (p) => {
-      const g = p.g, grey = "#8d93a0", dark = "#5c6270", base = SOLE - lq;
+      const g = p.g, grey = crow ? "#1c1d22" : "#8d93a0", dark = crow ? "#0c0d10" : "#5c6270", base = SOLE - lq;
       g.save();
       if (mode === "peck") { p.line([[296, base - 6], [298, base - 26]], "#c0675a", 5); p.line([[310, base - 6], [312, base - 26]], "#c0675a", 5); }
       const body = cw([[262, base - 40], [282, base - 62], [330, base - 64], [350, base - 46], [332, base - 28], [282, base - 26]] as P2[]);
@@ -275,7 +277,7 @@ export const pigeon = (mode: "peck" | "fly", phase = 0, lift = 0): Card => {
       p.poly(body, grey, OW * 0.5);
       const dn = mode === "peck" ? Math.max(0, Math.sin(ph * Math.PI * 2)) : 0;
       const hx = 352 + 8 * dn, hy = base - 70 + 40 * dn;
-      p.line([[336, base - 56], [hx - 4, hy + 8]], "#6f8a7a", 14);                                                     // the neck (a green sheen)
+      p.line([[336, base - 56], [hx - 4, hy + 8]], crow ? grey : "#6f8a7a", 14);                                                     // the neck (a green sheen)
       p.ell(hx, hy, 13, 12, grey, OW * 0.4);
       p.poly(cw([[hx + 11, hy - 2], [hx + 22, hy + 2], [hx + 11, hy + 5]] as P2[]), "#3a3030", 0);                   // beak
       if (mode === "fly") { const w = Math.sin(ph * Math.PI * 2); p.poly(cw([[290, base - 56], [318, base - 58], [296 - 10 * w, base - 56 - 70 * w], [280, base - 60 - 50 * w]] as P2[]), dark, OW * 0.4); }

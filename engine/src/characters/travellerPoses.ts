@@ -731,7 +731,7 @@ export const phoneInHand = (p: Pen, x: number, y: number, ang: number, light: nu
  *  as part of the drawing, so no 3D chair ever cuts through him. Hands typing at 0.78 m (above a 0.75 m desk top). */
 /** arms "phone": both hands hold a phone in front of his chest, head bowed to it (scroll = 0..1 thumb, glow = the
  *  screen's brightness); "call": the near hand holds a phone to his ear, the far hand rests on his knee. */
-export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | "rest" | "phone" | "call" | "head"; wave?: number; tilt?: number; wind?: number; chair?: boolean; scroll?: number } = {}) => {
+export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | "rest" | "phone" | "call" | "head" | "beads"; wave?: number; tilt?: number; wind?: number; chair?: boolean; scroll?: number } = {}) => {
   const light = o.light ?? DEF_LIGHT, arms = o.arms ?? "type";
   const hip: P2 = [272, 742], knee: P2 = [445, 748], ankle: P2 = [455, 952], sh: P2 = [292, 545];
   const hc = 404;
@@ -747,6 +747,7 @@ export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | 
   }
   const rest = (o.arms ?? "type") === "rest" || arms === "call";
   if (arms === "head") { sleeve(p, [290, 560], [372, 482], [334, 372]); p.dot(330, 366, 12); } // far hand on the back of his head
+  else if (arms === "beads") { sleeve(p, [290, 560], [330, 690], [392, 712]); p.dot(396, 716, 12); }      // far hand cupped in his lap
   else if (rest) { sleeve(p, [290, 560], [330, 680], [420, 735]); p.dot(426, 740, 12); }
   else if (arms === "phone") { sleeve(p, [290, 560], [330, 690], [398, 628]); p.dot(402, 624, 12); }
   else { sleeve(p, [290, 560], [342, 670], [528, 612]); p.dot(534, 616, 12); }
@@ -776,6 +777,12 @@ export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | 
     sleeve(p, [300, 562], [318, 652], [292, 470]);
     phoneInHand(p, 290, 428, 0.08, light, true);
     p.dot(294, 466, 12.5);
+  } else if (arms === "beads") { // prayer beads held in both hands in his lap, head bowed low over them
+    if (o.shawlNear) shawl.cap(p);
+    profileHead(p, 318, hc + 14, 0.5 - 0.28 * tilt, light, o.seed ?? 1);
+    sleeve(p, [300, 562], [342, 694], [404, 706]);
+    for (let i = 0; i < 14; i++) { const a = (i / 14) * Math.PI * 2; p.dot(404 + 22 * Math.cos(a), 730 + 14 * Math.sin(a), 5, "#4a2e22"); }
+    p.dot(408, 710, 12.5);
   } else if (arms === "head") { // both hands on his head, elbows forward, head bowed low: despair
     if (o.shawlNear) shawl.cap(p);
     profileHead(p, 322, hc + 18, 0.55 - 0.28 * tilt, light, o.seed ?? 1);

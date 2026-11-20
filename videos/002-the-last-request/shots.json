@@ -71,144 +71,174 @@
    "at": 19.74,
    "kind": "black",
    "set": "bedroom",
-   "why": "a hard cut to black on 'up'"
+   "why": "a hard cut to black on 'up' (0.36 s), bridged by a heavy heartbeat and a thunder crack"
   },
   {
-   "at": 22.2,
+   "at": 20.1,
    "kind": "bankPanic",
    "set": "bedroom",
    "why": "63:10 And spend...: the bank screen, work notifications piling up; his hands on his head"
   },
   {
-   "at": 25.0,
+   "at": 23.15,
    "kind": "walkHome",
    "set": "street",
    "why": "before death approaches one of you: he walks home alone in the heavy rain"
   },
   {
-   "at": 27.8,
+   "at": 25.95,
    "kind": "phoneDrop",
    "set": "street",
    "why": "his phone drops into a puddle and cracks"
   },
   {
-   "at": 30.05,
+   "at": 28.2,
    "kind": "collapseStreet",
    "set": "street",
    "why": "and he says...: he stumbles and collapses on the wet street (from a distance, side view)"
   },
   {
-   "at": 32.8,
+   "at": 30.95,
    "kind": "bedRail",
    "set": "hospital",
    "why": "the hospital: the camera moves along the bed rail; the heartbeat on the monitor slowing; heavier rain"
   },
   {
-   "at": 34.6,
+   "at": 32.75,
    "kind": "flatline",
    "set": "hospital",
    "why": "...if only You would delay me: the line goes flat"
   },
   {
-   "at": 36.6,
+   "at": 34.75,
    "kind": "emptyCurtain",
    "set": "hospital",
    "why": "for a brief term: the empty bed; the curtain moves in the draft (no being is shown)"
   },
   {
-   "at": 39.4,
-   "kind": "matPhone",
+   "at": 37.55,
+   "kind": "fatherBed",
    "set": "bedroom",
-   "why": "his phone lighting up on the dusty mat: 'Mum: are you awake?', '12 missed calls'"
+   "why": "his father sits on his bed in the dark, holding his prayer beads, shoulders shaking"
   },
   {
-   "at": 42.0,
-   "kind": "matBuzz",
+   "at": 39.7,
+   "kind": "phoneMat",
    "set": "bedroom",
-   "why": "close: the phone buzzing on the mat; nobody answers"
+   "why": "his phone buzzes on the mat ('12 missed calls'); his little brother picks it up and looks at it"
   },
   {
-   "at": 44.2,
-   "kind": "windowRain",
+   "at": 41.0,
+   "kind": "mushafBlow",
    "set": "bedroom",
-   "why": "so I would give charity...: through the rain on his window"
+   "why": "his little brother takes the dusty mushaf off the shelf and blows the dust off"
   },
   {
-   "at": 46.9,
-   "kind": "leftBehind",
+   "at": 42.35,
+   "kind": "laptopClose",
    "set": "bedroom",
-   "why": "...and be of the righteous: across his dark room, pushing toward the window"
+   "why": "so I would give charity: his father opens his laptop, the big balance still on screen, and slowly closes it"
   },
   {
-   "at": 49.95,
+   "at": 44.6,
+   "kind": "walletBox",
+   "set": "bedroom",
+   "why": "...his wallet is put into a box with his things"
+  },
+  {
+   "at": 46.4,
+   "kind": "kufiDoor",
+   "set": "bedroom",
+   "why": "...and be of the righteous: his kufi is hung on the door as the light goes out"
+  },
+  {
+   "at": 48.1,
    "kind": "lightning2",
    "set": "bedroom",
    "why": "63:11 But never will Allah delay a soul: two lightning flashes reveal the empty room"
   },
   {
-   "at": 52.4,
+   "at": 50.55,
    "kind": "janazahTrack",
    "set": "cemetery",
    "why": "when its time has come: alongside the carriers walking through the rain"
   },
   {
-   "at": 55.2,
+   "at": 53.35,
    "kind": "mudFeet",
    "set": "cemetery",
    "why": "feet splashing in the mud"
   },
   {
-   "at": 57.6,
+   "at": 55.75,
    "kind": "umbrellaLine",
    "set": "cemetery",
    "why": "umbrellas, men walking in a line"
   },
   {
-   "at": 60.2,
+   "at": 58.35,
    "kind": "graveSoil",
    "set": "cemetery",
-   "why": "at the grave: soil falling, the lantern flickering in the wind"
+   "why": "at the grave: soil falling; a man holds a lantern"
   },
   {
-   "at": 63.1,
+   "at": 60.2,
+   "kind": "duaGrave",
+   "set": "cemetery",
+   "why": "And Allah is Aware of what you do: men round the grave raise their hands in du'a in the rain"
+  },
+  {
+   "at": 62.0,
+   "kind": "waterGrave",
+   "set": "cemetery",
+   "why": "a man sprinkles water on the grave; hands smooth the soil"
+  },
+  {
+   "at": 63.7,
+   "kind": "gravesTrack",
+   "set": "cemetery",
+   "why": "the camera tracks slowly past rows of graves; wind blows the rain sideways; crows on a wall fly off"
+  },
+  {
+   "at": 65.3,
    "kind": "walkAway",
    "set": "cemetery",
-   "why": "And Allah is Aware of what you do: the crowd turns and walks away one by one; the camera stays with the grave"
+   "why": "the men turn and leave one by one, footsteps in the mud"
   },
   {
-   "at": 66.3,
+   "at": 66.9,
    "kind": "fogPullback",
    "set": "cemetery",
-   "why": "the final pull-back into fog and darkness"
+   "why": "fog rolls in over the grave as the camera pulls far back"
   }
  ],
  "events": {
   "lightOut": 19.74,
   "phoneOff": 19.74,
-  "hospitalDark": 36.4,
+  "hospitalDark": 34.55,
   "lightning": [
-   50.1,
-   51.0
+   48.25,
+   49.15
   ],
   "soil": [
-   60.5,
-   63.0
+   58.5,
+   60.2
   ],
   "flicker": [
    13.4,
    17.5
   ],
-  "janazah": 52.4,
+  "janazah": 50.55,
   "busPass": [
    1.2,
    3.5
   ],
-  "phoneDrop": 28.45,
-  "stumble": 30.7,
-  "fall": 31.2,
+  "phoneDrop": 26.6,
+  "stumble": 28.85,
+  "fall": 29.35,
   "collapseBed": 18.4,
   "beads": 11.2,
-  "flat": 34.6,
+  "flat": 32.75,
   "bump": 4.4,
   "transitions": [
    [
@@ -220,37 +250,43 @@
     "cut"
    ],
    [
-    22.2,
+    20.1,
     "blinkOpen"
    ],
    [
-    32.8,
+    30.95,
     "smear"
    ],
    [
-    34.6,
+    32.75,
     "heart"
    ],
    [
-    36.6,
+    34.75,
     "blink"
    ],
    [
-    44.2,
-    "glass"
-   ],
-   [
-    49.95,
+    48.1,
     "flash"
    ],
    [
-    52.4,
+    50.55,
     "glass"
    ],
    [
-    63.1,
+    65.3,
     "smear"
    ]
-  ]
+  ],
+  "familyLightOut": 47.6,
+  "laptopClose": [
+   42.6,
+   44.3
+  ],
+  "phonePick": 40.05,
+  "blow": 41.9,
+  "wallet": 45.1,
+  "kufi": 46.9,
+  "crows": 64.4
  }
 }
