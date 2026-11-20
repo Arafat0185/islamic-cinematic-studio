@@ -31,6 +31,8 @@ import { buildDeadlines } from "../sets/deadlines";
 import { buildAirport } from "../sets/airport";
 import { buildCar } from "../sets/car";
 import { buildSofa } from "../sets/sofa";
+import { buildHospital } from "../sets/hospital";
+import { buildCemetery } from "../sets/cemetery";
 import type { SetLook, StorySet } from "../sets/common";
 import { SET_OFFSET, SetId, StoryFilm, FrameFx, Shatter } from "./story";
 import { buildCourtyardFx } from "../brand/courtyardFx";
@@ -69,13 +71,15 @@ const buildWorld = (traffic: Vehicle[], ids: SetId[] = DEFAULT_SETS) => {
   if (has("office")) { office = buildOffice(SET_OFFSET.office); sets.office = office.set; }
   const simple: [SetId, (o: [number, number, number]) => StorySet][] = [
     ["bedroom", buildBedroom], ["gym", buildGym], ["feed", buildFeed], ["void", buildVoid], ["deadlines", buildDeadlines],
-    ["airport", buildAirport], ["car", buildCar], ["sofa", buildSofa],
+    ["airport", buildAirport], ["car", buildCar], ["sofa", buildSofa], ["hospital", buildHospital],
   ];
   for (const [id, b] of simple) if (has(id)) sets[id] = b(SET_OFFSET[id]);
+  let cemetery: ReturnType<typeof buildCemetery> | null = null;
+  if (has("cemetery")) { cemetery = buildCemetery(SET_OFFSET.cemetery); sets.cemetery = cemetery.set; }
   for (const [id, st] of Object.entries(sets) as [SetId, StorySet][]) roots[id] = st.root;
   for (const r of Object.values(roots)) root.add(r!);
   const cast = new Cast(); root.add(cast.root);
-  return { root, roots: roots as Record<SetId, THREE.Object3D>, sets, court, fx, courtFx, levels, street, office, cast };
+  return { root, roots: roots as Record<SetId, THREE.Object3D>, sets, court, fx, courtFx, levels, street, office, cemetery, cast };
 };
 type World = ReturnType<typeof buildWorld>;
 
@@ -189,6 +193,7 @@ const Inner: React.FC<{ film: StoryFilm; outgoing?: boolean; traffic: Vehicle[] 
   } else {
     if (fr.hooks?.streetX !== undefined) w.street?.follow(fr.hooks.streetX as number);
     if (fr.set === "office") w.office?.setBanner((fr.hooks?.officeBanner as string | null) ?? null);
+    if (fr.hooks?.graveFill !== undefined) w.cemetery?.setFill(fr.hooks.graveFill as number);
     const st = w.sets[fr.set];
     if (!st) throw new Error(`set "${fr.set}" is not built for this film (add it to film.sets)`);
     look = st.apply(fr.state, fr.t);
@@ -362,7 +367,7 @@ export const StoryPlayer: React.FC<{ film: StoryFilm; traffic?: Vehicle[] }> = (
       {!fx && whip ? <WhipBlurDefs px={whip.blur} /> : null}
       {fx ? <FxDefs fx={fx} whipBlur={whip?.blur ?? 0} f={f} /> : null}
       <View film={film} traffic={traffic} style={fx
-        ? { filter: "url(#storyFx)", ...(fx.zoom ? { transform: `scale(${fx.zoom.scale})`, transformOrigin: `${fx.zoom.x}px ${fx.zoom.y}px` } : {}) }
+        ? { filter: "url(#storyFx)" + (fx.css ? " " + fx.css : ""), ...(fx.zoom ? { transform: `scale(${fx.zoom.scale})`, transformOrigin: `${fx.zoom.x}px ${fx.zoom.y}px` } : {}) }
         : whip ? { filter: "url(#whipBlur)" } : undefined} />
       {ir && iris ? <View film={film} outgoing traffic={traffic} style={{ clipPath: irisClip(iris.R, iris.rot, wd, h) }} /> : null}
       {iris ? <IrisRim R={iris.R} rot={iris.rot} u={iris.u} /> : null}

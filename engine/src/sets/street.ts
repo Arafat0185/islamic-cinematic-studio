@@ -124,13 +124,19 @@ export const buildStreet = (offset: V3) => {
   const lampBeams = [-20, -10, 0, 10, 20].map((x) => lightBeam(root, [x, 4.0, 2.85], [x + 0.2, 0, 2.5], 0.3, 2.6, "#ffe2a8", 0.2));
   let followX = 0;
   const apply = (state: string, t: number): SetLook => {
-    const night = state === "night" || state === "dawn", dawn = state === "dawn";
+    const off = state === "dark";                                // night, every window and shop dark, the lamps dim
+    const night = state === "night" || state === "dawn" || off, dawn = state === "dawn";
     for (const { v, mesh } of traffic) { mesh.position.set(v.passX + v.speed * (t - v.passAt), 0, v.lane); mesh.rotation.y = v.speed < 0 ? Math.PI : 0; }
-    for (const sh of shops) sh.mesh.material = night ? sh.night : sh.day;
+    for (const sh of shops) sh.mesh.material = night && !off ? sh.night : sh.day;
     for (const lh of lampHeads) lh.mesh.material = night ? lampGlow : lh.day;
-    nightLights.forEach((l, i) => { l.intensity = night ? 7 : 0; l.position.set(followX - 6 + i * 4.5, 1.6, 0.4); });
+    nightLights.forEach((l, i) => { l.intensity = night && !off ? 7 : 0; l.position.set(followX - 6 + i * 4.5, 1.6, 0.4); });
     for (const b of lampBeams) b.setLevel(night ? 1 : 0);
     motes.update(t); for (const s3 of shafts) s3.setLevel(night ? 0 : state === "afternoon" ? 1.2 : 0.9);
+    if (off) {
+      sky.setColours("#1a1f28", "#3e4754"); s2.setFrom([0.3, 1.3, 0.8]);
+      for (const b of lampBeams) b.setLevel(0.55);
+      return { lit: [0.22, 0.24, 0.3], shade: [0.07, 0.08, 0.11], lift: [0.014, 0.016, 0.024], sat: 0.7, charTint: [0.8, 0.85, 0.95], cardGain: 0.8, cardPointK: 1.3, pointK: 1.0, grade: GRADE_NIGHT, fog: ["#3a4350", 5, 34] };
+    }
     if (dawn) { // before Fajr: deep blue sky lightening at the horizon, lamps and some windows still lit
       sky.setColours("#0f1c3f", "#4a5c94"); s2.setFrom([0.3, 1.3, 0.8]);
       return { lit: [0.2, 0.23, 0.4], shade: [0.07, 0.08, 0.16], lift: [0.012, 0.014, 0.032], sat: 0.95, charTint: [0.85, 0.88, 1.0], cardGain: 0.95, cardPointK: 1.3, pointK: 1.2, grade: GRADE_NIGHT, fog: ["#22305c", 10, 60] };

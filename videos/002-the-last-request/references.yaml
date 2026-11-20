@@ -1,0 +1,34 @@
+# References for video 002 · The Last Request
+# Rule: nothing ships until every source is checked and reviewer.approved is true.
+
+video: 002-the-last-request
+sources:
+  - id: quran-63-10-11
+    type: quran
+    used_in: The_Last_Request.mp4 (recitation in our sound track + on-screen captions)
+    reference: Surat Al-Munafiqun 63:10-11
+    recited_by: Sheikh Yasser Ad-Dussary (Al-Dossari)
+    recitation_audio: https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/063010.mp3 and 063011.mp3 (see NOTICE.md)
+    grade: n/a (Quran)
+    arabic_text: quran.com API v4, text_uthmani, saved verbatim in quran/63_10.json, quran/63_11.json
+    translation_used: Saheeh International (quran.com translation id 20, name confirmed in quran/translations_list.json)
+    link: https://quran.com/63/10-11
+    api: https://api.quran.com/api/v4/verses/by_key/63:{10..11}?fields=text_uthmani&translations=20
+    quoted_exactly: >-
+      Every caption is an exact slice of the saved API text; tools/build_lastrequest_timing.py fails unless the
+      phrases of each verse join back into the API text exactly (Arabic) and into the translation with the footnote
+      markers removed (English). Phrase list and timing: timing.json.
+    checked_on: 2026-11-20
+    checked_by: Claude (API responses saved; translation name confirmed; text checked mechanically)
+
+  - id: voice-clip
+    type: voice (not a religious source)
+    used_in: 0-21.7 s, added by the channel owner in TikTok ("Alborz - original sound"); NOT in our file
+    transcript: voice/transcript.json (local Whisper small.en, word timings; "Qiyam al-Layl" and "tongue" corrected by hand)
+    note: the guide recording (engine/public/audio/guide/alborz_guide.mp4) is for timing only, never exported or committed
+
+reviewer:
+  name: Arafat Rouf
+  role: channel owner
+  approved: true
+  notes: "2026-11-20: Al-Munafiqun 63:10-11 (Arabic and Saheeh International English) and the caption table reviewed; go-ahead given to render."

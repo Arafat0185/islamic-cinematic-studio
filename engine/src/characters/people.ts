@@ -29,6 +29,15 @@ export const LOOKS: Record<string, Look> = {
   w4: { skin: "#8d5b3c", thobe: "#d9cdb4", shawl: "#6b3a3a", kufi: "#efe9dc", beard: "#1a1416" },
   w5: { skin: "#b07a54", thobe: "#7a8a6a", shawl: "#e4dccb", kufi: "#ffffff", beard: "#d9d4cc", strand: "#aaa39a" },
   w6: { skin: "#a0704c", thobe: "#c9b48a", shawl: "#3f4f6b", kufi: "#ffffff", beard: "#1a1416" },
+  // muted mourners (video 002): dark and grey thobes, no bright colours
+  m1: { skin: "#a8744f", thobe: "#2e3236", shawl: "#4a4e52", kufi: "#d9d6cf", beard: "#1a1416" },
+  m2: { skin: "#7a4e34", thobe: "#d6d2c8", shawl: "#5a5e62", kufi: "#ffffff", beard: "#2a2020" },
+  m3: { skin: "#b07a54", thobe: "#4a4f58", shawl: "#2e3236", kufi: "#e8e4dc", beard: "#cfcac2", strand: "#9a948c" },
+  m4: { skin: "#8d5b3c", thobe: "#5e5a52", shawl: "#3a3e44", kufi: "#ffffff", beard: "#1a1416" },
+  m5: { skin: "#c49a74", thobe: "#22262c", shawl: "#55595e", kufi: "#d9d6cf", beard: "#3a2a20" },
+  m6: { skin: "#a0704c", thobe: "#8a8880", shawl: "#33373c", kufi: "#ffffff", beard: "#1a1416" },
+  /** the Traveller in video 002: his brand colours muted (dark rust scarf, a darker thobe) */
+  travellerMuted: { shawl: "#5c2a1f", thobe: "#5a4232" },
   kid1: { skin: "#c08a5e", thobe: "#c94f3a", shawl: null, kufi: "#ffffff", beard: "#1a1416", beardless: true },
   kid2: { skin: "#8d5b3c", thobe: "#3f8a6a", shawl: null, kufi: "#ffffff", beard: "#1a1416", beardless: true },
   kid3: { skin: "#b07a54", thobe: "#e0b04a", shawl: null, kufi: "#ffffff", beard: "#2a1e1a", beardless: true },
@@ -47,6 +56,16 @@ export const wuduArms = (k: number): { N: ArmPose; F: ArmPose } => ({
   N: { E: [344, 456], W: [436 + 6 * Math.sin(k * 9), 478 - 10 * Math.sin(k * 6)], hand: "open", ang: 0.35 },
   F: { E: [336, 458], W: [424 - 6 * Math.sin(k * 9), 486 + 8 * Math.sin(k * 6)], hand: "open", ang: 0.5 },
 });
+/** holding an umbrella: the near hand up in front of the chest, the shaft up past the head, a dark canopy above */
+const UMBRELLA_ARM: ArmPose = { E: [354, 440], W: [346, 340], hand: "dot" };
+const umbrellaFront = (c: string) => (p: Pen) => {
+  p.line([[346, 336], [334, 64]], "#2a2a2c", 7);
+  const pts: P2[] = [];
+  for (let i = 0; i <= 24; i++) { const a = Math.PI + (Math.PI * i) / 24; pts.push([334 + 200 * Math.cos(a), 92 + 74 * Math.sin(a)]); }
+  for (let i = 5; i >= 0; i--) { const x = 134 + (400 * i) / 5; pts.push([x, 92 + (i % 2 ? 0 : 10)]); }
+  p.poly(cw(pts), c, OW * 0.7);
+  for (const k of [-0.6, -0.2, 0.2, 0.6]) p.stroke([[334, 20], [334 + 200 * k, 96]], 3, mul(c, [0.6, 0.6, 0.66]));
+};
 /** an arm round a friend's back (hug): forward and a little up */
 const hugArm: ArmPose = { E: [372, 400], W: [470, 360], hand: "dot" };
 
@@ -54,18 +73,19 @@ export type Card = { key: string; draw: (p: Pen) => void };
 const k3 = (x: number) => Math.round(x * 1000) / 1000;
 
 /** standing still or walking (phase, k = how much the walk is on, stride in design units), with options */
-export const walker = (look: string, o: { phase?: number; k?: number; stride?: number; light?: number; shawlNear?: boolean; armN?: ArmPose; armF?: ArmPose; headRot?: number; bags?: string; swing?: number; fold?: number; barefoot?: boolean; tag?: string } = {}): Card => {
+export const walker = (look: string, o: { phase?: number; k?: number; stride?: number; light?: number; shawlNear?: boolean; armN?: ArmPose; armF?: ArmPose; headRot?: number; bags?: string; swing?: number; fold?: number; barefoot?: boolean; tag?: string; umbrella?: string } = {}): Card => {
   const ph = k3(o.phase ?? 0.25), k = k3(o.k ?? 0), L = o.light ?? DEF_LIGHT;
   const lk = { ...LOOKS[look], ...(o.barefoot ? { sandal: LOOKS[look].skin ?? SKIN_T } : {}) };
   return {
-    key: `walker|${look}|${ph}|${k}|${o.stride ?? 0}|${L}|${!!o.shawlNear}|${JSON.stringify(o.armN ?? 0)}|${JSON.stringify(o.armF ?? 0)}|${k3(o.headRot ?? 0)}|${o.bags ?? ""}|${o.swing ?? 1}|${k3(o.fold ?? 0)}|${!!o.barefoot}|${o.tag ?? ""}`,
+    key: `walker|${look}|${ph}|${k}|${o.stride ?? 0}|${L}|${!!o.shawlNear}|${JSON.stringify(o.armN ?? 0)}|${JSON.stringify(o.armF ?? 0)}|${k3(o.headRot ?? 0)}|${o.bags ?? ""}|${o.swing ?? 1}|${k3(o.fold ?? 0)}|${!!o.barefoot}|${o.tag ?? ""}|${o.umbrella ?? ""}`,
     draw: (p) => withLook(lk, () => {
-      if (!o.armN && !o.armF && !o.headRot && !o.bags) { travellerWalkPhase(p, ph, k, o.stride ?? 90, { light: L, shawlNear: o.shawlNear, swing: o.swing, fold: o.fold }); return; }
+      const um = o.umbrella ? umbrellaFront(o.umbrella) : undefined, armN = o.umbrella ? UMBRELLA_ARM : o.armN;
+      if (!armN && !o.armF && !o.headRot && !o.bags) { travellerWalkPhase(p, ph, k, o.stride ?? 90, { light: L, shawlNear: o.shawlNear, swing: o.swing, fold: o.fold }); return; }
       if (k > 0) {
         // walking with posed arms: the walk's own feet, the arms posed
-        const cfg: Partial<UprightCfg> = { armN: o.armN, armF: o.armF, headRot: o.headRot, bags: o.bags };
+        const cfg: Partial<UprightCfg> = { armN, armF: o.armF, headRot: o.headRot, bags: o.bags, front: um };
         walkWith(p, ph, k, o.stride ?? 90, L, !!o.shawlNear, cfg);
-      } else uprightSide(p, { near: STAND_N, far: STAND_F, armNear: 0, armFar: 0, bob: 0, light: L, seed: 1, shawlNear: o.shawlNear, armN: o.armN, armF: o.armF, headRot: o.headRot, bags: o.bags, fold: o.fold });
+      } else uprightSide(p, { near: STAND_N, far: STAND_F, armNear: 0, armFar: 0, bob: 0, light: L, seed: 1, shawlNear: o.shawlNear, armN, armF: o.armF, headRot: o.headRot, bags: o.bags, fold: o.fold, front: um });
     }),
   };
 };

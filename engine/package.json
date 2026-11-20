@@ -35,7 +35,11 @@
     "quran001-timing": ".venv-tts/Scripts/python tools/build_quran_timing.py",
     "quran001-mix": ".venv-tts/Scripts/python tools/mix_quran001.py",
     "quran001": "node tools/render-chunks.mjs TheFirstQuestionQuran out/The_First_Question_QURAN.mp4 --chunk 600 --audio public/audio/quran001_mix.wav --keep && npx remotion ffmpeg -v error -y -i out/The_First_Question_QURAN.mp4 -i public/audio/quran001_preview_mix.wav -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 192k -shortest out/The_First_Question_QURAN_PREVIEW.mp4",
-    "quran001-qa": ".venv-tts/Scripts/python tools/qa_quran001.py out/The_First_Question_QURAN.mp4 out/The_First_Question_QURAN_PREVIEW.mp4 out/qa_quran001"
+    "quran001-qa": ".venv-tts/Scripts/python tools/qa_quran001.py out/The_First_Question_QURAN.mp4 out/The_First_Question_QURAN_PREVIEW.mp4 out/qa_quran001",
+    "lastrequest-timing": ".venv-tts/Scripts/python tools/build_lastrequest_timing.py",
+    "lastrequest-mix": ".venv-tts/Scripts/python tools/mix_lastrequest.py",
+    "lastrequest": "node tools/render-chunks.mjs TheLastRequest out/The_Last_Request.mp4 --chunk 600 --audio public/audio/lastrequest_mix.wav --keep && npx remotion ffmpeg -v error -y -i out/The_Last_Request.mp4 -i public/audio/lastrequest_preview_mix.wav -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 192k -shortest out/The_Last_Request_PREVIEW.mp4",
+    "lastrequest-qa": ".venv-tts/Scripts/python tools/qa_lastrequest.py out/The_Last_Request.mp4 out/The_Last_Request_PREVIEW.mp4 out/qa_lastrequest"
   },
   "dependencies": {
     "@fontsource/amiri": "5.3.0",

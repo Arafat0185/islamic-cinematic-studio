@@ -1,0 +1,421 @@
+{
+ "fps": 30,
+ "voiceEnd": 21.7,
+ "recStart": 22.2,
+ "recEnd": 74.978,
+ "verseStarts": {
+  "63:10": 22.2,
+  "63:11": 57.964
+ },
+ "gap": 0.7,
+ "cardFrom": 75.978,
+ "length": 78.967,
+ "reciter": "Sheikh Yasser Al-Dossari",
+ "surah": "Al-Munafiqun",
+ "range": "63:10-11",
+ "translation": "Saheeh International",
+ "voice": [
+  {
+   "w": "You",
+   "start": 0.0,
+   "end": 0.62,
+   "key": false
+  },
+  {
+   "w": "think",
+   "start": 0.62,
+   "end": 0.86,
+   "key": false
+  },
+  {
+   "w": "you're",
+   "start": 0.86,
+   "end": 1.12,
+   "key": false
+  },
+  {
+   "w": "not",
+   "start": 1.12,
+   "end": 1.22,
+   "key": false
+  },
+  {
+   "w": "being",
+   "start": 1.22,
+   "end": 1.5,
+   "key": false
+  },
+  {
+   "w": "punished",
+   "start": 1.5,
+   "end": 1.76,
+   "key": true
+  },
+  {
+   "w": "for",
+   "start": 1.76,
+   "end": 1.96,
+   "key": false
+  },
+  {
+   "w": "your",
+   "start": 1.96,
+   "end": 2.1,
+   "key": false
+  },
+  {
+   "w": "sins?",
+   "start": 2.1,
+   "end": 2.32,
+   "key": true
+  },
+  {
+   "w": "Look",
+   "start": 3.16,
+   "end": 3.22,
+   "key": false
+  },
+  {
+   "w": "closely.",
+   "start": 3.22,
+   "end": 3.78,
+   "key": false
+  },
+  {
+   "w": "You've",
+   "start": 4.46,
+   "end": 4.56,
+   "key": false
+  },
+  {
+   "w": "been",
+   "start": 4.56,
+   "end": 4.74,
+   "key": false
+  },
+  {
+   "w": "deprived",
+   "start": 4.74,
+   "end": 5.2,
+   "key": true
+  },
+  {
+   "w": "of",
+   "start": 5.2,
+   "end": 5.42,
+   "key": false
+  },
+  {
+   "w": "your",
+   "start": 5.42,
+   "end": 5.58,
+   "key": false
+  },
+  {
+   "w": "Qiyam al-Layl,",
+   "start": 5.58,
+   "end": 6.22,
+   "key": false
+  },
+  {
+   "w": "your",
+   "start": 6.74,
+   "end": 6.94,
+   "key": false
+  },
+  {
+   "w": "daily",
+   "start": 6.94,
+   "end": 7.26,
+   "key": false
+  },
+  {
+   "w": "Qur'an",
+   "start": 7.26,
+   "end": 7.62,
+   "key": false
+  },
+  {
+   "w": "recitation,",
+   "start": 7.62,
+   "end": 8.3,
+   "key": false
+  },
+  {
+   "w": "your",
+   "start": 8.96,
+   "end": 9.06,
+   "key": false
+  },
+  {
+   "w": "sunnah",
+   "start": 9.06,
+   "end": 9.46,
+   "key": false
+  },
+  {
+   "w": "prayers",
+   "start": 9.46,
+   "end": 9.78,
+   "key": false
+  },
+  {
+   "w": "and",
+   "start": 9.78,
+   "end": 10.78,
+   "key": false
+  },
+  {
+   "w": "your",
+   "start": 10.78,
+   "end": 10.94,
+   "key": false
+  },
+  {
+   "w": "tongue",
+   "start": 10.94,
+   "end": 11.18,
+   "key": false
+  },
+  {
+   "w": "no",
+   "start": 11.18,
+   "end": 11.44,
+   "key": false
+  },
+  {
+   "w": "longer",
+   "start": 11.44,
+   "end": 11.7,
+   "key": false
+  },
+  {
+   "w": "remembers",
+   "start": 11.7,
+   "end": 12.14,
+   "key": false
+  },
+  {
+   "w": "Allah.",
+   "start": 12.14,
+   "end": 12.46,
+   "key": false
+  },
+  {
+   "w": "And",
+   "start": 13.54,
+   "end": 13.64,
+   "key": false
+  },
+  {
+   "w": "without",
+   "start": 13.64,
+   "end": 13.92,
+   "key": false
+  },
+  {
+   "w": "you",
+   "start": 13.92,
+   "end": 14.12,
+   "key": false
+  },
+  {
+   "w": "even",
+   "start": 14.12,
+   "end": 14.44,
+   "key": false
+  },
+  {
+   "w": "realizing",
+   "start": 14.44,
+   "end": 14.88,
+   "key": false
+  },
+  {
+   "w": "it,",
+   "start": 14.88,
+   "end": 15.38,
+   "key": false
+  },
+  {
+   "w": "your",
+   "start": 15.68,
+   "end": 15.8,
+   "key": false
+  },
+  {
+   "w": "heart",
+   "start": 15.8,
+   "end": 16.1,
+   "key": true
+  },
+  {
+   "w": "is",
+   "start": 16.1,
+   "end": 16.28,
+   "key": false
+  },
+  {
+   "w": "slowly",
+   "start": 16.28,
+   "end": 16.62,
+   "key": false
+  },
+  {
+   "w": "closing",
+   "start": 16.62,
+   "end": 17.1,
+   "key": true
+  },
+  {
+   "w": "off.",
+   "start": 17.1,
+   "end": 17.38,
+   "key": false
+  },
+  {
+   "w": "So",
+   "start": 18.66,
+   "end": 18.94,
+   "key": false
+  },
+  {
+   "w": "when",
+   "start": 18.94,
+   "end": 19.12,
+   "key": false
+  },
+  {
+   "w": "are",
+   "start": 19.12,
+   "end": 19.24,
+   "key": false
+  },
+  {
+   "w": "you",
+   "start": 19.24,
+   "end": 19.32,
+   "key": false
+  },
+  {
+   "w": "gonna",
+   "start": 19.32,
+   "end": 19.54,
+   "key": false
+  },
+  {
+   "w": "wake",
+   "start": 19.54,
+   "end": 19.74,
+   "key": true
+  },
+  {
+   "w": "up?",
+   "start": 19.74,
+   "end": 19.94,
+   "key": true
+  }
+ ],
+ "phrases": [
+  {
+   "i": 0,
+   "verse": "63:10",
+   "ar": "وَأَنفِقُوا۟ مِن مَّا رَزَقْنَـٰكُم",
+   "arKeys": [],
+   "en": "And spend [in the way of Allāh] from what We have provided you",
+   "keys": [
+    "spend"
+   ],
+   "start": 22.2,
+   "end": 26.1
+  },
+  {
+   "i": 1,
+   "verse": "63:10",
+   "ar": "مِّن قَبْلِ أَن يَأْتِىَ أَحَدَكُمُ ٱلْمَوْتُ",
+   "arKeys": [
+    5
+   ],
+   "en": "before death approaches one of you",
+   "keys": [
+    "death"
+   ],
+   "start": 26.1,
+   "end": 32.0
+  },
+  {
+   "i": 2,
+   "verse": "63:10",
+   "ar": "فَيَقُولَ رَبِّ لَوْلَآ أَخَّرْتَنِىٓ",
+   "arKeys": [
+    3
+   ],
+   "en": "and he says, \"My Lord, if only You would delay me",
+   "keys": [
+    "delay me"
+   ],
+   "start": 32.0,
+   "end": 41.5
+  },
+  {
+   "i": 3,
+   "verse": "63:10",
+   "ar": "إِلَىٰٓ أَجَلٍ قَرِيبٍ",
+   "arKeys": [
+    2
+   ],
+   "en": "for a brief term",
+   "keys": [
+    "brief term"
+   ],
+   "start": 41.5,
+   "end": 50.2
+  },
+  {
+   "i": 4,
+   "verse": "63:10",
+   "ar": "فَأَصَّدَّقَ وَأَكُن مِّنَ ٱلصَّـٰلِحِينَ",
+   "arKeys": [],
+   "en": "so I would give charity and be of the righteous.\"",
+   "keys": [
+    "charity"
+   ],
+   "start": 50.2,
+   "end": 57.964
+  },
+  {
+   "i": 5,
+   "verse": "63:11",
+   "ar": "وَلَن يُؤَخِّرَ ٱللَّهُ نَفْسًا إِذَا جَآءَ أَجَلُهَا ۚ",
+   "arKeys": [
+    1,
+    6
+   ],
+   "en": "But never will Allāh delay a soul when its time has come.",
+   "keys": [
+    "never",
+    "delay a soul"
+   ],
+   "start": 57.964,
+   "end": 66.364
+  },
+  {
+   "i": 6,
+   "verse": "63:11",
+   "ar": "وَٱللَّهُ خَبِيرٌۢ بِمَا تَعْمَلُونَ",
+   "arKeys": [
+    1
+   ],
+   "en": "And Allāh is Aware of what you do.",
+   "keys": [
+    "Aware"
+   ],
+   "start": 66.364,
+   "end": 75.978
+  }
+ ],
+ "sources": {
+  "recitation": "https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/063010.mp3 (and 063011)",
+  "text": "https://api.quran.com/api/v4/verses/by_key/63:{10..11}?fields=text_uthmani&translations=20"
+ }
+}

@@ -1,0 +1,161 @@
+{
+ "about": "Video 002 The Last Request: the shot list, shared by the picture (engine/src/scenes/lastrequest/timeline.ts) and the sound (engine/tools/mix_lastrequest.py). Times in seconds; the end card is an overlay from timing.json cardFrom.",
+ "shots": [
+  {
+   "at": 0.0,
+   "kind": "rainWindow",
+   "set": "bedroom",
+   "why": "You think you're not being punished...: rain running down his window at night"
+  },
+  {
+   "at": 3.1,
+   "kind": "dustyMat",
+   "set": "bedroom",
+   "why": "Look closely: his prayer mat, untouched, dust on it in the cold window light"
+  },
+  {
+   "at": 4.4,
+   "kind": "scroll3am",
+   "set": "bedroom",
+   "why": "deprived of your Qiyam al-Layl: 3 a.m., he lies in bed scrolling, the clock above him"
+  },
+  {
+   "at": 6.7,
+   "kind": "mushaf",
+   "set": "bedroom",
+   "why": "your daily Qur'an recitation: the mushaf closed on the top shelf, dust on it"
+  },
+  {
+   "at": 8.9,
+   "kind": "clockSpin",
+   "set": "bedroom",
+   "why": "your sunnah prayers: the clock's hands racing; the prayer tracker at 0/5"
+  },
+  {
+   "at": 10.7,
+   "kind": "tasbih",
+   "set": "bedroom",
+   "why": "your tongue no longer remembers Allah: his prayer beads lying untouched by the bed while he scrolls"
+  },
+  {
+   "at": 13.4,
+   "kind": "roomDim",
+   "set": "bedroom",
+   "why": "your heart is slowly closing off: the whole room, him small in it; the light flickers"
+  },
+  {
+   "at": 17.5,
+   "kind": "lightOut",
+   "set": "bedroom",
+   "why": "So when are you gonna wake up?: the light dies, then the phone; darkness"
+  },
+  {
+   "at": 22.2,
+   "kind": "laptopBank",
+   "set": "bedroom",
+   "why": "63:10 And spend from what We have provided you: his laptop on the bed, the bank screen, work notifications"
+  },
+  {
+   "at": 24.1,
+   "kind": "mushafDust",
+   "set": "bedroom",
+   "why": "...his mushaf closed on the shelf under dust"
+  },
+  {
+   "at": 26.0,
+   "kind": "hospRain",
+   "set": "hospital",
+   "why": "before death approaches one of you: rain on a hospital window at night"
+  },
+  {
+   "at": 28.6,
+   "kind": "monitor",
+   "set": "hospital",
+   "why": "the monitor's line"
+  },
+  {
+   "at": 32.0,
+   "kind": "hospitalWide",
+   "set": "hospital",
+   "why": "and he says: him in the hospital bed; the room goes dark"
+  },
+  {
+   "at": 37.0,
+   "kind": "emptyBed",
+   "set": "hospital",
+   "why": "My Lord, if only You would delay me: the empty bed in the dark (no being is shown)"
+  },
+  {
+   "at": 41.5,
+   "kind": "matPhone",
+   "set": "bedroom",
+   "why": "for a brief term: his dusty prayer mat, his phone lighting up on it, nobody answering"
+  },
+  {
+   "at": 46.1,
+   "kind": "leftBehind",
+   "set": "bedroom",
+   "why": "so I would give charity...: across his dark room, everything left behind"
+  },
+  {
+   "at": 52.1,
+   "kind": "stillWindow",
+   "set": "bedroom",
+   "why": "...and be of the righteous: the rain on his window, the stopped clock"
+  },
+  {
+   "at": 57.96,
+   "kind": "lightning",
+   "set": "bedroom",
+   "why": "63:11 But never will Allah delay a soul: lightning on the empty room"
+  },
+  {
+   "at": 59.8,
+   "kind": "janazah",
+   "set": "cemetery",
+   "why": "when its time has come: the janazah in the rain, the shrouded body, umbrellas"
+  },
+  {
+   "at": 63.0,
+   "kind": "janazahLow",
+   "set": "cemetery",
+   "why": "low: feet in the mud, the bier above"
+  },
+  {
+   "at": 66.36,
+   "kind": "burial",
+   "set": "cemetery",
+   "why": "And Allah is Aware of what you do: the grave by a lantern, soil falling"
+  },
+  {
+   "at": 69.6,
+   "kind": "leaving",
+   "set": "cemetery",
+   "why": "the camera rises as everyone walks away; the grave alone in the rain"
+  },
+  {
+   "at": 72.4,
+   "kind": "graveFog",
+   "set": "cemetery",
+   "why": "the grave in fog, the camera pulls far back into darkness"
+  }
+ ],
+ "events": {
+  "lightOut": 18.9,
+  "phoneOff": 21.3,
+  "hospitalDark": 36.6,
+  "lightning": [
+   58.1,
+   58.45
+  ],
+  "soil": [
+   66.7,
+   69.6
+  ],
+  "flicker": [
+   14.2,
+   18.9
+  ],
+  "janazah": 59.8
+ }
+}
