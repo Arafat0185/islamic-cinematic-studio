@@ -1,11 +1,11 @@
 # 001 · The First Question
 
 **Series:** Before Fajr (salah)
-**Brand:** Maktabatu Al-Ilm (brown #4D312C, orange #FB5606, white)
+**Brand:** channel brand (brown #4D312C, orange #FB5606, white)
 **World:** a fast, crowded day (shopping street, office, a phone-feed world, a wall of deadlines, a phone, an airport,
 a bedroom, a car in traffic, a sofa) → the courtyard at night, from the hadith onward
 **Character:** The Traveller (v7, brand colours: brown thobe, orange scarf, cream kufi)
-**Target length:** 55-65 seconds
+**Target length:** about 1:05 (64.7 s, including a 15 s quiet moment and the end card)
 **Voice:** Kokoro am_adam, deep (pitch -2 semitones), speed 1.15: fast, urgent, close; very short gaps; a longer pause
 before the hadith and after "And you've lost."
 **Status:** final version (2026-11-19). The owner decided to publish; references.yaml still records the reviewer step.
@@ -77,8 +77,8 @@ source tag.
 > Your next prayer is closer than you think.
 
 ### 10. Ending
-**Visual:** the camera cranes up; the floor pattern completes into the star mark. Then a 5-second quiet moment (no voice,
-no effects, soft ambience only) for a recitation added on TikTok. Then the end card: the Maktabatu Al-Ilm logo and the
+**Visual:** the camera cranes up; the floor pattern completes into the star mark. Then a 15-second quiet moment (no voice,
+no effects, soft ambience only) for a recitation added on TikTok. Then the end card: the channel logo (no text with it) and the
 sources.
 **On screen, end card:**
 - Sources: Jami' at-Tirmidhi 413, graded Sahih (Darussalam)

@@ -1,4 +1,4 @@
-// The 2D layer of video 001's final version (Maktabatu Al-Ilm brand: brown #4D312C, orange #FB5606, white):
+// The 2D layer of video 001's final version (channel brand: brown #4D312C, orange #FB5606, white):
 //  - kinetic captions: each phrase punches in; keywords pop (to ~115 %, then settle) in orange with a glow (warnings red,
 //    good actions green); the biggest words (first, lost, merciful, next one) slam in. Placed clear of his head and
 //    upper body and of the tracker.
@@ -6,11 +6,11 @@
 //    light up, crack (red) when a prayer is let go, light orange when one is prayed, and are mended by the mercy
 //  - pop-outs: coins, papers, notification bubbles, sticky notes, boarding passes flying at the lens and past the frame
 //  - shockwave rings on the impacts; the giant FIRST; the phone flooded with pings; the hadith's source tag; the end
-//    card with the source (the channel logo is left off until the new one is ready)
+//    card with the channel logo and the source
 // All timing from final/plan.json via timeline.ts.
 import React, { useMemo } from "react";
 import * as THREE from "three";
-import { AbsoluteFill, getInputProps, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Img, getInputProps, staticFile, useCurrentFrame } from "remotion";
 import { applyCam, smooth, clamp01 } from "../../camera/ease";
 import { FONT, measure, useFonts } from "../../text/fonts";
 import { A, F, FPS, WORDS, shotAt, shotOf, minutesAt, Word } from "./timeline";
@@ -19,6 +19,8 @@ import PLAN from "../../../../videos/001-the-first-question/final/plan.json";
 const W = 1080, H = 1920;
 export const BRAND = { brown: "#4D312C", orange: "#FB5606", white: "#FFFFFF", red: "#E5484D", green: "#3FB37F" };
 const PANEL = "rgba(77,49,44,0.85)";
+/** the channel logo (brand/logo/, copied into public/brand/logo/) */
+const LOGO = "brand/logo/traveller_logo_transparent.svg";
 
 // ---------------- projection ----------------
 const pcam = new THREE.PerspectiveCamera(45, W / H, 0.1, 600), v = new THREE.Vector3();
@@ -380,11 +382,13 @@ const SourceTag: React.FC<{ f: number; y: number }> = ({ f, y }) => {
 const EndCard: React.FC<{ f: number }> = ({ f }) => {
   const a = F(A.card);
   if (f < a) return null;
-  // the channel logo is left off for now (a new one is being made): the card shows the source only
-  const k = smooth((f - a) / 14), sk = smooth((f - a - 8) / 14);
+  // the channel logo (on its own, no name with it), then the source line
+  const k = smooth((f - a) / 14), lk = smooth((f - a - 4) / 12), sk = smooth((f - a - 10) / 12);
   return (
     <AbsoluteFill style={{ background: `rgba(77,49,44,${0.94 * k})`, alignItems: "center", justifyContent: "center" }}>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", opacity: k }}>
+        <Img src={staticFile(LOGO)} style={{ width: 520, height: 520, objectFit: "contain", opacity: lk, transform: `scale(${0.95 + 0.05 * lk})` }} />
+        <div style={{ height: 90 }} />
         <div style={{ opacity: sk, transform: `translateY(${(1 - sk) * 14}px)`, textAlign: "center" }}>
           <div style={{ fontFamily: FONT.caption, fontWeight: 800, fontSize: 34, letterSpacing: "0.22em", color: BRAND.orange, marginBottom: 22 }}>SOURCES</div>
           <div style={{ width: 120, height: 3, background: BRAND.orange, margin: "0 auto 30px" }} />

@@ -6,7 +6,7 @@
 // a 5 s quiet moment and the end card. Picture effects (motion blur, chromatic aberration, glitch, zoom-throughs,
 // flash, vignette, grain) are computed here too (fxAt), and the shatter (shatterAt).
 import * as THREE from "three";
-import { Cam, V3, clamp01, smooth, glide, applyCam } from "../../camera/ease";
+import { Cam, V3, clamp01, smooth, applyCam } from "../../camera/ease";
 import { SU, light2D } from "../../render/card";
 import { endingAt } from "../../brand/sequences";
 import { whipAt } from "../../brand/transitions";
@@ -204,7 +204,13 @@ const shotCam = (sh: PShot): CB => {
   }
 };
 const ENDING_TOP: Cam = { pos: [0.75, 4.6, 4.8], look: [0.75, 0.0, -0.7], fov: 46, roll: 0 };   // ~40 degrees down, never steeper than 45
-const QUIET_TOP: Cam = { pos: [1.25, 4.85, 4.55], look: [0.8, 0.0, -0.75], fov: 44, roll: 0 };
+/** the quiet moment: a slow crane and orbit round the star mark (never steeper than ~43 degrees down) */
+const quietCam = (f: number): Cam => {
+  const T = Math.max(1, CARD.to - QUIET.from), x = clamp01((f - QUIET.from) / T);
+  const u = x < 0.15 ? (x * x) / 0.3 : (x - 0.075) / 0.925 * 1;           // eases out of the crane's stop, then steady
+  const a = 0.42 * Math.min(1, u), r = 5.5 - 0.35 * u, h = 4.6 + 0.45 * u;  // orbit 24 degrees, rise 45 cm, closer 35 cm
+  return { pos: [MARK[0] + r * Math.sin(a), h, MARK[2] + r * Math.cos(a)], look: [MARK[0], 0.15 * u, MARK[2]], fov: 46 - 2 * u, roll: 0 };
+};
 const ENDING = shotNamed("ending"), QUIET = shotNamed("quiet"), CARD = shotNamed("card");
 const WHIPS = [{ from: F(A.your2) - 4, len: 8 }, { from: F(A.notifications) - 4, len: 8 }, { from: F(A.after) - 4, len: 8 }];
 const lostAt = F(A.lost), mercyAt = F(A.mercy), allahAt = F(A.allah), withAt = F(A.and8);
@@ -229,9 +235,9 @@ const courtTraveller = (f: number, c: Cam): { trav: TravellerCard | null; head: 
     const L = lightFor("courtyard", c), tq = q(turn, 40), lq = q(tilt, 40);
     return { key: `cf|${arms}|${tq}|${lq}|${bob}|${wind}|${L}`, draw: (p: Pen) => traveller(p, { mode: "stand", light: L, seed: 1, arms, headTurn: tq, headTilt: lq, bob, wind }), mirror: false };
   };
-  const side = (mirror: boolean, ph: number, k: number, raise: number, st: number) => {
-    const L = lightFor("courtyard", c, mirror), pq = q(ph, 240), kq = q(k, 60), rq = q(raise, 60), b = q(st + idle.bob, 4);
-    return { key: `cs|${mirror}|${pq}|${kq}|${rq}|${b}|${wind}|${L}`, draw: (p: Pen) => travellerWalkPhase(p, pq, kq, STRIDE_M / SU, { light: L, raise: rq, bob: b, wind, shawlNear: mirror }), mirror };
+  const side = (mirror: boolean, ph: number, k: number, raise: number, st: number, fold = 0) => {
+    const L = lightFor("courtyard", c, mirror), pq = q(ph, 240), kq = q(k, 60), rq = q(raise, 60), fq = q(fold, 30), b = q(st + idle.bob, 4);
+    return { key: `cs|${mirror}|${pq}|${kq}|${rq}|${fq}|${b}|${wind}|${L}`, draw: (p: Pen) => travellerWalkPhase(p, pq, kq, STRIDE_M / SU, { light: L, raise: rq, fold: fq, bob: b, wind, shawlNear: mirror }), mirror };
   };
   const q34 = (mirror: boolean) => { const L = lightFor("courtyard", c, mirror); return { key: `cq|${mirror}|${L}`, draw: (p: Pen) => travellerThreeQuarterFront(p, { light: L, shawlNear: mirror }), mirror }; };
   const sh = shotOf(f).kind;
@@ -258,7 +264,7 @@ const courtTraveller = (f: number, c: Cam): { trav: TravellerCard | null; head: 
     else if (f < TURN_Q + 3) { pos = P2; d = q34(false); }
     else if (f < TURN_Q + 6) { pos = P2; d = front(0, 0); }
     else if (f < TURN_Q + 9) { pos = P2; d = q34(true); }
-    else { pos = P2; d = side(true, endPhase, 0, clamp01((f - TAKBIR) / 14), settle(f - (TURN_Q + 9))); } // takbir: hands up to the ears, held
+    else { pos = P2; d = side(true, endPhase, 0, clamp01((f - TAKBIR) / 14), settle(f - (TURN_Q + 9)), smooth((f - TAKBIR - 30) / 16)); } // takbir, then the hands folded on the chest: standing in prayer
   }
   const onMat = Math.abs(pos[0] - 0.85) < 0.66 && Math.abs(pos[2] + 1.6) < 0.38;
   const p2: V3 = [pos[0] + idle.sway, onMat ? 0.012 : 0, pos[2]];
@@ -318,14 +324,15 @@ export const shotAt = (f: number, outgoing = false): FrameInfo => {
       // the crane up and the star mark, then the quiet: the camera keeps drifting slowly up and round
       const from = shotCam(shotOf(ENDING.from - 1)).cam(ENDING.from);
       const u = clamp01((f - ENDING.from) / (ENDING.to - ENDING.from)), e = endingAt(Math.min(1, u), from, MARK, ENDING_TOP);
-      const qk = glide(clamp01((f - QUIET.from) / (CARD.to - QUIET.from)));
-      c = f < QUIET.from ? e.cam : { pos: lerp3(ENDING_TOP.pos, QUIET_TOP.pos, qk), look: lerp3(ENDING_TOP.look, QUIET_TOP.look, qk), fov: ENDING_TOP.fov + (QUIET_TOP.fov - ENDING_TOP.fov) * qk, roll: 0 };
+      c = f < QUIET.from ? e.cam : quietCam(f);
       cInf = 2; focus = [MARK[0], 0, MARK[2]];
-      const hold = f >= QUIET.from ? 1 : 0;
-      const markInt = hold ? 0.85 + 0.15 * Math.sin(t * 1.3) : e.markIntensity, mainL = hold ? 0.32 : e.main;
-      levels = { main: hold ? mainL : e.main, lanterns: hold ? 0.3 : e.lanterns, night: hold ? 0.72 : e.night };
-      grooves = [MARK[0], MARK[2], hold ? 0 : e.grooveRadius, hold ? 0 : e.grooveIntensity, 0.15];
-      mark = [MARK[0], MARK[2], 1.9, hold ? 1 : e.markProgress, markInt * (f >= CARD.from ? 1 - 0.6 * smooth((f - CARD.from) / 20) : 1)];
+      // the lamp keeps glowing (a soft flicker); the floor pattern completes into the star mark slowly, over the crane
+      // and most of the quiet moment
+      const flick = 1 + 0.05 * Math.sin(f * 0.9) * Math.sin(f * 0.31 + 1);
+      levels = { main: 0.95 * flick, lanterns: 0.85, night: 0.95 };
+      const mp = smooth((f - ENDING.from - 20) / (QUIET.from + F(10) - ENDING.from - 20));
+      grooves = [MARK[0], MARK[2], 6.5 * (1 - mp), 0.6 * smooth((f - ENDING.from) / 20) * (1 - smooth((mp - 0.75) / 0.25)), 0.15];
+      mark = [MARK[0], MARK[2], 1.9, mp, (0.35 + 0.65 * mp) * smooth((f - ENDING.from - 10) / 20) * (0.92 + 0.08 * Math.sin(t * 1.3))];
     } else {
       const b = shotCam(sh); c = b.cam(f); focus = b.focus(f); cInf = b.cInf; nearScale = b.nearScale ?? 1.6;
     }

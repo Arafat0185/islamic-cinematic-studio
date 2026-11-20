@@ -27,7 +27,7 @@ Read this first. Full detail lives in `docs/phase-1-plan.md` and `characters/tra
 - **Concept A, "The Courtyard":** every video happens in one imagined, empty courtyard and the rooms around it.
   Time of day mirrors the theme (pre-dawn for salah, night rain for tawbah, dusk stone room for death).
   Desert exteriors may be borrowed for death and sabr stories.
-- **Channel brand: Maktabatu Al-Ilm** (logo `brand/logo.png`): brown `#4D312C`, orange `#FB5606`, white. UI panels
+- **Channel brand** (logo `brand/logo/traveller_logo_transparent.svg`, no name with it): brown `#4D312C`, orange `#FB5606`, white. UI panels
   brown at 85 %, keywords orange, warnings red `#E5484D`, good actions green `#3FB37F`, captions white.
 - **Scene palette:** night indigo `#0E1430`, lapis `#1F3B73`, limestone `#D9CBB0`, lamp gold `#E8B04B`, dawn rose `#C98B7A`.
 - **Fonts:** Amiri or Noto Naskh Arabic (Arabic), Cormorant Garamond (English titles), Inter (subtitles).

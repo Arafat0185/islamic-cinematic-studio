@@ -21,7 +21,7 @@ export type P2 = [number, number];
 
 // ---- palette (from the brief) ----
 export const SKIN_T = "#C08A5E";
-export const THOBE = "#7B5238";   // warm brown (Maktabatu Al-Ilm brand, 2026-11-19)
+export const THOBE = "#7B5238";   // warm brown (channel brand, 2026-11-19)
 export const SHAWL = "#EE5A0A";   // brand orange scarf (2026-11-19); earlier versions: deep dusty indigo #363C58
 export const KUFI = "#F2EEE3";
 export const SANDAL = "#6b4a33";

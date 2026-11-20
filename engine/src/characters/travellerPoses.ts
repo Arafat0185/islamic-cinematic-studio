@@ -263,7 +263,8 @@ const drapeShawl = (sx: number, sy: number, frontLen: number, light: number, win
 type Foot = { heel: P2; ang: number };
 /** raise: 0 = arms down, 1 = takbir (hands at ear level, open palms facing forward) */
 /** phone: 0..1 the near hand comes up holding a phone in front of his chest and his head bows to it */
-type UprightCfg = { near: Foot; far: Foot; armNear: number; armFar: number; bob: number; light: number; seed: number; raise?: number; shawlNear?: boolean; wind?: number; phone?: number };
+/** fold: 0..1 after takbir, the hands come down and rest folded on the chest (standing in prayer, qiyam) */
+type UprightCfg = { near: Foot; far: Foot; armNear: number; armFar: number; bob: number; light: number; seed: number; raise?: number; shawlNear?: boolean; wind?: number; phone?: number; fold?: number };
 
 /** upright body from the side (standing and walking). Feet given as sandals; the thobe skirt spans the feet. */
 const uprightSide = (p: Pen, c: UprightCfg) => {
@@ -277,6 +278,7 @@ const uprightSide = (p: Pen, c: UprightCfg) => {
   // arm geometry: shoulder joint, swing angle a (radians, + = forward); `raise` lifts it into takbir: elbow forward
   // and down, forearm up, the hand at ear level in front of the ear
   const r = Math.max(0, Math.min(1, c.raise ?? 0)), re = r * r * (3 - 2 * r);
+  const fo = Math.max(0, Math.min(1, c.fold ?? 0)), fe = fo * fo * (3 - 2 * fo);
   const lerp = (a: P2, b: P2, t: number): P2 => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
   const arm = (a: number, dx: number) => {
     const S: P2 = [302 + dx, shY + 20];
@@ -285,13 +287,18 @@ const uprightSide = (p: Pen, c: UprightCfg) => {
     const E = lerp(E0, [334 + dx, shY + 0.62 * HH], re);
     // the wrist swings forward and up (through a point in front of the chest), not straight through the body
     const Wm: P2 = [372 + dx, shY + 0.9 * HH];
-    const W = re < 0.5 ? lerp(W0, Wm, re * 2) : lerp(Wm, [300 + dx, hc + 0.52 * HH], (re - 0.5) * 2); // ends below the ear
-    return { S, E, W };
+    let W = re < 0.5 ? lerp(W0, Wm, re * 2) : lerp(Wm, [300 + dx, hc + 0.52 * HH], (re - 0.5) * 2); // ends below the ear
+    let Ef = E;
+    if (fe > 0) { // folded on the chest: elbows by the sides, forearms across, both hands in front of the chest
+      Ef = lerp(E, [316 + dx, shY + 0.98 * HH], fe);
+      W = lerp(W, [346 + dx * 0.5, shY + 0.62 * HH], fe);
+    }
+    return { S, E: Ef, W };
   };
   /** the hand: an ink dot with the arms down; an open skin-tone hand once they rise (fingers turn from down,
    *  through forward, to up; palm facing forward, seen partly edge-on from the side, thumb toward the ear) */
   const hand = (w: P2) => {
-    if (r <= 0) { p.dot(w[0], w[1] + 6, 12.5); return; }
+    if (r <= 0 || fe > 0.5) { p.dot(w[0], w[1] + (fe > 0.5 ? 0 : 6), 12.5); return; } // arms down, or hands folded
     const ang = Math.PI / 2 - Math.PI * re, off = 30 * 0.95;
     skinHand(p, w[0] + Math.cos(ang) * off, w[1] + Math.sin(ang) * off, ang, 1, light, 0.95, 0.62); // by the ear, not over the face
   };
@@ -376,7 +383,7 @@ export const travellerWalkSide = (p: Pen, key: number, o: PoseOpts = {}) => {
  *  feet together. */
 /** o.bob: extra body drop in design units (+ = down), e.g. a settle after a turn */
 /** o.swing: arm swing multiplier (rushing ~1.8); o.phone: 0..1 phone in the near hand (see UprightCfg) */
-export const travellerWalkPhase = (p: Pen, phase: number, k: number, stride: number, o: PoseOpts & { raise?: number; bob?: number; wind?: number; swing?: number; phone?: number } = {}) => {
+export const travellerWalkPhase = (p: Pen, phase: number, k: number, stride: number, o: PoseOpts & { raise?: number; bob?: number; wind?: number; swing?: number; phone?: number; fold?: number } = {}) => {
   const light = o.light ?? DEF_LIGHT, A = stride, LEN = 104, LIFT = 30 * k;
   const sm = (x: number) => { const t = Math.max(0, Math.min(1, x)); return t * t * (3 - 2 * t); };
   const foot = (u0: number): Foot => {
@@ -401,7 +408,7 @@ export const travellerWalkPhase = (p: Pen, phase: number, k: number, stride: num
   uprightSide(p, {
     near: foot(un), far: foot(uf),
     armNear: -0.26 * (o.swing ?? 1) * k * Math.cos(2 * Math.PI * un), armFar: 0.26 * (o.swing ?? 1) * k * Math.cos(2 * Math.PI * un),
-    bob: 0.006 * TALL * k * Math.cos(4 * Math.PI * phase) + (o.bob ?? 0), light, seed: o.seed ?? 1, raise: o.raise, shawlNear: o.shawlNear, wind: o.wind, phone: o.phone,
+    bob: 0.006 * TALL * k * Math.cos(4 * Math.PI * phase) + (o.bob ?? 0), light, seed: o.seed ?? 1, raise: o.raise, shawlNear: o.shawlNear, wind: o.wind, phone: o.phone, fold: o.fold,
   });
 };
 

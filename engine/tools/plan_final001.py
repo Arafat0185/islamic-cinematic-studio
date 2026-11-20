@@ -19,7 +19,7 @@ Story (seconds are computed, see the printout):
               calm transitions; "lost": the lamp is snuffed out, silence; the mercy re-lights it and mends the dots;
               the walk to the mat, takbir, the crane up and the star mark
   quiet       5 s of soft courtyard ambience only (a recitation is added on TikTok)
-  end card    the Maktabatu Al-Ilm logo and the source
+  end card    the channel logo (no text with it) and the source
 
 Run from engine/:  .venv-tts/Scripts/python tools/plan_final001.py ../videos/001-the-first-question
 """
@@ -34,7 +34,7 @@ FPS, SR = 30, 24000
 # silence between one block's last sound and the next block's first sound (seconds)
 GAP_AFTER = {1: 0.15, 2: 1.0, 3: 0.3, 4: 0.2, 5: 1.0, 6: 0.6, 7: 1.3, 8: 0.6}
 START = 0.80          # the first word's first sound (the crash-zoom dives for 0.8 s before "Your money")
-ENDING_LEN, QUIET_LEN, CARD_LEN = 3.5, 5.0, 5.0
+ENDING_LEN, QUIET_LEN, CARD_LEN = 3.5, 15.0, 3.9   # total ~1:04.7; the quiet moment is for a recitation added on TikTok
 REVERB_BLOCKS = {6, 7, 8, 9}  # the courtyard part
 
 
@@ -187,7 +187,7 @@ def main(video_dir: Path) -> None:
     for i in range(6): E(A["followers"] + i * 0.07, "ping", -12, (-0.5 + 0.2 * i))
     E(A["freeze"], "freeze", -3)                                 # tape-stop: the world freezes
     for i, k in enumerate([0.0, 0.26, 0.5]): E(A["freeze"] + 0.08 + k * (A["first"] - A["freeze"]), "glass_crack", -5 + i, (-0.3 + 0.3 * i))
-    E(A["first"] - 0.02, "shatter", 0); E(A["first"], "sub_drop", -2)
+    E(A["first"] - 0.02, "shatter", -3); E(A["first"], "sub_drop", -2)
     E(A["slam"], "slam", 0); E(A["slam"], "spot_on", -6)
     E(A["about"], "whoosh_soft", -10)
     E(A["about"] + 0.3, "dots_on", -12)

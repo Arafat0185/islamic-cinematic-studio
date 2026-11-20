@@ -1,7 +1,7 @@
 {
  "fps": 30,
- "frames": 1674,
- "duration": 55.813,
+ "frames": 1941,
+ "duration": 64.713,
  "voice": [
   {
    "block": 1,
@@ -966,7 +966,7 @@
   "takbir": 41.702,
   "ending": 42.3126,
   "quiet": 45.8126,
-  "card": 50.8126,
+  "card": 60.8126,
   "split": 16.0972,
   "walk": 38.731,
   "walkEnd": 40.46,
@@ -1139,13 +1139,13 @@
    "kind": "quiet",
    "set": "courtyard",
    "from": 45.8126,
-   "to": 50.8126
+   "to": 60.8126
   },
   {
    "kind": "card",
    "set": "courtyard",
-   "from": 50.8126,
-   "to": 55.8126
+   "from": 60.8126,
+   "to": 64.7126
   }
  ],
  "transitions": [
@@ -1525,7 +1525,7 @@
   {
    "t": 3.21,
    "kind": "shatter",
-   "gain": 0,
+   "gain": -3,
    "pan": 0.0
   },
   {
@@ -1895,7 +1895,7 @@
    "pan": 0.0
   },
   {
-   "t": 50.8126,
+   "t": 60.8126,
    "kind": "card_in",
    "gain": -12,
    "pan": 0.0
@@ -1955,12 +1955,12 @@
   {
    "kind": "courtyard",
    "from": 14.3753,
-   "to": 50.8126
+   "to": 60.8126
   },
   {
    "kind": "courtyard_soft",
-   "from": 50.8126,
-   "to": 55.8126
+   "from": 60.8126,
+   "to": 64.7126
   }
  ],
  "silences": [
@@ -1975,6 +1975,6 @@
  ],
  "quiet": [
   45.8126,
-  50.8126
+  60.8126
  ]
 }

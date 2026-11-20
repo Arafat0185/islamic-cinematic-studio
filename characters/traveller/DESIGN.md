@@ -1,7 +1,7 @@
-# The Traveller: locked design (v7, Maktabatu Al-Ilm colours)
+# The Traveller: locked design (v7, channel brand colours)
 
 The Traveller is our signature character: a calm, faceless man in a warm brown thobe, an orange scarf and a small
-cream kufi (the Maktabatu Al-Ilm brand colours, from 2026-11-19). This page describes his **official, locked** look. If you draw him again, in any tool, match this page.
+cream kufi (the channel brand colours, from 2026-11-19). This page describes his **official, locked** look. If you draw him again, in any tool, match this page.
 
 - Code: [`engine/src/characters/traveller.ts`](../../engine/src/characters/traveller.ts) (draws him with the Pen tools in
   `engine/src/draw/toon.ts`, see [NOTICE.md](../../NOTICE.md))
@@ -95,5 +95,5 @@ from two side-by-side comparison sheets.
 | v4 | v3 plus the v2 dusty shawl, plus a full dark-brown beard. | Combine the parts we liked and give him a beard. |
 | v5 | Beard made near-black with lighter strands; a moustache joined to the beard as one shape. | Brown read wrong, and the beard needed a moustache with no gap. |
 | v6 | Angular facial hair: sideburns from ear level, sharp V chin beard, notched moustache, open skin gap. | Wanted a crisper beard. Result was wrong: the sides covered the cheeks like a mask, the gap looked like a box, the point was too long. |
-| v7 brand | Thobe `#7B5238`, scarf `#EE5A0A`, cream kufi; back of the head: hair on the top half, skin below. | The Maktabatu Al-Ilm brand colours; the back view had the hair the wrong way round. |
+| v7 brand | Thobe `#7B5238`, scarf `#EE5A0A`, cream kufi; back of the head: hair on the top half, skin below. | The channel brand colours; the back view had the hair the wrong way round. |
 | v7 | Head width 0.75 × height with a slimmer jaw; thin sideburns; medium moustache with thin drops; rounded chin beard 1/4 head-height long; small gap in the face's own tone; 30 % thinner head and beard ink; snug, smaller kufi; narrower shoulders. | Picked from comparison sheets: beard length "B" of three, then head width "B" of three (the v6 head looked fat). **Locked.** |

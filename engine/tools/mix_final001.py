@@ -57,7 +57,7 @@ def shimmer(dur=1.0, soft=False):
 def ping(soft=False):
     """a notification: a short bright tick-pop of band-passed NOISE (no tone, no chime)"""
     n = int(0.12 * SR); t = np.arange(n) / SR
-    pop = bp(noise(n), 1800, 6000) * np.exp(-t / 0.018) * 0.9 + hp(noise(n), 4000) * np.exp(-t / 0.004) * 0.6
+    pop = (bp(noise(n), 1800, 6000) * np.exp(-t / 0.018) * 0.9 + bp(noise(n), 4000, 11000) * np.exp(-t / 0.004) * 0.5) * np.minimum(1, t / 0.002)
     return verb(stereo(pop, rng.uniform(-0.6, 0.6))) * db(-9 if soft else -6)
 
 def glitch():
@@ -148,7 +148,7 @@ def freeze():
 def shatter():
     """the frame shatters toward the lens: a big glass burst, many pieces, a low boom, spreading across"""
     n = int(1.6 * SR); out = np.zeros((2, n))
-    burst = hp(noise(n), 1800, 4) * env(n, 0.0005, 0.12) * 1.2
+    burst = lp(hp(noise(n), 1800, 4), 12000) * env(n, 0.003, 0.12) * 1.2   # 3 ms attack, no top end: it encodes cleanly
     out += stereo(burst)
     for _ in range(40):  # pieces flying past and tinkling
         c = crack() * rng.uniform(0.08, 0.3); i = int(rng.uniform(0.0, 0.7) * SR); m = min(c.shape[1], n - i)
@@ -345,7 +345,7 @@ CHAIN = Pedalboard([
 ])
 ROOMV = Pedalboard([Reverb(room_size=0.28, damping=0.6, wet_level=1.0, dry_level=0.0, width=0.8)])
 
-TP_WAV = -1.6   # the WAV's ceiling: AAC encoding adds up to ~0.5 dB of overshoot, and the final file must stay <= -1 dBTP
+TP_WAV = -2.8   # the WAV's true-peak ceiling: AAC encoding overshoots, and the final file must stay <= -1 dBTP
 
 def true_peak(x):
     return float(np.max(np.abs(resample_poly(x, 4, 1, axis=1))))
@@ -397,14 +397,18 @@ def main(video_dir: Path, out: Path) -> None:
     meter = pyln.Meter(SR)
     raw = mixd.copy()
     gain_db = -14.0 - meter.integrated_loudness(raw.T)
-    for _ in range(20):
-        lim = Pedalboard([Gain(gain_db), Limiter(threshold_db=0.0, release_ms=80), Gain(-2.0)])
-        y = lim(raw.astype(np.float32), SR)
-        tp = true_peak(y)
-        if tp > db(TP_WAV): y *= db(TP_WAV) / tp
-        L = meter.integrated_loudness(y.T)
-        if abs(L + 14.0) < 0.05: break
-        gain_db += (-14.0 - L) * 1.3
+    # true-peak limiting: the limiter runs on a 4x upsampled copy (the peaks between samples become real samples), then
+    # back down; the loop sets the gain for -14 LUFS. No scaling afterwards (that made the loop crush the voice).
+    def master(g):
+        up = resample_poly(raw * db(g), 4, 1, axis=1).astype(np.float32)
+        up = Pedalboard([Limiter(threshold_db=0.0, release_ms=120), Gain(TP_WAV - 0.3)])(up, SR * 4)
+        return resample_poly(up, 1, 4, axis=1).astype(np.float32)
+    for _ in range(12):
+        y = master(gain_db); L = meter.integrated_loudness(y.T)
+        if abs(L + 14.0) < 0.04: break
+        gain_db += (-14.0 - L)
+    unlimited = meter.integrated_loudness((raw * db(gain_db + TP_WAV - 0.3)).T)
+    print(f"master: gain {gain_db:+.1f} dB; loudness taken off by the limiter {unlimited - L:.1f} LU")
     # the quiet moment and the card: check the voice really is absent there
     out.parent.mkdir(parents=True, exist_ok=True)
     sf.write(out, y.T, SR, subtype="PCM_24")
