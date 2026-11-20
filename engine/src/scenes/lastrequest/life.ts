@@ -121,7 +121,7 @@ const bedroomLife = (root: THREE.Object3D) => {
   });
   // the ceiling light (a dim, lonely lamp) that flickers and dies; lightning through the window
   const ceil = new THREE.PointLight("#ffd9a8", 0, 7, 1.5); ceil.position.set(0, 2.6, -0.6); root.add(ceil);
-  const cold = new THREE.PointLight("#8fa6d8", 0, 9, 1.3); cold.position.set(0.9, 1.9, -1.2); root.add(cold);   // the window's cold light (rain-grey night)
+  const cold = new THREE.PointLight("#8fa6d8", 0, 9, 1.3); cold.position.set(0.9, 1.9, -0.6); root.add(cold);   // the window's cold light (rain-grey night)
   const shelfL = new THREE.PointLight("#9fb2d8", 0, 2.5, 1.6); shelfL.position.set(-2.2, 2.4, -1.4); root.add(shelfL);
   const flash = new THREE.PointLight("#c8d8ff", 0, 12, 1.2); flash.position.set(1.05, 1.8, -1.6); root.add(flash);
   const clock = root.getObjectByName("wallClock"), hourC = root.getObjectByName("clockHour"), minC = root.getObjectByName("clockMin");
@@ -131,9 +131,10 @@ const bedroomLife = (root: THREE.Object3D) => {
     const t = f / FPS, kind = kindAt(f);
     rainOn(t, 1);
     // the ceiling light: steady and dim, flickering from f0, dead at lightOut; never back
-    let k = f < f0 ? 1 : f < EV.lightOut ? Math.max(0, 1 - 0.85 * sm((f - f0) / (EV.lightOut - f0))) * (Math.sin(f * 1.9) * Math.sin(f * 0.53) > 0.35 ? 0.15 : 1) : 0;
+    // a dying bulb: soft, uneven dips (never a hard on/off strobe), weaker and weaker until it goes
+    let k = f < f0 ? 1 : f < EV.lightOut ? Math.max(0, 1 - 0.85 * sm((f - f0) / (EV.lightOut - f0))) * (1 - 0.45 * sm((Math.sin(t * 2.3) * Math.sin(t * 0.9 + 1) - 0.2) / 0.5)) : 0;
     if (f >= SHOTS.find((s) => s.kind === "hospRain")!.from) k = 0;
-    ceil.intensity = 1.1 * k; cold.intensity = kind === "lightOut" ? 0.5 * (1 - sm((f - EV.phoneOff) / 20)) + 0.25 : f >= EV.lightOut ? 1.4 : 0.6; shelfL.intensity = kind === "mushaf" || kind === "leftBehind" ? 1.6 : 0;
+    ceil.intensity = 1.1 * k; cold.intensity = kind === "dustyMat" ? 6.0 : kind === "matPhone" ? 3.2 : kind === "lightning" ? 2.6 : kind === "lightOut" ? 0.5 * (1 - sm((f - EV.phoneOff) / 20)) + 0.25 : f >= EV.lightOut ? 1.4 : 0.6; shelfL.intensity = kind === "mushaf" || kind === "leftBehind" ? 1.6 : 0;
     // the clock: 03:12 and ticking; racing in "clockSpin"; stopped at 03:47 once he is gone
     const spin = kind === "clockSpin" ? (f - SHOTS.find((s) => s.kind === "clockSpin")!.from) / FPS : 0, gone = f >= SHOTS.find((s) => s.kind === "hospRain")!.from;
     const secs = gone ? 47 * 60 : 12 * 60 + Math.floor(t) + spin * 1800;
@@ -145,7 +146,7 @@ const bedroomLife = (root: THREE.Object3D) => {
     // the phone on the mat: dark until he is gone; then it lights up with each notification and fades again
     const mp = SHOTS.find((s) => s.kind === "matPhone")!, onMat = f >= mp.from;
     phone.visible = onMat; const blink = onMat ? Math.max(0, ...[0.15, 0.95, 1.6].map((d) => { const x = (f - mp.from) / FPS - d; return x >= 0 && x < 1.4 ? (x < 0.1 ? x / 0.1 : 1 - (x - 0.1) / 1.3) : 0; })) : 0;
-    (scr.material as THREE.MeshBasicMaterial).color.set("#cfe6ff").multiplyScalar(0.05 + 1.6 * blink); phL.intensity = 0.6 * blink;
+    (scr.material as THREE.MeshBasicMaterial).color.set("#cfe6ff").multiplyScalar(0.12 + 1.6 * blink); phL.intensity = 0.15 + 0.6 * blink;
     // lightning ("No!"): two cold pulses
     const lp = (x: number) => (x >= 0 && x < 5 ? Math.exp(-x / 1.6) : 0);
     flash.intensity = 9 * Math.max(lp(f - l0), 0.7 * lp(f - l1));

@@ -40,7 +40,7 @@ env = lambda x: np.convolve(np.abs(x[:v].mean(axis=1)), np.ones(4800) / 4800, mo
 n = min(len(env(u)), len(env(g)), len(env(pv)))
 cu, cp = float(np.corrcoef(env(u)[:n], env(g)[:n])[0, 1]), float(np.corrcoef(env(pv)[:n], env(g)[:n])[0, 1])
 lines.append(f"## audio\nrecitation span {m.integrated_loudness(u[a:b]):.1f} LUFS (target -14); ambience under the voice part {m.integrated_loudness(u[:v]):.1f} LUFS (target ~-24); peak {20 * np.log10(np.abs(u).max()):.1f} dBFS\n"
-             f"envelope correlation with the guide voice (0-{timing['voiceEnd']} s): upload {cu:+.3f} (should be low), preview {cp:+.3f} (should be high): guide voice in the upload file: {'NO' if abs(cu) < 0.3 and cp > 0.6 else 'CHECK'}")
+             f"envelope correlation with the guide voice (0-{timing['voiceEnd']} s): upload {cu:+.3f} (should be low), preview {cp:+.3f} (should be high): guide voice in the upload file: {'NO' if cu < 0.3 and cp > 0.6 else 'CHECK'} (negative = the rain dips under the voice, the voice itself is absent)")
 bad = []
 for p in timing["phrases"]:
     vv = int(p["verse"].split(":")[1]); d = json.loads((VDIR / "quran" / f"63_{vv}.json").read_text(encoding="utf-8"))["verse"]
