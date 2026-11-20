@@ -41,38 +41,60 @@ const lineCount = (text: string, font: string, maxw: number) => {
 };
 const blockHeight = (p: Phrase) => lineCount(p.ar, arFont, MAXW) * AR_SIZE * AR_LH + GAP + lineCount(p.en, enFont, MAXW) * EN_SIZE * EN_LH;
 
-/** his head (and neck) on screen over frames [from, to): fractions of the frame, only what is inside it */
-const headRange = (from: number, to: number) => {
-  let y0 = Infinity, y1 = -Infinity, x0 = Infinity, x1 = -Infinity;
+/** the head height (m above the card's soles, before scale) of a card, from its drawing's key; null = not a person */
+const headHeight = (key: string): number | null => {
+  const k = key.split("|")[0];
+  if (k === "cat" || k === "pigeon" || k === "lie") return null;
+  if (k === "sit") return 1.22; if (k === "sujood") return 0.33; if (k === "ruku") return 1.12; if (k === "jalsa") return 1.3; if (k === "edge") return 1.25;
+  if (k === "stoop") return 1.8 - 0.75 * Number(key.split("|")[2] ?? 0);
+  return 1.78;
+};
+type Box = { y0: number; y1: number; x0: number; x1: number; id?: string };
+/** every head on screen over frames [from, to) (the Traveller's and everyone else's), each as one box (fractions of the frame) */
+const headBoxes = (from: number, to: number): Box[] => {
+  const boxes = new Map<string, Box>();
+  const addPt = (id: string, x: number, y: number) => { const b = boxes.get(id) ?? { y0: Infinity, y1: -Infinity, x0: Infinity, x1: -Infinity }; b.y0 = Math.min(b.y0, y); b.y1 = Math.max(b.y1, y); b.x0 = Math.min(b.x0, x); b.x1 = Math.max(b.x1, x); boxes.set(id, b); };
   for (let f = from; f < to; f += 3) {
-    const s = shotAt(f), tr = s.frame.traveller;
-    if (!tr) continue;
-    const c = s.frame.plan.cam, right = new THREE.Vector3(...c.look).sub(new THREE.Vector3(...c.pos)).cross(new THREE.Vector3(0, 1, 0)).setY(0).normalize();
-    // sitting poses (bed edge, office chair): the head is lower; the "head" point given by the shot covers it
-    const top = s.head[1] + (tr.wide ? 0.1 : 0.17), bottom = s.head[1] - 0.42;
-    for (const h of [bottom, (bottom + top) / 2, top]) for (const k of [-0.22, 0, 0.22]) {
-      const qq = toScreen(f, [s.head[0] + right.x * k, h, s.head[2] + right.z * k]);
-      if (qq.behind || qq.x < 0 || qq.x > W || qq.y < 0 || qq.y > H) continue;
-      y0 = Math.min(y0, qq.y / H); y1 = Math.max(y1, qq.y / H); x0 = Math.min(x0, qq.x / W); x1 = Math.max(x1, qq.x / W);
+    const s = shotAt(f), c = s.frame.plan.cam, right = new THREE.Vector3(...c.look).sub(new THREE.Vector3(...c.pos)).cross(new THREE.Vector3(0, 1, 0)).setY(0).normalize();
+    const heads: { id: string; p: [number, number, number]; r: number }[] = [];
+    if (s.frame.traveller) heads.push({ id: "T", p: s.head, r: 0.22 });
+    (s.frame.others ?? []).forEach((o, i) => { const h = headHeight(o.key); if (h !== null) { const sc = o.scale ?? 1, wide = o.key.startsWith("ruku") || o.key.startsWith("sujood"); heads.push({ id: `o${i}`, p: [o.pos[0], o.pos[1] + h * sc, o.pos[2]], r: (wide ? 0.42 : 0.2) * sc }); } });
+    for (const hd of heads) {
+      const top = hd.p[1] + 0.17, bottom = hd.p[1] - 0.3;
+      for (const h of [bottom, (bottom + top) / 2, top]) for (const k of [-hd.r, 0, hd.r]) {
+        const qq = toScreen(f, [hd.p[0] + right.x * k, h, hd.p[2] + right.z * k]);
+        if (qq.behind || qq.x < 0 || qq.x > W || qq.y < 0 || qq.y > H) continue;
+        addPt(hd.id, qq.x / W, qq.y / H);
+      }
     }
   }
-  return { y0, y1, x0, x1 };
+  return [...boxes.entries()].map(([id, b]) => ({ ...b, id }));
 };
-const CANDIDATES = [0.5, 0.57, 0.43, 0.64, 0.7, 0.36, 0.76];
-/** shots that show something below his head that the caption must not hide: try these first */
-const PREFER: Record<string, number[]> = {};
-const SAFE_TOP = 0.2, SAFE_BOT = 0.86;
-/** the caption's centre (fraction of the frame height): as central as possible, never over his head */
-const placeCaption = (p: Phrase) => {
-  const half = blockHeight(p) / H / 2;
-  if (shotOf(p.from).kind === "phoneDown" || shotOf(p.from + 6).kind === "phoneDown") return Math.min(SAFE_BOT - half, 0.8);
-  const { y0, y1 } = headRange(p.from, p.to), M = 0.025;
-  for (const c of [...(PREFER[shotOf(p.from + 6).kind] ?? []), ...CANDIDATES]) {
-    if (c - half < SAFE_TOP || c + half > SAFE_BOT) continue;
-    if (!isFinite(y0) || c + half < y0 - M || c - half > y1 + M) return c;
+/** where a caption may sit: the lower third first, then the top third (under the tag and the tracker), then the middle */
+const CANDIDATES = [0.74, 0.7, 0.78, 0.66, 0.31, 0.35, 0.28, 0.4, 0.6, 0.5];
+const SAFE_TOP = 0.245, SAFE_BOT = 0.86, CAP_X0 = (W / 2 - 40 - 380) / W, CAP_X1 = (W / 2 - 40 + 380) / W;
+/** the caption's centre for frames [from, to): the first candidate that covers no head; else the one covering least */
+const placeAt = (p: Phrase, from: number, to: number) => {
+  const half = blockHeight(p) / H / 2, M = 0.02, boxes = headBoxes(from, to);
+  const cost = (c: number) => boxes.reduce((s2, b) => {
+    const oy = Math.max(0, Math.min(c + half + M, b.y1) - Math.max(c - half - M, b.y0)), ox = Math.max(0, Math.min(CAP_X1, b.x1) - Math.max(CAP_X0, b.x0));
+    return s2 + oy * ox;
+  }, 0);
+  if (shotOf(from).kind === "phoneDown") return Math.min(SAFE_BOT - half, 0.8);
+  const ok = CANDIDATES.filter((c) => c - half >= SAFE_TOP && c + half <= SAFE_BOT);
+  return ok.find((c) => cost(c) === 0) ?? ok.slice().sort((x, y) => cost(x) - cost(y))[0];
+};
+/** a caption's segments: one per shot it spans; neighbours with the same place merge (no fade there) */
+type Seg = { from: number; to: number; y: number };
+const y0Of = (segs: Seg[], f: number) => (segs.find((g) => f >= g.from && f < g.to) ?? segs[0]).y;
+const segmentsOf = (p: Phrase): Seg[] => {
+  const cuts = [p.from, ...SHOTS.map((s2) => s2.from).filter((c) => c > p.from && c < p.to), p.to];
+  const segs: Seg[] = [];
+  for (let i = 0; i + 1 < cuts.length; i++) {
+    const y = placeAt(p, cuts[i], cuts[i + 1]), last = segs[segs.length - 1];
+    if (last && Math.abs(last.y - y) < 1e-6) last.to = cuts[i + 1]; else segs.push({ from: cuts[i], to: cuts[i + 1], y });
   }
-  // nothing fits cleanly: the candidate farthest from the head
-  return CANDIDATES.filter((c) => c - half >= SAFE_TOP && c + half <= SAFE_BOT).sort((a, b) => Math.abs(b - (y0 + y1) / 2) - Math.abs(a - (y0 + y1) / 2))[0];
+  return segs;
 };
 
 // ---------------- captions ----------------
@@ -94,15 +116,18 @@ const englishParts = (en: string, keys: string[]) => {
 };
 /** 0..1: the end card's crossfade (the last caption and the tag fade out under it) */
 const cardK = (f: number) => smooth((f - CARD_FROM) / 24);
-const Caption: React.FC<{ p: Phrase; f: number; y: number }> = ({ p, f, y }) => {
-  const d = f - p.from, out = 1 - cardK(f);
+const Caption: React.FC<{ p: Phrase; f: number; segs: Seg[] }> = ({ p, f, segs }) => {
+  const si = Math.max(0, segs.findIndex((x) => f >= x.from && f < x.to)), sg = segs[si], y = sg.y;
+  // at a cut where the caption moves: it fades out over the last 5 frames of the shot and back in over 7 at its new place
+  const fin = si === 0 ? 1 : smooth((f - sg.from) / 7), fout = si < segs.length - 1 ? 1 - smooth((f - (sg.to - 5)) / 5) : 1;
+  const d = f - p.from, out = (1 - cardK(f)) * fin * fout;
   const ra = reveal(d), re = reveal(d - 4);
   const words = p.ar.split(" ");
   return (
     <div style={{ position: "absolute", left: CAP_CX - MAXW / 2, width: MAXW, top: H * y, transform: "translateY(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: GAP, opacity: out }}>
       {/* behind the text the busy background is softened (blurred and dimmed, fading out at the edges), so it reads easily */}
       <div style={{ position: "absolute", left: -(CAP_CX - MAXW / 2), width: W, top: -90, bottom: -90, backdropFilter: "blur(7px)", WebkitBackdropFilter: "blur(7px)",
-        background: "linear-gradient(rgba(8,10,26,0), rgba(8,10,26,0.34) 30%, rgba(8,10,26,0.34) 70%, rgba(8,10,26,0))",
+        background: "linear-gradient(rgba(8,10,26,0), rgba(8,10,26,0.5) 32%, rgba(8,10,26,0.5) 68%, rgba(8,10,26,0))",
         maskImage: "linear-gradient(rgba(0,0,0,0), #000 28%, #000 72%, rgba(0,0,0,0))", WebkitMaskImage: "linear-gradient(rgba(0,0,0,0), #000 28%, #000 72%, rgba(0,0,0,0))", opacity: ra.e }} />
       <div style={{ position: "absolute", left: -40, right: -40, top: -40, bottom: -40, borderRadius: 120, background: "radial-gradient(ellipse at center, rgba(8,10,26,0.45) 0%, rgba(8,10,26,0.25) 55%, rgba(8,10,26,0) 75%)", opacity: ra.e, filter: "blur(18px)" }} />
       <div dir="rtl" lang="ar" style={{ position: "relative", maxWidth: MAXW, textAlign: "center", fontFamily: FONT.arabic, fontWeight: 700, fontSize: AR_SIZE, lineHeight: AR_LH,
@@ -294,11 +319,18 @@ export const Overlay: React.FC = () => {
   const ready = useFonts();
   const f = useCurrentFrame();
   const ys = useMemo(() => {
-    if (!ready) return [] as number[];
-    const y = PHRASES.map(placeCaption);
+    if (!ready) return [] as Seg[][];
+    const y = PHRASES.map(segmentsOf);
     const post = (getInputProps() as { post?: { pitchReport?: boolean; camReport?: boolean } }).post;
     if (post?.pitchReport || post?.camReport) {
-      PHRASES.forEach((p, i) => console.log(`TEXT LAYOUT: ${p.i} ${p.verse} frames ${p.from}-${p.to} centre ${y[i].toFixed(2)} half ${(blockHeight(p) / H / 2).toFixed(3)} head ${JSON.stringify(headRange(p.from, p.to))}`));
+      PHRASES.forEach((p, i) => {
+        const cuts = [p.from, ...SHOTS.map((s2) => s2.from).filter((c) => c > p.from && c < p.to), p.to], h = blockHeight(p) / H / 2;
+        const parts = cuts.slice(0, -1).map((c0, k) => {
+          const c1 = cuts[k + 1], yy = y0Of(y[i], c0), hit = headBoxes(c0, c1).filter((b) => yy + h > b.y0 && yy - h < b.y1 && CAP_X1 > b.x0 && CAP_X0 < b.x1);
+          return `${c0}-${c1}@${yy.toFixed(2)}${hit.length ? "(OVER " + JSON.stringify(hit.map((b) => [b.id, b.y0.toFixed(2), b.y1.toFixed(2)])) + ")" : ""}`;
+        });
+        console.log(`TEXT LAYOUT: ${p.i} ${p.verse} ${parts.join(" ")}`);
+      });
       let worst = -90, at = 0;
       for (let g = 0; g < FRAMES; g++) { const pp = pitchAt(g); if (pp > worst) { worst = pp; at = g; } }
       console.log(`PITCH REPORT: steepest downward look ${worst.toFixed(1)} degrees at frame ${at} (${shotOf(at).kind}); limit 45`);
@@ -314,7 +346,7 @@ export const Overlay: React.FC = () => {
       <Notifications f={f} />
       <PhoneDown f={f} />
       <Tracker f={f} />
-      {pi >= 0 ? <Caption p={PHRASES[pi]} f={f} y={ys[pi]} /> : null}
+      {pi >= 0 ? <Caption p={PHRASES[pi]} f={f} segs={ys[pi]} /> : null}
       <VerseTag f={f} />
       <EndCard f={f} />
     </AbsoluteFill>

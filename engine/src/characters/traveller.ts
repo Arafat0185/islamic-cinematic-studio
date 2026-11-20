@@ -20,13 +20,13 @@ import { Pen, FrontOpts, INK, mul, mix, blobPts, Blob, thickAngle } from "../dra
 export type P2 = [number, number];
 
 // ---- palette (from the brief) ----
-export const SKIN_T = "#C08A5E";
-export const THOBE = "#7B5238";   // warm brown (channel brand, 2026-11-19)
-export const SHAWL = "#EE5A0A";   // brand orange scarf (2026-11-19); earlier versions: deep dusty indigo #363C58
-export const KUFI = "#F2EEE3";
-export const SANDAL = "#6b4a33";
-export const BEARD = "#1A1416";   // near-black
-export const BEARD_STRAND = "#3A3236"; // subtle lighter strands so the beard doesn't merge with the ink outline
+export let SKIN_T = "#C08A5E";
+export let THOBE = "#7B5238";   // warm brown (channel brand, 2026-11-19)
+export let SHAWL = "#EE5A0A";   // brand orange scarf (2026-11-19); earlier versions: deep dusty indigo #363C58
+export let KUFI = "#F2EEE3";
+export let SANDAL = "#6b4a33";
+export let BEARD = "#1A1416";   // near-black
+export let BEARD_STRAND = "#3A3236"; // subtle lighter strands so the beard doesn't merge with the ink outline
 // shadow ratios, same values as toon.ts uses for skin and cloth
 export const SH_SKIN: [number, number, number] = [0.96, 0.86, 0.84];
 export const SH_CLOTH: [number, number, number] = [0.66, 0.66, 0.74]; // the brown thobe: shade darker, a touch cooler
@@ -41,7 +41,22 @@ export const OW_HEAD = OW * 0.7;    // head, beard and kufi outlines: 30 % thinn
 export const HEAD_RATIO = 0.75;     // head width / head height (v7, head option B)
 export const BEARD_LEN = HH / 4;    // chin beard length below the chin (v7, beard option B)
 /** sleeve colour and width (sleeves are loose thobe cloth: a thick line with an ink rim, like the soldiers' arms) */
-export const SLEEVE = mul(THOBE, [0.9, 0.9, 0.94]);
+export let SLEEVE = mul(THOBE, [0.9, 0.9, 0.94]);
+/** other faceless characters drawn with the Traveller's own pose code, in their own colours (the Traveller is unchanged:
+ *  every drawing outside withLook uses his palette). beardless: boys (no beard; the hair keeps the `beard` colour);
+ *  shawl null: no shawl. */
+export type Look = { skin?: string; thobe?: string; shawl?: string | null; kufi?: string; sandal?: string; beard?: string; strand?: string; beardless?: boolean };
+export let NO_BEARD = false, NO_SHAWL = false;
+export const withLook = <T>(l: Look | null | undefined, fn: () => T): T => {
+  if (!l) return fn();
+  const saved = [SKIN_T, THOBE, SHAWL, KUFI, SANDAL, BEARD, BEARD_STRAND, SLEEVE] as const, sb = NO_BEARD, ss = NO_SHAWL;
+  SKIN_T = l.skin ?? SKIN_T; THOBE = l.thobe ?? THOBE; SHAWL = l.shawl ?? SHAWL; KUFI = l.kufi ?? KUFI; SANDAL = l.sandal ?? SANDAL;
+  BEARD = l.beard ?? BEARD; BEARD_STRAND = l.strand ?? BEARD_STRAND; SLEEVE = mul(THOBE, [0.9, 0.9, 0.94]);
+  NO_BEARD = !!l.beardless; NO_SHAWL = l.shawl === null;
+  try { return fn(); } finally {
+    [SKIN_T, THOBE, SHAWL, KUFI, SANDAL, BEARD, BEARD_STRAND, SLEEVE] = saved; NO_BEARD = sb; NO_SHAWL = ss;
+  }
+};
 export const SLEEVE_W = 26;
 
 /** quadratic curve a -> (near) k -> b as a polyline (same idea as toon.ts `curve`) */
@@ -83,6 +98,7 @@ export const frontHeadShape = (hc: number, seed = 1) => {
 /** turn / tilt (optional, -1..1): the moustache, mouth gap and chin beard move toward where the face points, while
  *  the sideburns stay on the jaw edges, so a turned or lowered blank face still reads cleanly */
 export const frontBeard = (p: Pen, h: ReturnType<typeof frontHeadShape>, hc: number, light: number, faceFill: () => void, turn = 0, tilt = 0) => {
+  if (NO_BEARD) return;
   const { hp, edgeX, headA, headB } = h, thick = thickAngle(light);
   const u = headA, v = headB, chin = hc + headB;
   const SB = (2 * headA) / 20;               // sideburn width: 1/20 of the head width
@@ -225,8 +241,10 @@ export const traveller = (p: Pen, opts: TravellerOpts) => {
     qc([bx + 2, shY + 0.82 * HH], [bx - 6, shY + 0.3 * HH], [bx - 30, shY - 22]),
   ).map((q) => q);
   if (wind) back.splice(0, back.length, ...blow(back, 5));
-  p.gradFill(back, shawlDark, mul(shawlDark, [0.85, 0.85, 0.88]), light);
-  p.inkRing(back, OW * 0.85, thick);
+  if (!NO_SHAWL) {
+    p.gradFill(back, shawlDark, mul(shawlDark, [0.85, 0.85, 0.88]), light);
+    p.inkRing(back, OW * 0.85, thick);
+  }
 
   // ---- sandals (not bobbing: planted on the ground), alternate small lift with the walk ----
   for (const side of [-1, 1]) {
@@ -280,6 +298,7 @@ export const traveller = (p: Pen, opts: TravellerOpts) => {
     qc([300 + 22, waistY + 4], [300 + 16, shY + 0.8 * HH], [300 + 20, neckY - 4]),         // inner edge
   ).map((q) => q);
   if (wind) front.splice(0, front.length, ...blow(front));
+  if (!NO_SHAWL) {
   p.gradFill(front, SHAWL, shawlDark, light, 0.3);
   p.clip(front, () => {
     const f1 = mix(shawlDark, INK, 0.35), f2 = mix(SHAWL, "#b8b4a8", 0.14);
@@ -291,6 +310,7 @@ export const traveller = (p: Pen, opts: TravellerOpts) => {
   for (let k = 0; k < 6; k++) { // fringe along the bottom edge
     const t = (k + 0.5) / 6, x = 300 + 24 + t * 40 + wind * 7, y = waistY + 8 - 4 * t;
     p.stroke([[x, y], [x + 1, y + 13]], 3.2);
+  }
   }
 
   // ---- qiyam: forearms across the chest, right hand over the left (his right = screen left) ----

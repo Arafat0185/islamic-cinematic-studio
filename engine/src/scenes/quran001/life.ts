@@ -26,6 +26,7 @@ import { WALL_Z, APEX } from "../courtyard-test/courtyard";
 import { ARCHES, MAIN, LIT, POOL } from "../courtyard-beauty/world";
 import type { Frame, SetId } from "../../story/story";
 import { FPS, F, PHRASES, EV, SHOTS, streetX, P2, MARK, FRAMES } from "./timeline";
+import { buildProps } from "./props";
 
 // ---------------- helpers ----------------
 const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
@@ -146,8 +147,47 @@ const buildStreetLife = (root: THREE.Object3D) => {
   let shopMats: { m: THREE.MeshBasicMaterial; base: THREE.Color }[] | null = null;
   const soft = (t: number, i: number) => 1 - 0.22 * Math.pow(Math.max(0, Math.sin(0.85 * t + 1.9 * i)), 14) - 0.04 * Math.sin(5.3 * t + i); // slow dips, never off
 
+  // ---- the sunrise over the city ("lapse"): his lit window, the sky turning gold, a sun glow behind the towers, birds ----
+  const LAPSE = shotSpan("lapse");
+  let skyU: Record<string, THREE.IUniform> | null = null;
+  root.traverse((o) => { const m = (o as THREE.Mesh).material as THREE.ShaderMaterial; if (m?.uniforms?.uTop && m.uniforms.uHor) skyU = m.uniforms; });
+  const winG = new THREE.Group(); winG.visible = false; root.add(winG);
+  const wpane = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 1.15), new THREE.MeshBasicMaterial({ color: new THREE.Color("#ffcf8a").multiplyScalar(1.3), fog: false })); wpane.position.set(48.9, 4.3, -0.17); winG.add(wpane);
+  box(winG, [48.4, 3.66, -0.2], [49.4, 3.72, -0.12], mat("#e8e2d6")); box(winG, [48.4, 4.88, -0.2], [49.4, 4.94, -0.12], mat("#e8e2d6"));
+  box(winG, [48.4, 3.66, -0.2], [48.46, 4.94, -0.12], mat("#e8e2d6")); box(winG, [49.34, 3.66, -0.2], [49.4, 4.94, -0.12], mat("#e8e2d6")); box(winG, [48.87, 3.7, -0.2], [48.93, 4.9, -0.14], mat("#e8e2d6"));
+  const sunG = glowSprite(root, new THREE.Color(2.2, 1.35, 0.55), 170, [62, 150, -55]);
+  const sClouds = [[40, 125, -60, 70], [58, 140, -40, 60], [30, 150, -20, 55]].map(([x, y, z, w]) => { const c = new THREE.Sprite(new THREE.SpriteMaterial({ map: cloudTex(), color: new THREE.Color(1.3, 0.95, 0.75), transparent: true, opacity: 0, depthWrite: false, fog: false })); c.position.set(x, y, z); c.scale.set(w, w * 0.36, 1); c.renderOrder = -0.5; c.layers.set(NOINK); root.add(c); return c; }); sunG.visible = false; sunG.renderOrder = -0.6;
+  const sb = Array.from({ length: 6 }, () => {
+    const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(12), 3)); geo.setIndex([0, 1, 3, 1, 2, 3]);
+    const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: new THREE.Color("#141626"), side: THREE.DoubleSide, fog: false }));
+    m.layers.set(NOINK); m.frustumCulled = false; m.visible = false; root.add(m); return m;
+  });
+  const sv = new THREE.Vector3();
+  const sunrise = (fr: Frame, f: number) => {
+    const on = f >= LAPSE.a && f < LAPSE.b, t = f / FPS;
+    winG.visible = on; sunG.visible = on; for (const m of sb) m.visible = false; for (const c of sClouds) c.visible = false;
+    if (!on) return;
+    const u = clamp01((f - LAPSE.a) / (LAPSE.b - LAPSE.a)), e = sm(u * 1.15);
+    if (skyU) {
+      const top = untone("#" + new THREE.Color("#0f1c3f").lerp(new THREE.Color("#e0a468"), e).getHexString()), hor = untone("#" + new THREE.Color("#4a5c94").lerp(new THREE.Color("#ffc46a"), e).getHexString());
+      (skyU.uTop.value as THREE.Vector3).set(top.r, top.g, top.b); (skyU.uHor.value as THREE.Vector3).set(hor.r, hor.g, hor.b);
+    }
+    sunG.material.color.setRGB(1.5, 0.95, 0.42).multiplyScalar(0.2 + 0.8 * e);
+    sClouds.forEach((c, i) => { c.visible = true; c.material.opacity = 0.75 * e; c.position.x = [40, 58, 30][i] + 3 * u; });
+    const bu = (u - 0.3) / 0.7;
+    sb.forEach((m, i) => {
+      if (bu <= 0 || bu >= 1) return;
+      const k = i === 0 ? 0 : Math.ceil(i / 2) * (i % 2 ? 1 : -1);
+      atScreen(fr.plan.cam, -1.2 + 2.4 * bu - 0.07 * Math.abs(k), 0.42 + 0.05 * Math.abs(k) + 0.008 * Math.sin(t * 2 + i), 16, sv);
+      sv.sub(root.position);
+      const fl = Math.sin(t * 7 + i * 1.3), s2 = 0.45, p = m.geometry.attributes.position as THREE.BufferAttribute;
+      p.setXYZ(0, sv.x - s2, sv.y + 0.5 * s2 * fl, sv.z); p.setXYZ(1, sv.x, sv.y - 0.12 * s2, sv.z); p.setXYZ(2, sv.x + s2, sv.y + 0.5 * s2 * fl, sv.z); p.setXYZ(3, sv.x, sv.y + 0.08 * s2, sv.z);
+      p.needsUpdate = true; m.visible = true;
+    });
+  };
   return (fr: Frame, f: number) => {
     const t = f / FPS;
+    sunrise(fr, f);
     for (let i = 0; i < N; i++) {
       const h = fract(seed[i * 3 + 1] + (t * VY) / YT), y = YT * (1 - h), x = X0 + (X1 - X0) * seed[i * 3] + VX * (t + seed[i * 3 + 1]) * 0.3, z = Z0 + (Z1 - Z0) * seed[i * 3 + 2];
       rp.set([x, y, z, x - (VX * LEN) / VY, y + LEN, z], i * 6);
@@ -271,7 +311,7 @@ const preDawn = () => ctex("bedWin2", 128, 256, (g, r) => {
   for (let i = 0; i < 8; i++) { g.fillStyle = r() < 0.5 ? "#f2c879" : "#d7e2ff"; g.fillRect(r() * 128, 200 + r() * 50, 3, 4); }
 });
 const buildBedroomLife = (root: THREE.Object3D) => {
-  const bed = shotSpan("bedDawn"), A = bed.a, Z = shotSpan("phoneDown").b;
+  const A = shotSpan("alarm").a, Z = shotSpan("wudu").a;
   // a small high window above the nightstand, with its frame and sill
   const WX0 = -2.28, WX1 = -1.66, WY0 = 1.32, WY1 = 2.5, cx = (WX0 + WX1) / 2, cy = (WY0 + WY1) / 2;
   const glass = new THREE.Mesh(new THREE.PlaneGeometry(WX1 - WX0, WY1 - WY0), new THREE.MeshBasicMaterial({ map: preDawn(), color: new THREE.Color(0.6, 0.6, 0.6), fog: false }));
@@ -377,13 +417,13 @@ const buildCourtLife = (root: THREE.Object3D) => {
   const minaret = glowSprite(root, new THREE.Color(1.6, 1.0, 0.45), 1.8, [3.2, 9.0, -11.2]);   // around its lower lit window
   // ---- a shooting star (once) and birds crossing at dawn: placed in the top of the frame, far away ----
   const shoot = points(root, 22, 7, false);
-  const SHOOT_AT = PHRASES[7].from + F(0.5), SHOOT_LEN = F(1.2);   // in the wide shot of the gardens: the only one that shows the sky
+  const SHOOT_AT = -1e6, SHOOT_LEN = F(1.2);   // (off: no shot in this cut shows the open sky)
   const birds = Array.from({ length: 5 }, () => {
     const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(12), 3)); geo.setIndex([0, 1, 3, 1, 2, 3]);
     const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: new THREE.Color("#0a0d1c"), side: THREE.DoubleSide, transparent: true, opacity: 0, depthWrite: false, fog: false }));
     m.layers.set(NOINK); m.frustumCulled = false; root.add(m); return m;
   });
-  const BIRDS_A = PHRASES[7].from + F(2.0), BIRDS_B = PHRASES[8].from;
+  const BIRDS_A = -2e6, BIRDS_B = -1e6;                                 // (off: pigeons on the pavement instead, story.ts)
   // ---- slanting light: two broad beams whose colour and angle follow the day ----
   const beams = [0, 1].map((i) => {
     const b = lightBeam(root, [0, 0, 0], [0, -10, 0], 1.0 + 0.5 * i, 3.4 + 0.6 * i, "#ffffff", 1);
@@ -562,6 +602,7 @@ export const buildLife = (roots: Partial<Record<SetId, THREE.Object3D>>) => {
   if (roots.void) up.void = buildVoidLife(roots.void);
   if (roots.bedroom) up.bedroom = buildBedroomLife(roots.bedroom);
   if (roots.courtyard) up.courtyard = buildCourtLife(roots.courtyard);
+  const props = buildProps(roots);
   for (const r of Object.values(roots)) r!.updateMatrixWorld(true);
-  return { update: (fr: Frame, f: number) => { up[fr.set]?.(fr, Math.min(f, FRAMES - 1)); } };
+  return { update: (fr: Frame, f: number) => { const g = Math.min(f, FRAMES - 1); up[fr.set]?.(fr, g); props(fr, g); } };
 };

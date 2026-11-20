@@ -1,7 +1,7 @@
 // A city street: a sidewalk along x (z 0..2.2, kerb 0.14 m), a two-lane road (z 2.2..9), a row of buildings with
 // window facades and awnings behind the sidewalk, distant towers, street lamps, trees, a bus stop and a crossing.
 // Local coordinates: he walks along +x on the sidewalk (z ~ 0.9); cameras stand in the road (z ~ 7.5) looking -z.
-// States: "morning" (cool, high sun from the front left), "afternoon" (warm, lower sun from the right), "night" (a dark
+// States: "dawn" (before Fajr: deep blue, lamps lit), "morning" (cool, high sun from the front left), "afternoon" (warm, lower sun from the right), "night" (a dark
 // sky, every shop window glowing with its display, the street lamps lit, warm light spilling onto the pavement).
 // Traffic: setTraffic([...]) - each vehicle is at x = passX + speed * (t - passAt), in lane z, so a car can be timed
 // to cross the frame exactly on a sound effect.
@@ -124,17 +124,21 @@ export const buildStreet = (offset: V3) => {
   const lampBeams = [-20, -10, 0, 10, 20].map((x) => lightBeam(root, [x, 4.0, 2.85], [x + 0.2, 0, 2.5], 0.3, 2.6, "#ffe2a8", 0.2));
   let followX = 0;
   const apply = (state: string, t: number): SetLook => {
-    const night = state === "night";
+    const night = state === "night" || state === "dawn", dawn = state === "dawn";
+    for (const { v, mesh } of traffic) { mesh.position.set(v.passX + v.speed * (t - v.passAt), 0, v.lane); mesh.rotation.y = v.speed < 0 ? Math.PI : 0; }
     for (const sh of shops) sh.mesh.material = night ? sh.night : sh.day;
     for (const lh of lampHeads) lh.mesh.material = night ? lampGlow : lh.day;
     nightLights.forEach((l, i) => { l.intensity = night ? 7 : 0; l.position.set(followX - 6 + i * 4.5, 1.6, 0.4); });
     for (const b of lampBeams) b.setLevel(night ? 1 : 0);
     motes.update(t); for (const s3 of shafts) s3.setLevel(night ? 0 : state === "afternoon" ? 1.2 : 0.9);
+    if (dawn) { // before Fajr: deep blue sky lightening at the horizon, lamps and some windows still lit
+      sky.setColours("#0f1c3f", "#4a5c94"); s2.setFrom([0.3, 1.3, 0.8]);
+      return { lit: [0.2, 0.23, 0.4], shade: [0.07, 0.08, 0.16], lift: [0.012, 0.014, 0.032], sat: 0.95, charTint: [0.85, 0.88, 1.0], cardGain: 0.95, cardPointK: 1.3, pointK: 1.2, grade: GRADE_NIGHT, fog: ["#22305c", 10, 60] };
+    }
     if (night) {
       sky.setColours("#060a1c", "#1c2448"); s2.setFrom([0.3, 1.3, 0.8]);
       return { lit: [0.12, 0.13, 0.22], shade: [0.04, 0.045, 0.09], lift: [0.008, 0.008, 0.018], sat: 1.0, charTint: [0.95, 0.9, 0.86], cardGain: 0.9, cardPointK: 1.4, pointK: 1.3, grade: GRADE_NIGHT, fog: ["#141a36", 10, 60] };
     }
-    for (const { v, mesh } of traffic) { mesh.position.set(v.passX + v.speed * (t - v.passAt), 0, v.lane); mesh.rotation.y = v.speed < 0 ? Math.PI : 0; }
     if (state === "afternoon") {
       sky.setColours("#5e8fcf", "#f2cf9c"); s2.setFrom([1.0, 0.75, 0.7]);
       return { lit: [1.25, 0.98, 0.72], shade: [0.3, 0.3, 0.46], lift: [0.03, 0.02, 0.04], sat: 1.05, charTint: [1, 0.92, 0.82], cardGain: 1.0, grade: GRADE_DUSK, fog: ["#f0d2a8", 14, 75] };

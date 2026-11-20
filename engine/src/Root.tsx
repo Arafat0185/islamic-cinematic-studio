@@ -3,6 +3,7 @@ import React from "react";
 import { Composition } from "remotion";
 import { CourtyardTest, COURTYARD_FRAMES, COURTYARD_FPS } from "./scenes/courtyard-test/CourtyardTest";
 import { PoseSheet, POSE_SHEET_W, POSE_SHEET_H } from "./scenes/pose-sheet/PoseSheet";
+import { CastSheet, CAST_SHEET_W, CAST_SHEET_H } from "./scenes/pose-sheet/CastSheet";
 import { TravellerMotionTest, MOTION_FRAMES, MOTION_FPS } from "./scenes/motion-test/TravellerMotionTest";
 import { CourtyardBeauty } from "./scenes/courtyard-beauty/CourtyardBeauty";
 import { TextSample } from "./scenes/toolkit/TextSample";
@@ -57,6 +58,7 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="BeautyLow" component={CourtyardBeauty} defaultProps={{ shot: "low" as const }} durationInFrames={1} fps={30} width={1080} height={1920} />
     <Composition id="BeautyClose" component={CourtyardBeauty} defaultProps={{ shot: "close" as const }} durationInFrames={1} fps={30} width={1080} height={1920} />
     {/* Still image only: every Traveller pose side by side (no 3D scene) */}
+    <Composition id="CastSheet" component={CastSheet} durationInFrames={1} fps={30} width={CAST_SHEET_W} height={CAST_SHEET_H} />
     <Composition
       id="PoseSheet"
       component={PoseSheet}

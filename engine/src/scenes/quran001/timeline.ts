@@ -24,6 +24,7 @@ import type { Accent } from "../../film/film";
 import { SET_OFFSET, SetId, Frame, Plan, TravellerCard, FrameFx } from "../../story/story";
 import TIMING from "../../../../videos/001-the-first-question/quran/timing.json";
 import STORY from "../../../../videos/001-the-first-question/quran/shots.json";
+import { midAt, MID_KINDS } from "./story";
 
 export const FPS = TIMING.fps;
 export const F = (s: number) => Math.round(s * FPS);
@@ -205,14 +206,17 @@ export const accentAt = (f: number): Accent & { ca: number } => {
 // ---------------- the frame ----------------
 export type FrameInfo = { frame: Frame; head: V3; shot: PShot };
 /** two star irises: out of the warning into "except those who repent", and out of the bedroom into the courtyard */
-export const IRISES = [{ from: PHRASES[3].from - 7, len: 14 }, { from: PHRASES[4].from - 7, len: 14 }];
+export const IRISES = [{ from: PHRASES[3].from - 7, len: 14 }];
 export const shotAt = (f: number, outgoing = false): FrameInfo => {
   const t = f / FPS;
   let sh = shotOf(f);
   const ir = IRISES.find((r) => f >= r.from && f < r.from + r.len);
   if (outgoing && ir) sh = shotOf(ir.from - 1);
   let fr: Frame, head: V3;
-  if (sh.set !== "courtyard") {
+  if (MID_KINDS.has(sh.kind)) {
+    const m = midAt(f, sh);
+    fr = m.frame; head = m.head;
+  } else if (sh.set !== "courtyard") {
     const d = dayAt(f, sh);
     fr = { set: d.set, state: d.state, t: d.t, plan: d.plan, traveller: d.trav, hooks: { streetX: d.streetX, officeBanner: d.banner ?? null } };
     head = d.head;
@@ -261,6 +265,7 @@ export const fxAt = (f: number): FrameFx => {
     const fp = shotAt(f - 1).frame.plan.cam.look, a = project(f - 1, fp), b = project(f, fp);
     blurX = Math.min(24, Math.abs(b.x - a.x) * 0.4); blurY = Math.min(18, Math.abs(b.y - a.y) * 0.4);
     if (blurX < 1.2) blurX = 0; if (blurY < 1.2) blurY = 0;
+    if (shotOf(f).kind === "lapse") { blurX *= 0.2; blurY *= 0.2; }   // the tilt up to the sky stays crisp (the birds read)
   }
   // every cut lands with a soft settle: a 4 % scale and a little blur that clear in 7 frames
   for (const s of SHOTS) { const d = f - s.from; if (s.from > 0 && d >= 0 && d < 7) { const u = 1 - d / 7; zoom = { scale: 1 + 0.04 * u * u, x: 540, y: 900, blur: 3 * u }; } }

@@ -215,7 +215,9 @@ const Inner: React.FC<{ film: StoryFilm; outgoing?: boolean; traffic: Vehicle[] 
 
   // ---- the Traveller ----
   const tr = fr.traveller;
-  w.cast.pose(cam, tr ? [{ key: tr.key, x: tr.pos[0], y: tr.pos[1], z: tr.pos[2], draw: tr.draw, mirror: tr.mirror, roll: tr.roll, yaw: tr.yaw, wide: tr.wide, blob: tr.blob === undefined ? NIGHT.blob : tr.blob, castShadow: true }] : []);
+  const others = (fr.others ?? []).map((o) => ({ key: o.key, x: o.pos[0], y: o.pos[1], z: o.pos[2], draw: o.draw, mirror: o.mirror, roll: o.roll, yaw: o.yaw, wide: o.wide, scale: o.scale,
+    blob: o.blob === undefined ? NIGHT.blob : o.blob, castShadow: o.castShadow ?? false }));
+  w.cast.pose(cam, [...(tr ? [{ key: tr.key, x: tr.pos[0], y: tr.pos[1], z: tr.pos[2], draw: tr.draw, mirror: tr.mirror, roll: tr.roll, yaw: tr.yaw, wide: tr.wide, scale: tr.scale, blob: tr.blob === undefined ? NIGHT.blob : tr.blob, castShadow: true }] : []), ...others]);
   noInkFallback(w.root);
   cam.getWorldDirection(fwd);
   fpt.set(...pl.focus);
