@@ -11,6 +11,7 @@ import { Video001, VIDEO001_FRAMES, VIDEO001_FPS } from "./scenes/video001/Video
 import { Video001D2, VIDEO001D2_FRAMES, VIDEO001D2_FPS } from "./scenes/video001d2/Video001D2";
 import { Video001D3, VIDEO001D3_FRAMES, VIDEO001D3_FPS } from "./scenes/video001d3/Video001D3";
 import { Final001, FINAL001_FRAMES, FINAL001_FPS } from "./scenes/final001/Final001";
+import { Quran001, Quran001Samples, QURAN001_FRAMES, QURAN001_FPS } from "./scenes/quran001/Quran001";
 
 export const RemotionRoot: React.FC = () => (
   <>
@@ -35,6 +36,11 @@ export const RemotionRoot: React.FC = () => (
     {/* Video 001 draft 3: recitation slot, the day with varied transitions and effects, the faster courtyard (with sound) */}
     <Composition id="Video001D3" component={Video001D3} durationInFrames={VIDEO001D3_FRAMES} fps={VIDEO001D3_FPS} width={1080} height={1920} />
     <Composition id="TheFirstQuestionFinal" component={Final001} durationInFrames={FINAL001_FRAMES} fps={FINAL001_FPS} width={1080} height={1920} />
+    {/* Video 001, Quran version: captions of the recitation of Maryam 19:59-63 over the Traveller's story (the recitation is added in TikTok) */}
+    <Composition id="TheFirstQuestionQuran" component={Quran001} durationInFrames={QURAN001_FRAMES} fps={QURAN001_FPS} width={1080} height={1920} />
+    {/* preview only: chosen frames of the Quran version, one per output frame (props {"samples": [frame, ...]}); as long as
+        the video (Remotion clamps the frame to the composition's length), render it with --frames=0-<n-1> */}
+    <Composition id="TheFirstQuestionQuranSamples" component={Quran001Samples} durationInFrames={QURAN001_FRAMES} fps={QURAN001_FPS} width={1080} height={1920} />
     {/* Video 001 draft 2 - "A day of chasing": the story version across five sets (with sound) */}
     <Composition id="Video001D2" component={Video001D2} durationInFrames={VIDEO001D2_FRAMES} fps={VIDEO001D2_FPS} width={1080} height={1920} />
     {/* Video 001 · The First Question: the full draft, timed to the narration (with sound) */}

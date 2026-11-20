@@ -1,0 +1,123 @@
+{
+ "about": "The First Question - QURAN: the shot list and story events, shared by the picture (engine/src/scenes/quran001/timeline.ts) and the sound (engine/tools/mix_quran001.py). A shot starts at its phrase's caption ('phrase': index into timing.json) or at a time in seconds ('at'); the video ends in the breath after 19:63 (timing.json guide.recitationEnd); the end card is an overlay that crossfades in over its last cardFadeSeconds. Events: seconds, or {phrase, plus} = that phrase's voice start + plus.",
+ "shots": [
+  {
+   "kind": "street",
+   "set": "street",
+   "phrase": 0,
+   "why": "neglected: city at night, walking with his phone glowing"
+  },
+  {
+   "kind": "office",
+   "set": "office",
+   "phrase": 1,
+   "why": "prayer and pursued desires: busy at the desk"
+  },
+  {
+   "kind": "void",
+   "set": "void",
+   "phrase": 2,
+   "why": "the warning: dark, cold light, slow push-in"
+  },
+  {
+   "kind": "bedDawn",
+   "set": "bedroom",
+   "phrase": 3,
+   "why": "except those who repent: before Fajr, the phone glowing on the nightstand"
+  },
+  {
+   "kind": "phoneDown",
+   "set": "bedroom",
+   "at": 14.3,
+   "why": "he turns the phone face-down"
+  },
+  {
+   "kind": "walk",
+   "set": "courtyard",
+   "phrase": 4,
+   "why": "the dark courtyard before dawn: he walks to the mat"
+  },
+  {
+   "kind": "takbir",
+   "set": "courtyard",
+   "phrase": 5,
+   "why": "takbir: the warm light returns, the Fajr dot glows orange"
+  },
+  {
+   "kind": "qiyamClose",
+   "set": "courtyard",
+   "phrase": 6,
+   "why": "not wronged at all: close, standing in prayer"
+  },
+  {
+   "kind": "wideGold",
+   "set": "courtyard",
+   "phrase": 7,
+   "why": "gardens: the lamp-lit courtyard, gold"
+  },
+  {
+   "kind": "lampGold",
+   "set": "courtyard",
+   "phrase": 8,
+   "why": "the unseen: the lamp close"
+  },
+  {
+   "kind": "archLow",
+   "set": "courtyard",
+   "phrase": 9,
+   "why": "His promise: low, through the arches"
+  },
+  {
+   "kind": "poolLow",
+   "set": "courtyard",
+   "phrase": 10,
+   "why": "only peace: over the still pool"
+  },
+  {
+   "kind": "arcade",
+   "set": "courtyard",
+   "phrase": 11,
+   "why": "provision morning and afternoon: along the lanterns to him"
+  },
+  {
+   "kind": "mediumPush",
+   "set": "courtyard",
+   "phrase": 12,
+   "why": "that is Paradise: a slow push-in"
+  },
+  {
+   "kind": "ending",
+   "set": "courtyard",
+   "phrase": 13,
+   "why": "those who were fearing of Allah: the crane up to the star mark; the end card crossfades in over the last 1.5 s (inside the length)"
+  }
+ ],
+ "events": {
+  "dims": [
+   1.6,
+   3.0,
+   4.6,
+   6.1,
+   7.6
+  ],
+  "flip": 15.25,
+  "walk": [
+   17.75,
+   21.15
+  ],
+  "turn": 21.55,
+  "takbir": {
+   "phrase": 5,
+   "plus": 0.25
+  },
+  "fajrGlow": {
+   "phrase": 5,
+   "plus": 1.15
+  },
+  "craneUp": [
+   62.1,
+   64.7
+  ],
+  "cardFadeSeconds": 1.5
+ }
+}
