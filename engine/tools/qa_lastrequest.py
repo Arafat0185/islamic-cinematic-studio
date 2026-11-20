@@ -21,8 +21,17 @@ FF = str(HERE.parent / "node_modules/@remotion/compositor-win32-x64-msvc/ffmpeg.
 lines = []
 starts = [F(s["at"]) for s in story["shots"]]
 shots = [{"id": i, "a": a, "b": starts[i + 1] if i + 1 < len(starts) else FRAMES} for i, a in enumerate(starts)]
-meta = {"shots": shots, "planned": [[F(e), F(e) + 8] for e in story["events"]["lightning"]] + [[F(timing["cardFrom"]) - 30, FRAMES]],
-        "intended_dark": [[F(story["events"]["lightOut"]), F(timing["recStart"]) + 8], [F(timing["cardFrom"]) - 30, FRAMES]]}
+ev = story["events"]
+trans = [(F(t0), k) for t0, k in ev.get("transitions", [])]
+# planned: the lightning, the eerie transitions (blinks, smears, the heartbeat cut, dissolves), his collapse, the phone
+# dropping and lighting up on the mat, the end card; intended dark: the cut to black, the closed eyelids, the smears
+mat = next(s2 for s2 in story["shots"] if s2["kind"] == "matPhone")["at"]
+planned = [[F(e) - 2, F(e) + 10] for e in ev["lightning"]] + [[f0 - 12, f0 + 12] for f0, _ in trans] + [[F(timing["cardFrom"]) - 30, FRAMES]]
+planned += [[F(ev[k]) - 6, F(ev[k]) + 18] for k in ("collapseBed", "phoneDrop", "fall", "flat") if k in ev]
+planned += [[F(mat + d) - 2, F(mat + d) + 6] for d in (0.15, 0.95, 1.7, 2.6, 3.4, 4.2)]
+dark = [[F(ev["lightOut"]), F(timing["recStart"]) + 14], [F(timing["cardFrom"]) - 30, FRAMES], [F(mat), F(mat) + 8]]
+dark += [[f0 - 10, f0 + 10] for f0, k in trans if k in ("blink", "smear", "cut", "blinkOpen")]
+meta = {"shots": shots, "planned": planned, "intended_dark": dark}
 (OUT / "shots.json").write_text(json.dumps(meta), encoding="utf-8")
 r = subprocess.run([sys.executable, str(HERE / "short_qa.py"), str(UP), str(OUT), str(OUT / "shots.json")], capture_output=True, text=True, encoding="utf-8", errors="replace")
 lines.append("## frames (upload file)\n" + (r.stdout or r.stderr).split("\nPER SHOT")[0])
