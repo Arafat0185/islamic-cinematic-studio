@@ -8,7 +8,7 @@ import { Cam, V3, clamp01, smooth, applyCam } from "../../camera/ease";
 import { SU, light2D } from "../../render/card";
 import type { Pen } from "../../draw/toon";
 import { withLook } from "../../characters/traveller";
-import { travellerLying, travellerBedPhoneWide } from "../../characters/travellerPoses";
+import { travellerLying, travellerBedPhoneWide, travellerChair } from "../../characters/travellerPoses";
 import { walker, stoop, LOOKS, type Card } from "../../characters/people";
 import { BEDROOM } from "../../sets/bedroom";
 import { STREET } from "../../sets/street";
@@ -24,14 +24,18 @@ export const FPS = TIMING.fps;
 export const F = (s: number) => Math.round(s * FPS);
 export const FRAMES = Math.round(TIMING.length * FPS);
 export const CARD_FROM = F(TIMING.cardFrom);
+const EVJ = STORY.events as unknown as Record<string, unknown>;
 export const EV = {
-  lightOut: F(STORY.events.lightOut), phoneOff: F(STORY.events.phoneOff), hospDark: F(STORY.events.hospitalDark),
-  lightning: STORY.events.lightning.map(F), soil: STORY.events.soil.map(F), flicker: STORY.events.flicker.map(F),
+  lightOut: F(EVJ.lightOut as number), phoneOff: F(EVJ.phoneOff as number), hospDark: F(EVJ.hospitalDark as number),
+  lightning: (EVJ.lightning as number[]).map(F), soil: (EVJ.soil as number[]).map(F), flicker: (EVJ.flicker as number[]).map(F),
+  phoneDrop: F(EVJ.phoneDrop as number), stumble: F(EVJ.stumble as number), fall: F(EVJ.fall as number), collapseBed: F(EVJ.collapseBed as number),
+  beads: F(EVJ.beads as number), flat: F(EVJ.flat as number),
 };
+export const TRANSITIONS = (EVJ.transitions as [number, string][]).map(([t, k]) => ({ f: F(t), kind: k }));
 export type PShot = { kind: string; set: SetId; from: number; to: number };
 export const SHOTS: PShot[] = STORY.shots.map((s, i, a) => ({ kind: s.kind, set: s.set as SetId, from: F(s.at), to: i + 1 < a.length ? F(a[i + 1].at) : FRAMES }));
 export const shotOf = (f: number): PShot => { let s = SHOTS[0]; for (const x of SHOTS) if (f >= x.from) s = x; return s; };
-export const SETS: SetId[] = ["bedroom", "hospital", "cemetery"];
+export const SETS: SetId[] = ["bedroom", "hospital", "cemetery", "street"];
 
 const q = (v: number, n: number) => Math.round(v * n) / n;
 const add = (a: V3, b: V3): V3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
@@ -41,8 +45,8 @@ const LDIR: Record<string, V3> = { room: [0.9, 0.8, -1.2], hosp: [-0.9, 1.0, 1.0
 const camRight = (c: Cam) => { const f = new THREE.Vector3(c.look[0] - c.pos[0], 0, c.look[2] - c.pos[2]).normalize(); return new THREE.Vector3(-f.z, 0, f.x); };
 const lightOf = (k: string, c: Cam, mirror = false) => q(light2D(new THREE.Vector3(...LDIR[k]).normalize(), camRight(c), mirror), 30);
 const mirrorFor = (c: Cam, dx: number, dz: number) => { const r = camRight(c); return dx * r.x + dz * r.z < 0; };
-const put = (set: SetId, c: Card, p: V3, o: { mirror?: boolean; scale?: number; yaw?: number; wide?: boolean; blob?: string | null; shadow?: boolean } = {}): TravellerCard =>
-  ({ pos: W(set, p), key: c.key, draw: c.draw as (p: Pen) => void, mirror: o.mirror, scale: o.scale, yaw: o.yaw, wide: o.wide, blob: o.blob, castShadow: o.shadow });
+const put = (set: SetId, c: Card, p: V3, o: { mirror?: boolean; scale?: number; yaw?: number; wide?: boolean; blob?: string | null; shadow?: boolean; roll?: number } = {}): TravellerCard =>
+  ({ pos: W(set, p), key: c.key, draw: c.draw as (p: Pen) => void, mirror: o.mirror, scale: o.scale, yaw: o.yaw, wide: o.wide, blob: o.blob, castShadow: o.shadow, roll: o.roll });
 const MUTED = LOOKS.travellerMuted;
 
 // ---------------- the janazah: where the procession is at time t (shared with life.ts: the bier) ----------------
@@ -62,71 +66,124 @@ const procession = (c: Cam, t: number): TravellerCard[] => {
   return out;
 };
 /** mourners standing round the grave with umbrellas; leaving: they walk away (k = seconds since they turned) */
-const mourners = (c: Cam, leave: number): TravellerCard[] => {
+const mourners = (c: Cam, leave: number, oneByOne = false): TravellerCard[] => {
   const spots: [string, number, number, number][] = [["m3", -1.6, -1.9, -1], ["m6", -0.6, -2.05, -1], ["m2", 0.5, -2.0, 1], ["m1", 1.6, -1.85, 1], ["m4", -2.3, 1.2, -1], ["m5", 2.3, 1.25, 1]];
   const um = ["#1d2128", "#2a2d33", "#16191e", "#24272c", "#1d2128", "#2a2d33"];
   return spots.map(([lk, x, z, dir], i) => {
-    const d = Math.max(0, leave - 0.25 * i) * 0.55, mir = mirrorFor(c, dir, 0), L = lightOf("cem", c, mir);
+    const d = Math.max(0, leave - (oneByOne ? 0.7 : 0.25) * i) * 0.55, mir = mirrorFor(c, dir, 0), L = lightOf("cem", c, mir);
     return put("cemetery", d > 0 ? walkC(lk, d, L, mir, { umbrella: um[i] }) : walker(lk, { light: L, shawlNear: mir, umbrella: um[i], headRot: 0.15 }), [x + dir * d, 0, z], { mirror: mir });
   });
 };
 
 // ---------------- the shots ----------------
 type Shot = { set: SetId; state: string; cam: Cam; focus: V3; cInf: number; trav: TravellerCard | null; others?: TravellerCard[]; head: V3; hooks?: Frame["hooks"] };
-/** the clock of the voice part (seconds to minutes past 3 a.m.) */
+const NOHEAD: V3 = [0, -5, 0];
+const KERB = STREET.KERB - 0.02;
+/** where he runs in the opening (street): x at time t (accelerating a little, then braking at the stop) */
+/** the bus that pulls away in the opening (the street set's vehicle: x = passX + speed * (t - passAt), in the far lane) */
+export const BUS = { passAt: 2.0, passX: 40.0, speed: 3.5, lane: 5.3 };
+export const runX = (t: number) => 36.2 + 1.75 * Math.min(t, 1.65) - 0.4 * Math.max(0, Math.min(t, 1.65) - 1.1) ** 2;
+/** people rushing past him on the pavement (both ways, some under umbrellas) */
+const crowd = (c: Cam, t: number, x0: number): TravellerCard[] => {
+  const ppl: [string, number, number, number, string][] = [["m1", 1.35, 1.25, 0, ""], ["m5", -1.25, 0.6, 2.1, "#1d2128"], ["m2", 1.15, 0.35, 4.3, "#24272c"], ["m4", -1.45, 1.0, 1.0, ""], ["m6", 1.3, 0.75, 5.6, ""], ["m3", -1.2, 0.25, 3.3, "#16191e"]];
+  return ppl.map(([lk, v, z, ph, um]) => {
+    const span = 9, x = x0 - span / 2 + (((v * t + ph * 1.7) % span) + span) % span, mir = mirrorFor(c, Math.sign(v), 0);
+    return put("street", walkC(lk, Math.abs(v) * t + ph, lightOf("street", c, mir), mir, { swing: 1.3, ...(um ? { umbrella: um } : {}) }), [x, KERB, z], { mirror: mir });
+  });
+};
 export const shotAt0 = (f: number): Shot => {
-  const sh = shotOf(f), t = f / FPS, a = sh.from, b = sh.to, u = clamp01((f - a) / Math.max(1, b - a)), mv = (c0: Cam, c1: Cam) => move(c0, c1, a, b)(f);
-  const roomState = f < EV.phoneOff ? "night" : "nightOff";
+  const sh = shotOf(f), t = f / FPS, a = sh.from, b = sh.to, u = clamp01((f - a) / Math.max(1, b - a)), tl = (f - a) / FPS, mv = (c0: Cam, c1: Cam) => move(c0, c1, a, b)(f);
   const bedPhone = (c: Cam, dark = false): TravellerCard => {
     const L = lightOf("room", c), sc = q((t * 0.7) % 1, 10);
     return put("bedroom", { key: `bedphone|${sc}|${dark}|${L}`, draw: (p) => withLook(MUTED, () => travellerBedPhoneWide(p, { light: L, scroll: sc, dark })) }, BEDROOM.SIT, { wide: true, blob: null });
   };
-  const HEAD_SIT: V3 = [BEDROOM.SIT[0] - 0.3, 1.25, BEDROOM.SIT[2]];
+  const lying = (c: Cam, st: number): TravellerCard => { const L = lightOf("room", c), s2 = q(st, 10); return put("bedroom", { key: `lie|${s2}|${L}`, draw: (p) => withLook(MUTED, () => travellerLying(p, { light: L, stir: s2 })) }, BEDROOM.LYING, { wide: true, blob: null }); };
+  const HEAD_SIT: V3 = [BEDROOM.SIT[0] - 0.3, 1.25, BEDROOM.SIT[2]], HEAD_LIE: V3 = [BEDROOM.LYING[0] - 0.86, 0.85, BEDROOM.LYING[2]];
+  const T = "travellerMuted";
   switch (sh.kind) {
-    case "rainWindow": return { set: "bedroom", state: roomState, cam: mv(cam([1.1, 1.62, -0.75], [1.05, 1.58, -2.2], 42), cam([1.08, 1.6, -1.1], [1.05, 1.58, -2.2], 38)), focus: [1.05, 1.6, -2.18], cInf: 3, trav: null, head: [0, -5, 0] };
-    case "dustyMat": return { set: "bedroom", state: roomState, cam: mv(cam([1.9, 1.05, 1.6], [1.0, 0.05, 0.25], 42), cam([1.6, 0.85, 1.2], [1.0, 0.03, 0.25], 38)), focus: [1.0, 0.03, 0.25], cInf: 5, trav: null, head: [0, -5, 0] };
-    case "scroll3am": { const c = mv(cam([0.9, 1.45, 1.45], [-1.0, 1.25, -1.5], 44), cam([0.7, 1.4, 1.15], [-1.05, 1.25, -1.5], 42)); return { set: "bedroom", state: roomState, cam: c, focus: HEAD_SIT, cInf: 4, trav: bedPhone(c), head: HEAD_SIT }; }
-    case "mushaf": return { set: "bedroom", state: roomState, cam: mv(cam([-1.85, 2.05, -0.8], [-2.62, 1.92, -2.03], 40), cam([-2.0, 2.02, -1.0], [-2.63, 1.92, -2.03], 36)), focus: [-2.63, 1.93, -2.03], cInf: 7, trav: null, head: [0, -5, 0] };
-    case "clockSpin": return { set: "bedroom", state: roomState, cam: mv(cam([-1.15, 2.0, -0.95], [-1.3, 2.18, -2.19], 40), cam([-1.2, 2.05, -1.2], [-1.3, 2.19, -2.19], 36)), focus: [-1.3, 2.2, -2.18], cInf: 6, trav: null, head: [0, -5, 0] };
-    case "tasbih": { const c = mv(cam([0.15, 0.88, -0.45], [-1.0, 0.75, -1.3], 42), cam([0.05, 0.85, -0.55], [-1.05, 0.74, -1.3], 40)); return { set: "bedroom", state: roomState, cam: c, focus: HEAD_SIT, cInf: 6, trav: bedPhone(c), head: HEAD_SIT }; }
-    case "roomDim": { const c = mv(cam([1.9, 1.75, 2.1], [-0.9, 0.85, -1.3], 44), cam([2.4, 1.95, 2.7], [-0.9, 0.85, -1.3], 46)); return { set: "bedroom", state: roomState, cam: c, focus: HEAD_SIT, cInf: 3, trav: bedPhone(c), head: HEAD_SIT }; }
-    case "lightOut": { const c = mv(cam([0.45, 1.35, 1.1], [-1.1, 1.0, -1.3], 42), cam([0.3, 1.3, 0.85], [-1.12, 1.0, -1.3], 40)); return { set: "bedroom", state: roomState, cam: c, focus: HEAD_SIT, cInf: 5, trav: bedPhone(c, f >= EV.phoneOff), head: HEAD_SIT }; }
-    // ---- the recitation ----
-    case "hospRain": return { set: "hospital", state: "on", cam: mv(cam([-1.55, 1.55, -1.1], [-1.6, 1.5, -2.38], 40), cam([-1.58, 1.52, -1.45], [-1.6, 1.5, -2.38], 36)), focus: [-1.6, 1.5, -2.37], cInf: 3, trav: null, head: [0, -5, 0] };
-    case "monitor": return { set: "hospital", state: "on", cam: mv(cam([0.2, 1.55, -0.55], [0.95, 1.42, -2.05], 38), cam([0.32, 1.52, -0.8], [0.95, 1.42, -2.05], 34)), focus: [0.95, 1.45, -2.04], cInf: 6, trav: null, head: [0, -5, 0] };
-    case "hospitalWide": case "emptyBed": {
-      const wide = sh.kind === "hospitalWide";
-      const c = wide ? mv(cam([2.2, 1.65, 1.0], [-0.1, 0.8, -1.4], 44), cam([1.8, 1.55, 0.6], [-0.1, 0.8, -1.45], 42)) : mv(cam([-0.4, 1.35, 1.3], [0.0, 0.7, -1.3], 44), cam([-0.35, 1.3, 1.0], [0.0, 0.7, -1.3], 42));
-      const L = lightOf("hosp", c, true), st = q(0.1 + 0.05 * Math.sin(t * 0.8), 20);
-      const trav = wide ? put("hospital", { key: `hlie|${st}|${L}`, draw: (p) => withLook(MUTED, () => travellerLying(p, { light: L, stir: st })) }, [HOSPITAL.BED[0], 0.72, HOSPITAL.BED[2] + 0.03], { wide: true, blob: null, yaw: Math.PI / 2, mirror: true, scale: 0.88 }) : null;
-      return { set: "hospital", state: wide && f < EV.hospDark ? "on" : "dark", cam: c, focus: [0, 0.8, -1.4], cInf: 4, trav, head: wide ? [0, 0.95, -2.1] : [0, -5, 0] };
+    // ======================= the voice: his life falling apart =======================
+    case "runRain": { // running through the night rain, splashing, late
+      const x = runX(t), c = cam([x - 0.9, 1.45, 3.65], [x + 0.05, 1.25, 1.3], 46), mir = mirrorFor(c, 1, 0);
+      const trav = put("street", walker(T, { phase: q(0.25 + (x - 36.2) / 1.3, 240), k: 1, stride: Math.round(0.65 / SU), swing: 1.9, light: lightOf("street", c, mir), shawlNear: mir }), [x, KERB, 1.5], { mirror: mir });
+      return { set: "street", state: "dark", cam: c, focus: [x, 1.1, 1.5], cInf: 4, trav, others: crowd(c, t, x + 2).slice(0, 2), head: [x, 1.8, 1.5], hooks: { streetX: x, officeBanner: null } };
     }
-    case "phoneGlow": { const c = mv(cam([0.0, 1.32, 0.3], [-1.35, 1.05, -1.3], 42), cam([-0.15, 1.28, 0.05], [-1.38, 1.05, -1.3], 38)); return { set: "bedroom", state: "night", cam: c, focus: [-0.85, 1.05, -1.3], cInf: 6, trav: bedPhone(c), head: HEAD_SIT }; }
-    case "laptopBank": { const c = mv(cam([1.0, 1.05, 0.05], [0.12, 0.66, -1.2], 42), cam([0.8, 0.98, -0.2], [0.12, 0.66, -1.22], 38)); return { set: "bedroom", state: "night", cam: c, focus: [0.12, 0.7, -1.22], cInf: 5, trav: bedPhone(c), head: HEAD_SIT }; }
-    case "laptopClose": return { set: "bedroom", state: "night", cam: mv(cam([0.55, 0.98, -0.42], [0.12, 0.72, -1.25], 34), cam([0.48, 0.95, -0.55], [0.12, 0.72, -1.25], 30)), focus: [0.12, 0.72, -1.25], cInf: 7, trav: null, head: [0, -5, 0] };
-    case "mushafDust": return { set: "bedroom", state: "night", cam: mv(cam([-1.7, 2.1, -0.65], [-2.62, 1.92, -2.03], 40), cam([-1.95, 2.05, -0.95], [-2.63, 1.92, -2.03], 34)), focus: [-2.63, 1.93, -2.03], cInf: 7, trav: null, head: [0, -5, 0] };
-    case "beadsBed": { const c = mv(cam([0.3, 1.0, -0.15], [-0.55, 0.62, -1.05], 40), cam([0.2, 0.95, -0.3], [-0.5, 0.6, -1.0], 36)); return { set: "bedroom", state: "night", cam: c, focus: [-0.45, 0.58, -0.95], cInf: 6, trav: bedPhone(c), head: HEAD_SIT }; }
-    case "trackerRoom": { const c = mv(cam([2.1, 2.05, 1.6], [-0.8, 0.8, -1.3], 44), cam([1.9, 2.15, 1.3], [-0.85, 0.8, -1.3], 42)); return { set: "bedroom", state: "night", cam: c, focus: HEAD_SIT, cInf: 3, trav: bedPhone(c), head: HEAD_SIT }; }
-    case "matPhone": return { set: "bedroom", state: "nightOff", cam: mv(cam([1.75, 0.65, 1.05], [1.0, 0.05, 0.25], 42), cam([1.6, 0.58, 0.9], [1.0, 0.04, 0.25], 38)), focus: [1.0, 0.05, 0.25], cInf: 6, trav: null, head: [0, -5, 0] };
-    case "leftBehind": { const e = smooth(u); return { set: "bedroom", state: "nightOff", cam: cam([0.8 - 0.3 * e, 1.4, 1.6], [lerp(-0.6, -2.45, e), lerp(0.7, 1.5, e), lerp(-1.3, -2.0, e)], 42), focus: [lerp(-0.6, -2.45, e), 1.0, lerp(-1.3, -2.0, e)], cInf: 4, trav: null, head: [0, -5, 0] }; }
-    case "stillWindow": return { set: "bedroom", state: "nightOff", cam: mv(cam([2.05, 1.3, 0.35], [1.0, 1.5, -2.2], 42), cam([1.95, 1.32, 0.05], [1.0, 1.52, -2.2], 40)), focus: [1.0, 1.5, -2.2], cInf: 3, trav: null, head: [0, -5, 0] };
-    case "lightning": return { set: "bedroom", state: "nightOff", cam: mv(cam([1.6, 1.6, 2.2], [-0.6, 0.9, -1.3], 46), cam([1.55, 1.58, 2.1], [-0.6, 0.9, -1.3], 46)), focus: [-0.6, 0.8, -1.3], cInf: 3, trav: null, head: [0, -5, 0] };
-    case "janazah": { const x = procX(t), c = cam([x - 0.5, 1.5, 7.9], [x - 0.3, 1.25, PROC.z], 46); return { set: "cemetery", state: "rain", cam: c, focus: [x, 1.3, PROC.z], cInf: 4, trav: null, others: procession(c, t), head: [x, 1.8, PROC.z] }; }
-    case "janazahLow": { const x = procX(t), c = cam([x + 0.75, 0.36, 5.3], [x + 0.6, 0.95, PROC.z], 46); return { set: "cemetery", state: "rain", cam: c, focus: [x, 0.6, PROC.z], cInf: 5, trav: null, others: procession(c, t), head: [x, 1.8, PROC.z] }; }
-    case "burial": { const c = mv(cam([0.65, 1.65, 2.05], [0.0, 0.05, 0.2], 46), cam([0.55, 1.6, 1.9], [0.0, 0.05, 0.2], 44));
-      const [s0, s1] = EV.soil, fill = 0.65 * smooth((f - s0) / (s1 - s0));
+    case "missBus": { // he reaches the stop as the bus pulls away; he stops, slumps
+      const x = runX(t), stopK = clamp01((t - 2.5) / 0.4), c = mv(cam([36.6, 1.4, 0.38], [41.5, 1.7, 4.8], 50), cam([36.8, 1.45, 0.4], [42.8, 1.8, 5.0], 50)), mir = mirrorFor(c, 1, 0);
+      const card = stopK < 1 ? walker(T, { phase: q(0.25 + (x - 36.2) / 1.3, 240), k: 1 - stopK, stride: Math.round(0.65 / SU), swing: 1.9, light: lightOf("street", c, mir), shawlNear: mir })
+        : walker(T, { light: lightOf("street", c, mir), shawlNear: mir, headRot: 0.3 });
+      return { set: "street", state: "dark", cam: c, focus: [x, 1.2, 1.5], cInf: 4, trav: put("street", card, [x, KERB, 1.5 + 0.3 * stopK], { mirror: mir }), head: [x, 1.8, 1.6], hooks: { streetX: x, officeBanner: null } };
+    }
+    case "lookClosely": { // slow push into his soaked silhouette, standing still while the crowd rushes past
+      const x = runX(99), c = mv(cam([x + 0.1, 1.5, 3.7], [x, 1.55, 1.8], 44), cam([x + 0.05, 1.6, 2.95], [x, 1.62, 1.8], 34)), mir = mirrorFor(c, 1, 0);
+      const trav = put("street", walker(T, { light: lightOf("street", c, mir), shawlNear: mir, headRot: 0.3 }), [x, KERB, 1.8], { mirror: mir });
+      return { set: "street", state: "dark", cam: c, focus: [x, 1.6, 1.8], cInf: 6, trav, others: crowd(c, t, x), head: [x, 1.8, 1.8], hooks: { streetX: x, officeBanner: null } };
+    }
+    case "toss3am": { const c = mv(cam([0.75, 1.3, 1.2], [-1.2, 0.75, -1.4], 44), cam([0.55, 1.22, 0.9], [-1.25, 0.75, -1.4], 42)); return { set: "bedroom", state: "night", cam: c, focus: HEAD_LIE, cInf: 5, trav: lying(c, 0.5 + 0.5 * Math.sin(tl * 9) * Math.sin(tl * 3.1)), head: HEAD_LIE }; }
+    case "grabPhone": { const c = mv(cam([0.55, 1.22, 0.9], [-1.1, 1.0, -1.4], 42), cam([0.35, 1.25, 0.6], [-1.1, 1.05, -1.4], 40)); return { set: "bedroom", state: "night", cam: c, focus: HEAD_SIT, cInf: 5, trav: bedPhone(c), head: HEAD_SIT }; }
+    case "pastShelf": { // he walks past the shelf without looking
+      const x = -2.55 + 0.75 * tl, c = mv(cam([0.45, 1.6, 1.9], [-2.2, 1.35, -1.3], 44), cam([0.55, 1.6, 1.8], [-1.8, 1.3, -1.1], 44)), mir = mirrorFor(c, 1, 0);
+      return { set: "bedroom", state: "night", cam: c, focus: [x, 1.2, -0.35], cInf: 4, trav: put("bedroom", walkC(T, tl * 0.75, lightOf("room", c, mir), mir, { headRot: 0.25 }), [x, 0.013, -0.35], { mirror: mir }), head: [x, 1.8, -0.35] };
+    }
+    case "pastMasjid": { // past the masjid door in the rain, men going in, warm light spilling; he keeps walking into the dark
+      const x = 26.9 + 1.3 * tl, c = cam([x - 1.6, 1.45, 4.4], [x + 0.5, 1.3, 0.6], 44), mir = mirrorFor(c, 1, 0), mirL = mirrorFor(c, -1, 0);
+      const men = [0, 1, 2].map((i) => { const d = Math.max(0, tl - 0.45 * i), mx = 30.6 + 0.9 * i - 1.0 * d, zz = 0.9 - Math.max(0, (29.2 - mx)) * 0.9;
+        return put("street", walkC(["m2", "m4", "m6"][i], d, lightOf("street", c, mirL), mirL), [Math.max(28.85, mx), KERB, Math.max(0.05, zz)], { mirror: mirL }); }).filter((_, i) => tl - 0.45 * i < 2.1);
+      return { set: "street", state: "dark", cam: c, focus: [x, 1.3, 1.0], cInf: 4, trav: put("street", walkC(T, tl * 1.3, lightOf("street", c, mir), mir, { headRot: 0.2 }), [x, KERB, 1.15], { mirror: mir }), others: men, head: [x, 1.8, 1.15], hooks: { streetX: x, officeBanner: null } };
+    }
+    case "beadsFall": return { set: "bedroom", state: "night", cam: mv(cam([-1.95, 0.62, -0.1], [-2.08, 0.18, -1.15], 44), cam([-1.95, 0.58, -0.22], [-2.08, 0.15, -1.15], 40)), focus: [-2.0, 0.3, -1.4], cInf: 6, trav: null, head: NOHEAD };
+    case "drainWave": { const c = mv(cam([1.9, 1.8, 2.3], [-0.6, 0.9, -1.3], 46), cam([1.7, 1.75, 2.0], [-0.5, 0.9, -1.4], 44)); return { set: "bedroom", state: "night", cam: c, focus: HEAD_SIT, cInf: 3, trav: bedPhone(c), head: HEAD_SIT }; }
+    case "drainClose": return { set: "bedroom", state: "night", cam: mv(cam([1.08, 1.42, -0.55], [1.05, 1.1, -2.15], 44), cam([1.06, 1.38, -0.75], [1.05, 1.1, -2.15], 42)), focus: [1.05, 1.1, -2.12], cInf: 6, trav: null, head: NOHEAD };
+    case "collapseBed": { // standing by the bed, he folds and falls onto it
+      const c = mv(cam([1.4, 1.5, 1.9], [-0.4, 0.85, -1.0], 44), cam([1.25, 1.4, 1.6], [-0.45, 0.8, -1.05], 42)), mir = mirrorFor(c, -1, 0), L = lightOf("room", c, mir);
+      const P: V3 = [0.75, 0.013, -0.25], k = smooth((f - EV.collapseBed + 8) / 10);
+      const trav = f < EV.collapseBed + 4 ? put("bedroom", stoop(T, 0.7 * k, L), P, { mirror: mir }) : lying(c, 0.05);
+      return { set: "bedroom", state: "night", cam: c, focus: [0, 0.9, -0.8], cInf: 4, trav, head: f < EV.collapseBed + 4 ? [P[0], 1.7 - 0.5 * k, P[2]] : HEAD_LIE };
+    }
+    case "black": return { set: "bedroom", state: "nightOff", cam: cam([0.5, 1.3, 1.0], [-1.0, 0.8, -1.3], 44), focus: [-1, 0.8, -1.3], cInf: 3, trav: null, head: NOHEAD };
+    // ======================= 63:10 =======================
+    case "bankPanic": { const c = mv(cam([0.6, 1.08, 1.3], [-0.4, 0.8, -0.55], 46), cam([0.5, 1.05, 1.1], [-0.42, 0.8, -0.55], 44)); const L = lightOf("room", c);
+      return { set: "bedroom", state: "night", cam: c, focus: [-0.4, 0.9, -0.3], cInf: 5, trav: put("bedroom", { key: `edgehead|${L}`, draw: (p) => withLook(MUTED, () => travellerChair(p, { light: L, arms: "head", tilt: 0, chair: false })) }, BEDROOM.EDGE, { yaw: 0, blob: null }), head: [BEDROOM.EDGE[0] + 0.05, 1.15, BEDROOM.EDGE[2]] }; }
+    case "walkHome": { const x = 36.0 + 0.55 * tl, c = cam([x - 0.8, 1.45, 3.7], [x + 0.05, 1.25, 1.3], 44), mir = mirrorFor(c, 1, 0);
+      return { set: "street", state: "dark", cam: c, focus: [x, 1.2, 1.3], cInf: 4, trav: put("street", walkC(T, tl * 0.55, lightOf("street", c, mir), mir, { headRot: 0.3 }), [x, KERB, 1.3], { mirror: mir }), head: [x, 1.8, 1.3], hooks: { streetX: x, officeBanner: null } }; }
+    case "phoneDrop": { const x = 40.15 + 0.45 * tl, c = mv(cam([41.0, 0.42, 2.35], [40.6, 0.2, 1.25], 42), cam([40.95, 0.4, 2.25], [40.6, 0.2, 1.25], 40)), mir = mirrorFor(c, 1, 0);
+      return { set: "street", state: "dark", cam: c, focus: [43.0, 0.2, 1.25], cInf: 6, trav: put("street", walkC(T, tl * 0.45, lightOf("street", c, mir), mir, { headRot: 0.3 }), [x, KERB, 1.0], { mirror: mir }), head: [x, 1.8, 1.0], hooks: { streetX: 40.6, officeBanner: null } }; }
+    case "collapseStreet": { // he stumbles and falls on the wet street, seen from across the road
+      const c = mv(cam([41.75, 1.2, 7.4], [42.1, 0.55, 1.2], 44), cam([41.8, 1.15, 7.0], [42.15, 0.5, 1.2], 42)), mir = mirrorFor(c, 1, 0), L = lightOf("street", c, mir);
+      const x = Math.min(42.3, 41.5 + 0.5 * tl);
+      let card: TravellerCard;
+      if (f < EV.stumble) card = put("street", walkC(T, tl * 0.5, L, mir, { swing: 0.4, headRot: 0.35 }), [x, KERB, 1.2], { mirror: mir });
+      else if (f < EV.fall) card = put("street", stoop(T, smooth((f - EV.stumble) / (EV.fall - EV.stumble)) * 0.8, L), [x, KERB, 1.2], { mirror: mir });
+      else { const k = smooth((f - EV.fall) / 9); card = put("street", stoop(T, 0.8 * (1 - k), L), [x, KERB + 0.16 * k, 1.2], { mirror: mir, roll: (mir ? 1 : -1) * (Math.PI / 2) * k }); }
+      return { set: "street", state: "dark", cam: c, focus: [x, 0.5, 1.2], cInf: 3, trav: card, head: [x, f < EV.fall ? 1.6 : 0.4, 1.2], hooks: { streetX: 42, officeBanner: null } };
+    }
+    case "bedRail": case "flatline": { // the heart slowing on the monitor, then flat; the camera along the bed rail
+      const beatPhase = (g: number) => { const s = g / FPS - 32.8; return 32.8 * 1.1 + 1.1 * s - 0.2 * s * s * 0.5; };   // the rate falls from 1.1 to ~0.75 beats/s
+      const flat = f >= EV.flat, amp = flat ? 0 : 1 - 0.35 * clamp01((t - 32.8) / 1.8);
+      const c = sh.kind === "bedRail" ? mv(cam([0.88, 1.12, 0.2], [0.55, 0.9, -1.9], 40), cam([0.88, 1.1, -0.55], [0.6, 0.95, -2.2], 38)) : mv(cam([0.2, 1.55, -0.55], [0.95, 1.42, -2.05], 38), cam([0.32, 1.52, -0.8], [0.95, 1.42, -2.05], 34));
+      const L = lightOf("hosp", c, true), trav = sh.kind === "bedRail" ? put("hospital", { key: `hlie|0.1|${L}`, draw: (p) => withLook(MUTED, () => travellerLying(p, { light: L, stir: 0.1 })) }, [HOSPITAL.BED[0], 0.72, HOSPITAL.BED[2] + 0.03], { wide: true, blob: null, yaw: Math.PI / 2, mirror: true, scale: 0.88 }) : null;
+      return { set: "hospital", state: `mon:${q(beatPhase(f), 100)}:${q(amp, 20)}`, cam: c, focus: sh.kind === "bedRail" ? [0.5, 0.85, -1.4] : [0.95, 1.45, -2.04], cInf: 5, trav, head: sh.kind === "bedRail" ? [0, 0.95, -2.1] : NOHEAD };
+    }
+    case "emptyCurtain": return { set: "hospital", state: "dark", cam: mv(cam([-0.3, 1.35, 1.3], [-0.6, 0.9, -1.6], 44), cam([-0.3, 1.32, 1.0], [-0.7, 0.95, -1.8], 42)), focus: [-0.4, 0.8, -1.5], cInf: 4, trav: null, head: NOHEAD };
+    case "matPhone": return { set: "bedroom", state: "nightOff", cam: mv(cam([1.75, 0.65, 1.05], [1.0, 0.05, 0.25], 42), cam([1.6, 0.58, 0.9], [1.0, 0.04, 0.25], 38)), focus: [1.0, 0.05, 0.25], cInf: 6, trav: null, head: NOHEAD };
+    case "matBuzz": return { set: "bedroom", state: "nightOff", cam: mv(cam([1.4, 0.44, 0.66], [1.12, 0.04, 0.3], 34), cam([1.36, 0.41, 0.6], [1.12, 0.04, 0.3], 30)), focus: [1.12, 0.04, 0.3], cInf: 8, trav: null, head: NOHEAD };
+    case "windowRain": return { set: "bedroom", state: "nightOff", cam: mv(cam([1.08, 1.6, -0.8], [1.05, 1.58, -2.2], 40), cam([1.06, 1.6, -1.2], [1.05, 1.58, -2.2], 36)), focus: [1.05, 1.6, -2.18], cInf: 3, trav: null, head: NOHEAD };
+    case "leftBehind": { const e = smooth(u); return { set: "bedroom", state: "nightOff", cam: cam([lerp(-0.2, 0.95, e), lerp(1.4, 1.55, e), lerp(1.4, -1.05, e)], [lerp(-1.6, 1.05, e), lerp(0.9, 1.55, e), lerp(-1.6, -2.2, e)], lerp(44, 38, e)), focus: [lerp(-1.6, 1.05, e), 1.2, lerp(-1.6, -2.2, e)], cInf: 4, trav: null, head: NOHEAD }; }
+    case "lightning2": { const second = f >= EV.lightning[1] - 1;
+      const c = second ? cam([-1.6, 1.7, 1.6], [0.2, 0.8, -1.4], 46) : cam([1.6, 1.6, 2.2], [-0.6, 0.9, -1.3], 46);
+      return { set: "bedroom", state: "nightOff", cam: c, focus: [-0.5, 0.8, -1.2], cInf: 3, trav: null, head: NOHEAD }; }
+    // ======================= 63:11 =======================
+    case "janazahTrack": { const x = procX(t), c = cam([x + 0.35, 1.6, PROC.z + 3.4], [x + 0.35, 1.35, PROC.z], 46); return { set: "cemetery", state: "rain", cam: c, focus: [x + 0.95, 1.4, PROC.z + 0.42], cInf: 5, trav: null, others: procession(c, t), head: [x, 1.8, PROC.z] }; }
+    case "mudFeet": { const x = procX(t), c = cam([x + 0.75, 0.4, 5.0], [x + 0.6, 0.6, PROC.z], 46); return { set: "cemetery", state: "rain", cam: c, focus: [x, 0.4, PROC.z], cInf: 5, trav: null, others: procession(c, t), head: [x, 1.8, PROC.z] }; }
+    case "umbrellaLine": { const x = procX(t), c = cam([x - 2.6, 1.7, 9.0], [x - 1.4, 1.2, PROC.z], 44); return { set: "cemetery", state: "rain", cam: c, focus: [x - 1.4, 1.2, PROC.z], cInf: 2, trav: null, others: procession(c, t), head: [x, 1.8, PROC.z] }; }
+    case "graveSoil": { const c = mv(cam([0.65, 1.65, 2.05], [0.0, 0.05, 0.2], 46), cam([0.55, 1.6, 1.9], [0.0, 0.05, 0.2], 44));
+      const [s0, s1] = EV.soil, fill = 0.85 * smooth((f - s0) / (s1 - s0));
       const dig = (x: number, dir: number, ph: number) => { const k = 0.35 + 0.25 * Math.max(0, Math.sin(t * 2.4 + ph)), mir = mirrorFor(c, dir, 0); return put("cemetery", stoop(["m1", "m4"][ph], k, lightOf("cem", c, mir)), [x, 0, -0.05], { mirror: mir }); };
-      return { set: "cemetery", state: "rain", cam: c, focus: [0, 0, 0], cInf: 4, trav: null, others: [dig(-1.45, 1, 0), dig(1.45, -1, 1), ...mourners(c, 0).slice(0, 4)], head: [0, -5, 0], hooks: { graveFill: fill } };
-    }
-    case "leaving": { const e = smooth(u * 0.95), c = cam([lerp(0.8, 0.6, e), lerp(1.4, 5.0, e), lerp(3.0, 6.0, e)], [0, 0.05, lerp(0.4, 0.2, e)], lerp(44, 46, e));
-      return { set: "cemetery", state: "rain", cam: c, focus: [0, 0, 0], cInf: 3, trav: null, others: mourners(c, (f - a) / FPS - 0.6), head: [0, -5, 0], hooks: { graveFill: 1 } };
-    }
-    case "emptyCity": return { set: "street", state: "dark", cam: mv(cam([19.2, 1.15, 6.4], [21.5, 2.2, -0.2], 44), cam([19.6, 1.2, 6.3], [21.8, 2.3, -0.2], 44)), focus: [21, 1.2, 1], cInf: 2, trav: null, head: [0, -5, 0], hooks: { streetX: 21, officeBanner: null } };
-    case "houseDark": return { set: "street", state: "dark", cam: mv(cam([26.2, 1.6, 5.0], [27.0, 2.6, -0.2], 44), cam([26.4, 1.7, 4.4], [27.0, 2.7, -0.2], 42)), focus: [27, 2.2, -0.2], cInf: 2, trav: null, head: [0, -5, 0], hooks: { streetX: 27, officeBanner: null } };
-    case "emptyStreet": return { set: "street", state: "dark", cam: mv(cam([9.0, 1.7, 6.0], [30, 1.5, 1.2], 42), cam([10.0, 1.6, 6.0], [31, 1.45, 1.2], 42)), focus: [20, 1.5, 1.5], cInf: 1.5, trav: null, head: [0, -5, 0], hooks: { streetX: 20, officeBanner: null } };
-    default: { // graveFog: the camera pulls far back and up into the dark
+      return { set: "cemetery", state: "rain", cam: c, focus: [0, 0, 0], cInf: 4, trav: null, others: [dig(-1.45, 1, 0), dig(1.45, -1, 1), ...mourners(c, 0).slice(0, 4)], head: NOHEAD, hooks: { graveFill: fill } }; }
+    case "walkAway": { const c = mv(cam([0.8, 1.45, 3.0], [0, 0.4, 0.2], 44), cam([0.7, 1.5, 3.3], [0, 0.35, 0.2], 44));
+      return { set: "cemetery", state: "rain", cam: c, focus: [0, 0.3, 0.3], cInf: 3, trav: null, others: mourners(c, (f - a) / FPS * 1.3 - 0.2, true), head: NOHEAD, hooks: { graveFill: 1 } }; }
+    default: { // fogPullback: the camera pulls far back and up into the dark
       const e = Math.pow(u, 0.8), c = cam([lerp(0.5, 0.3, e), lerp(1.2, 3.6, e), lerp(2.6, 17, e)], [0, 0.15, 0.3], lerp(42, 40, e));
-      return { set: "cemetery", state: "fog", cam: c, focus: [0, 0.2, 0], cInf: 2, trav: null, head: [0, -5, 0], hooks: { graveFill: 1 } };
+      return { set: "cemetery", state: "fog", cam: c, focus: [0, 0.2, 0], cInf: 2, trav: null, head: NOHEAD, hooks: { graveFill: 1 } };
     }
   }
 };
@@ -144,8 +201,16 @@ const pcam = new THREE.PerspectiveCamera(45, 1080 / 1920, 0.1, 600), v = new THR
 export const project = (f: number, p: V3) => { applyCam(pcam, shotAt(f).frame.plan.cam); pcam.updateProjectionMatrix(); v.set(...p).project(pcam); return { x: ((v.x + 1) / 2) * 1080, y: ((1 - v.y) / 2) * 1920, behind: v.z > 1 }; };
 export const fxAt = (f: number): FrameFx => {
   const s = shotOf(f), first = f - s.from;
-  // each cut eases in from a slow dissolve-like soft blur (no zooms, no whooshes)
-  const soft = first < 8 ? 2.5 * (1 - first / 8) : 0;
-  return { blurX: soft, blurY: soft, ca: 0, glitch: 0, flash: 0, vignette: 1.1, grain: true, css: "saturate(0.42) contrast(1.05) brightness(1.08)" };
+  // each cut eases in from a soft blur; a smear stretches the picture sideways into the dark; a heartbeat cut thumps
+  let bx = first < 8 ? 2.5 * (1 - first / 8) : 0, by = bx, zoom: FrameFx["zoom"];
+  for (const tr of TRANSITIONS) {
+    const d = f - tr.f;
+    if (tr.kind === "smear" && d > -12 && d < 0) bx = Math.max(bx, 30 * smooth((d + 12) / 12));
+    if (tr.kind === "heart" && Math.abs(d) < 5) { const k = 1 - Math.abs(d) / 5; zoom = { scale: 1 + 0.035 * k, x: 540, y: 960, blur: 2 * k }; }
+  }
+  // the barakah drains: the picture loses its colour (and stays colder afterwards)
+  const dw = SHOTS.find((x) => x.kind === "drainWave")!, cb = SHOTS.find((x) => x.kind === "collapseBed")!;
+  const sat = f < dw.from ? 0.42 : f < cb.to ? 0.42 - 0.34 * smooth((f - dw.from) / (cb.from - dw.from)) : 0.3;
+  return { blurX: bx, blurY: by, ca: 0, glitch: 0, flash: 0, vignette: 1.1, grain: true, zoom, css: `saturate(${sat.toFixed(3)}) contrast(1.05) brightness(1.08)` };
 };
 export const pitchAt = (f: number) => { const c = shotAt(f).frame.plan.cam, dx = c.look[0] - c.pos[0], dy = c.look[1] - c.pos[1], dz = c.look[2] - c.pos[2]; return (-Math.atan2(dy, Math.hypot(dx, dz)) * 180) / Math.PI; };

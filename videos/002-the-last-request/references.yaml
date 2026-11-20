@@ -7,8 +7,8 @@ sources:
     type: quran
     used_in: The_Last_Request.mp4 (recitation in our sound track + on-screen captions)
     reference: Surat Al-Munafiqun 63:10-11
-    recited_by: Sheikh Yasser Ad-Dussary (Al-Dossari)
-    recitation_audio: https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/063010.mp3 and 063011.mp3 (see NOTICE.md)
+    recited_by: not confirmed (not named on the end card)
+    recitation_audio: engine/public/audio/recitation/recitation_63_10-11.m4a, a TikTok upload by @islamthetruth100 supplied by the channel owner (see NOTICE.md); never committed
     grade: n/a (Quran)
     arabic_text: quran.com API v4, text_uthmani, saved verbatim in quran/63_10.json, quran/63_11.json
     translation_used: Saheeh International (quran.com translation id 20, name confirmed in quran/translations_list.json)
@@ -23,7 +23,7 @@ sources:
 
   - id: voice-clip
     type: voice (not a religious source)
-    used_in: 0-21.7 s, added by the channel owner in TikTok ("Alborz - original sound"); NOT in our file
+    used_in: 0-22.2 s, added by the channel owner in TikTok ("Alborz - original sound"); NOT in our file
     transcript: voice/transcript.json (local Whisper small.en, word timings; "Qiyam al-Layl" and "tongue" corrected by hand)
     note: the guide recording (engine/public/audio/guide/alborz_guide.mp4) is for timing only, never exported or committed
 

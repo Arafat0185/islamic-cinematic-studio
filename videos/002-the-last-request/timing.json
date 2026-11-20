@@ -2,15 +2,15 @@
  "fps": 30,
  "voiceEnd": 21.7,
  "recStart": 22.2,
- "recEnd": 74.978,
+ "recEnd": 69.915,
  "verseStarts": {
-  "63:10": 22.2,
-  "63:11": 57.964
+  "63:10": 22.5,
+  "63:11": 49.95
  },
  "gap": 0.7,
- "cardFrom": 75.978,
- "length": 78.967,
- "reciter": "Sheikh Yasser Al-Dossari",
+ "cardFrom": 70.915,
+ "length": 73.9,
+ "reciter": null,
  "surah": "Al-Munafiqun",
  "range": "63:10-11",
  "translation": "Saheeh International",
@@ -326,8 +326,8 @@
    "keys": [
     "spend"
    ],
-   "start": 22.2,
-   "end": 26.1
+   "start": 22.5,
+   "end": 25.8
   },
   {
    "i": 1,
@@ -340,8 +340,8 @@
    "keys": [
     "death"
    ],
-   "start": 26.1,
-   "end": 32.0
+   "start": 25.8,
+   "end": 30.05
   },
   {
    "i": 2,
@@ -354,8 +354,8 @@
    "keys": [
     "delay me"
    ],
-   "start": 32.0,
-   "end": 41.5
+   "start": 30.05,
+   "end": 36.6
   },
   {
    "i": 3,
@@ -368,8 +368,8 @@
    "keys": [
     "brief term"
    ],
-   "start": 41.5,
-   "end": 50.2
+   "start": 36.6,
+   "end": 44.2
   },
   {
    "i": 4,
@@ -380,8 +380,8 @@
    "keys": [
     "charity"
    ],
-   "start": 50.2,
-   "end": 57.964
+   "start": 44.2,
+   "end": 49.95
   },
   {
    "i": 5,
@@ -396,8 +396,9 @@
     "never",
     "delay a soul"
    ],
-   "start": 57.964,
-   "end": 66.364
+   "start": 49.95,
+   "end": 63.1,
+   "repeatAt": 56.2
   },
   {
    "i": 6,
@@ -410,12 +411,12 @@
    "keys": [
     "Aware"
    ],
-   "start": 66.364,
-   "end": 75.978
+   "start": 63.1,
+   "end": 70.915
   }
  ],
  "sources": {
-  "recitation": "https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/063010.mp3 (and 063011)",
+  "recitation": "public/audio/recitation/recitation_63_10-11.m4a (a TikTok upload by @islamthetruth100; reciter not confirmed)",
   "text": "https://api.quran.com/api/v4/verses/by_key/63:{10..11}?fields=text_uthmani&translations=20"
  }
 }

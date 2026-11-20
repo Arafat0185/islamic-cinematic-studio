@@ -71,20 +71,22 @@ export const buildHospital = (offset: V3): StorySet => {
   const coldBeam = lightBeam(root, [W[0], W[1] + 0.3, -2.3], [W[0] + 1.1, 0.0, -0.6], 0.9, 1.7, "#9fb6e8", 0.16);
   const s = sun(root, [0, 0.7, -1.2], 5); s.setFrom([-0.9, 1.0, 1.0]);
 
-  const drawMonitor = (on: boolean, t: number) => screen.redraw((g) => {
+  /** on: the screen lit; ph: the beat phase (cycles); amp: 1 = a normal beat, 0 = a flat line */
+  const drawMonitor = (on: boolean, ph0: number, amp = 1) => screen.redraw((g) => {
     g.fillStyle = "#06100c"; g.fillRect(0, 0, 256, 192);
     if (!on) return;
     g.strokeStyle = "rgba(120,255,180,0.9)"; g.lineWidth = 3; g.beginPath();
     for (let x = 0; x <= 256; x += 2) {
-      const ph = ((x / 256) * 2 + t * 0.9) % 1, beat = ph > 0.42 && ph < 0.5 ? Math.sin((ph - 0.42) / 0.08 * Math.PI) * (ph < 0.46 ? 1 : -0.4) : 0;
+      const ph = (((x / 256) * 2 + ph0) % 1 + 1) % 1, beat = amp * (ph > 0.42 && ph < 0.5 ? Math.sin((ph - 0.42) / 0.08 * Math.PI) * (ph < 0.46 ? 1 : -0.4) : 0);
       const y = 110 - 60 * beat; if (x) g.lineTo(x, y); else g.moveTo(x, y);
     }
     g.stroke();
     g.fillStyle = "rgba(120,255,180,0.8)"; g.fillRect(14, 20, 40, 6); g.fillRect(14, 32, 26, 6); g.fillRect(200, 20, 40, 14);
   });
   const apply = (state: string, t: number): SetLook => {
-    const on = state === "on";
-    drawMonitor(on, t);
+    // "on", "dark", or "mon:<phase>:<amp>" (the light on, the monitor's beat phase and strength set by the shot)
+    const mon = state.startsWith("mon:") ? state.split(":").map(Number) : null, on = state === "on" || !!mon;
+    drawMonitor(on, mon ? mon[1] : t * 0.9, mon ? mon[2] : 1);
     ceiling.intensity = on ? 2.2 : 0; monL.intensity = on ? 0.5 : 0;
     (panel.material as THREE.MeshBasicMaterial).color.set("#f4f7fb").multiplyScalar(on ? 1.0 : 0.08);
     coldBeam.setLevel(on ? 0.6 : 1.6); coldL.intensity = on ? 0 : 1.6;

@@ -96,7 +96,7 @@ const cameraReport = (film: StoryFilm, w: World) => {
   for (let f = 0; f < film.frames; f++) check(f, false);
   for (const ir of film.irises) for (let f = ir.from; f < ir.from + ir.len; f++) check(f, true);
   console.log(`CAMERA REPORT: ${film.frames} frames, ${moved} corrected, closest surface ${minClear === Infinity ? "> margin" : minClear.toFixed(2) + " m"}`);
-  for (const r of rows.slice(0, 40)) console.log("CAMERA REPORT: " + r);
+  for (const r of rows.slice(0, 400)) console.log("CAMERA REPORT: " + r);
 };
 
 /** every frame (every 2nd): does any opaque part of the Traveller's card pass through a 3D object of the set?

@@ -24,16 +24,21 @@ GAP = 0.7                 # between the verses
 HOLD = 1.0                # after the last verse, before the end card
 CARD = 3.0                # the end card
 
-# (verse, first word index, last word index, English slice, cut inside the verse in s = start of this phrase)
+# (verse, first word index, last word index, English slice, start in the recitation file in s)
+# The recitation (public/audio/recitation/recitation_63_10-11.m4a, one file, 47.7 s, its own echo) has no gaps between
+# the verses. Phrase starts: Whisper word timings (quran/whisper_words_new.json) checked against the reciter's breaths.
+# The reciter repeats 63:11's first sentence (34.0-40.8 s): its caption stays up through both readings (repeatAt).
 PHRASES = [
-    (10, 0, 3, 'And spend [in the way of Allāh] from what We have provided you', 0.0),
-    (10, 4, 9, 'before death approaches one of you', 3.9),
-    (10, 10, 13, 'and he says, "My Lord, if only You would delay me', 9.8),
-    (10, 14, 16, 'for a brief term', 19.3),
-    (10, 17, 20, 'so I would give charity and be of the righteous."', 28.0),
-    (11, 0, 7, 'But never will Allāh delay a soul when its time has come.', 0.0),
-    (11, 8, 11, 'And Allāh is Aware of what you do.', 8.4),
+    (10, 0, 3, 'And spend [in the way of Allāh] from what We have provided you', 0.3),
+    (10, 4, 9, 'before death approaches one of you', 3.6),
+    (10, 10, 13, 'and he says, "My Lord, if only You would delay me', 7.85),
+    (10, 14, 16, 'for a brief term', 14.4),
+    (10, 17, 20, 'so I would give charity and be of the righteous."', 22.0),
+    (11, 0, 7, 'But never will Allāh delay a soul when its time has come.', 27.75),
+    (11, 8, 11, 'And Allāh is Aware of what you do.', 40.9),
 ]
+REPEAT = {5: 34.0}
+REC_FILE = "recitation_63_10-11.m4a"
 AR_KEYS = {(10, 9): True, (10, 13): True, (10, 16): True, (11, 1): True, (11, 6): True, (11, 9): True}
 EN_KEYS = {0: ["spend"], 1: ["death"], 2: ["delay me"], 3: ["brief term"], 4: ["charity"], 5: ["never", "delay a soul"], 6: ["Aware"]}
 FIXES = {"Qiyamulay,": "Qiyam al-Layl,", "tomb": "tongue"}        # Whisper mis-heard these (meaning checked against the context)
@@ -57,18 +62,16 @@ def main():
         ps = [p for p in PHRASES if p[0] == v]
         assert " ".join(" ".join(verses[v]["ar"][a:b + 1]) for _, a, b, _, _ in ps) == " ".join(verses[v]["ar"]), f"Arabic of {v}"
         assert " ".join(e for *_, e, _ in ps) == verses[v]["en"], f"English of {v}: {verses[v]['en']!r}"
-    starts, t = {}, REC_START
-    for v in (10, 11):
-        starts[v] = round(t, 3); t += dur(REC / f"063{v:03d}.mp3") + GAP
-    rec_end = round(t - GAP, 3)
+    rec_end = round(REC_START + dur(REC / REC_FILE), 3)
+    starts = {v: round(REC_START + min(p[4] for p in PHRASES if p[0] == v), 3) for v in (10, 11)}
     length = round(round((rec_end + HOLD + CARD) * FPS) / FPS, 3)
     phrases = []
     for i, (v, a, b, en, cut) in enumerate(PHRASES):
         nxt = PHRASES[i + 1] if i + 1 < len(PHRASES) else None
-        end = (starts[nxt[0]] + nxt[4]) if nxt else rec_end + HOLD
+        end = (REC_START + nxt[4]) if nxt else rec_end + HOLD
         ar = " ".join(verses[v]["ar"][a:b + 1])
         phrases.append({"i": i, "verse": f"63:{v}", "ar": ar, "arKeys": [k - a for k in range(a, b + 1) if AR_KEYS.get((v, k))], "en": en, "keys": EN_KEYS.get(i, []),
-                        "start": round(starts[v] + cut, 3), "end": round(end, 3)})
+                        "start": round(REC_START + cut, 3), "end": round(end, 3), **({"repeatAt": round(REC_START + REPEAT[i], 3)} if i in REPEAT else {})})
     tr = json.loads((VDIR / "voice" / "transcript.json").read_text(encoding="utf-8"))
     words = [{"w": FIXES.get(w["w"], w["w"]), "start": w["start"], "end": w["end"], "key": w["w"].lower() in VOICE_KEYS} for w in tr["words"]]
     # Whisper split "Qur'an" in two: join it back
@@ -77,9 +80,9 @@ def main():
         if j and w["w"].startswith("'"): j[-1] = {**j[-1], "w": j[-1]["w"] + w["w"], "end": w["end"]}
         else: j.append(w)
     out = {"fps": FPS, "voiceEnd": VOICE_END, "recStart": REC_START, "recEnd": rec_end, "verseStarts": {f"63:{v}": s for v, s in starts.items()},
-           "gap": GAP, "cardFrom": round(rec_end + HOLD, 3), "length": length, "reciter": "Sheikh Yasser Al-Dossari",
+           "gap": GAP, "cardFrom": round(rec_end + HOLD, 3), "length": length, "reciter": None,
            "surah": "Al-Munafiqun", "range": "63:10-11", "translation": "Saheeh International", "voice": j, "phrases": phrases,
-           "sources": {"recitation": "https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/063010.mp3 (and 063011)",
+           "sources": {"recitation": "public/audio/recitation/recitation_63_10-11.m4a (a TikTok upload by @islamthetruth100; reciter not confirmed)",
                        "text": "https://api.quran.com/api/v4/verses/by_key/63:{10..11}?fields=text_uthmani&translations=20"}}
     (VDIR / "timing.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"length {length:.2f} s ({round(length * FPS)} frames); recitation {REC_START}-{rec_end}; card from {out['cardFrom']}")

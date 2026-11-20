@@ -11,7 +11,7 @@ import * as THREE from "three";
 import { AbsoluteFill, Img, getInputProps, staticFile, useCurrentFrame } from "remotion";
 import { applyCam, smooth, clamp01 } from "../../camera/ease";
 import { FONT, measure, useFonts } from "../../text/fonts";
-import { F, FPS, FRAMES, CARD_FROM, SHOTS, EV, shotAt, shotOf, pitchAt } from "./timeline";
+import { F, FPS, FRAMES, CARD_FROM, SHOTS, EV, TRANSITIONS, shotAt, shotOf, pitchAt } from "./timeline";
 import TIMING from "../../../../videos/002-the-last-request/timing.json";
 import { SET_OFFSET } from "../../story/story";
 
@@ -31,17 +31,17 @@ const CHUNKS = (() => {
   if (cur.length) out.push(cur);
   return out;
 })();
-const VoiceCaption: React.FC<{ f: number }> = ({ f }) => {
+const VoiceCaption: React.FC<{ f: number; ys: number[] }> = ({ f, ys }) => {
   const t = f / FPS;
   const ci = CHUNKS.findIndex((c, i) => t >= c[0].start - 0.05 && (i + 1 >= CHUNKS.length ? t < c[c.length - 1].end + 1.2 : t < CHUNKS[i + 1][0].start - 0.05));
   if (ci < 0 || t > TIMING.voiceEnd) return null;
   const c = CHUNKS[ci], last = c[c.length - 1], out = ci + 1 >= CHUNKS.length ? 1 - smooth((t - last.end - 0.6) / 0.6) : 1 - smooth((t - CHUNKS[ci + 1][0].start + 0.2) / 0.15);
   return (
-    <div style={{ position: "absolute", left: CAP_CX - MAXW / 2, width: MAXW, top: H * 0.72, transform: "translateY(-50%)", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "10px 18px", opacity: out }}>
+    <div style={{ position: "absolute", left: CAP_CX - MAXW / 2, width: MAXW, top: H * (ys[ci] ?? 0.72), transform: "translateY(-50%)", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 11px", opacity: out }}>
       {c.map((w, i) => {
         const k = smooth((t - w.start + 0.04) / 0.16);
         return (
-          <span key={i} style={{ fontFamily: FONT.caption, fontWeight: 800, fontSize: 52, letterSpacing: "0.08em", textTransform: "uppercase", lineHeight: 1.2,
+          <span key={i} style={{ fontFamily: FONT.caption, fontWeight: 800, fontSize: 31, letterSpacing: "0.08em", textTransform: "uppercase", lineHeight: 1.2,
             color: w.key ? RED : "#F2F2EE", textShadow: SHADOW, opacity: k, transform: `translateY(${(1 - k) * 10}px)`, filter: `blur(${(1 - k) * 4}px)` }}>{w.w}</span>
         );
       })}
@@ -50,9 +50,9 @@ const VoiceCaption: React.FC<{ f: number }> = ({ f }) => {
 };
 
 // ---------------- the recitation captions ----------------
-type Phrase = { i: number; verse: string; ar: string; arKeys: number[]; en: string; keys: string[]; start: number; end: number };
+type Phrase = { i: number; verse: string; ar: string; arKeys: number[]; en: string; keys: string[]; start: number; end: number; repeatAt?: number };
 const PH = (TIMING.phrases as Phrase[]).map((p) => ({ ...p, from: F(p.start), to: Math.min(F(p.end), CARD_FROM) }));
-const AR_SIZE = 84, AR_LH = 1.6, EN_SIZE = 38, EN_LH = 1.32, GAP = 24;
+const AR_SIZE = 50, AR_LH = 1.6, EN_SIZE = 24, EN_LH = 1.32, GAP = 52;   // smaller captions (2026-11-20): one line each where possible
 const lines = (text: string, font: string) => { let n = 1, cur = ""; for (const w of text.split(" ")) { const tt = cur ? cur + " " + w : w; if (measure(tt, font) > MAXW && cur) { n++; cur = w; } else cur = tt; } return n; };
 const half = (p: Phrase) => (lines(p.ar, `700 ${AR_SIZE}px ${FONT.arabic}`) * AR_SIZE * AR_LH + GAP + lines(p.en, `600 ${EN_SIZE}px ${FONT.caption}`) * EN_SIZE * EN_LH) / H / 2;
 /** heads on screen (the Traveller and everyone else) over [a, b): boxes in frame fractions */
@@ -79,11 +79,12 @@ const enParts = (en: string, keys: string[]) => {
   if (at < en.length) out.push({ s: en.slice(at), key: false }); return out;
 };
 const RecCaption: React.FC<{ p: (typeof PH)[number]; f: number; y: number }> = ({ p, f, y }) => {
-  const k = Math.min(smooth((f - p.from) / 14), 1 - smooth((f - p.to + 12) / 12)), ke = Math.min(smooth((f - p.from - 8) / 16), 1 - smooth((f - p.to + 12) / 12));
+  const rep = p.repeatAt ? 1 - 0.55 * Math.max(0, 1 - Math.abs(f - F(p.repeatAt)) / 14) : 1;      // the reciter repeats the sentence: a soft breath of the caption
+  const k = rep * Math.min(smooth((f - p.from) / 14), 1 - smooth((f - p.to + 12) / 12)), ke = rep * Math.min(smooth((f - p.from - 8) / 16), 1 - smooth((f - p.to + 12) / 12));
   const words = p.ar.split(" "), red = { color: RED, textShadow: `0 0 10px rgba(229,72,77,0.35), ${SHADOW}` };
   return (
     <div style={{ position: "absolute", left: CAP_CX - MAXW / 2, width: MAXW, top: H * y, transform: "translateY(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: GAP }}>
-      <div style={{ position: "absolute", left: -(CAP_CX - MAXW / 2), width: W, top: -80, bottom: -80, background: "linear-gradient(rgba(4,6,12,0), rgba(4,6,12,0.55) 30%, rgba(4,6,12,0.55) 70%, rgba(4,6,12,0))", opacity: k }} />
+      <div style={{ position: "absolute", left: -(CAP_CX - MAXW / 2), width: W, top: -50, bottom: -50, background: "linear-gradient(rgba(4,6,12,0), rgba(4,6,12,0.55) 30%, rgba(4,6,12,0.55) 70%, rgba(4,6,12,0))", opacity: k }} />
       <div dir="rtl" lang="ar" style={{ position: "relative", maxWidth: MAXW, textAlign: "center", fontFamily: FONT.arabic, fontWeight: 700, fontSize: AR_SIZE, lineHeight: AR_LH, color: "#EDEBE6", textShadow: SHADOW, opacity: k, filter: `blur(${(1 - k) * 6}px)` }}>
         {words.map((w, i) => <React.Fragment key={i}>{p.arKeys.includes(i) ? <span style={red}>{w}</span> : w}{i < words.length - 1 ? " " : ""}</React.Fragment>)}
       </div>
@@ -118,35 +119,35 @@ const Tracker0: React.FC<{ f: number }> = ({ f }) => {
     </div>
   );
 };
-const NOTES = ["12 missed calls", "Mum: are you awake?", "New message", "Are you okay?", "Missed call"];
+const NOTES = ["Mum: are you awake?", "12 missed calls", "Mum: please call me", "Are you okay?", "Missed call", "Mum: answer please"];
 const MatNotes: React.FC<{ f: number }> = ({ f }) => {
-  const s = span("matPhone"); if (!s || f < s.from || f >= s.to + 6) return null;
+  const s = span("matPhone"), e = span("matBuzz"); if (!s || !e || f < s.from || f >= e.to) return null;
   const tt = (f - s.from) / FPS, ph = toScreen(f, [SET_OFFSET.bedroom[0] + 1.12, 0.04, 0.3]);
-  const out = 1 - smooth((f - s.to) / 6);
+  const out = 1 - smooth((f - e.to + 6) / 6);
   return (
     <AbsoluteFill style={{ opacity: out }}>
-      {[0.15, 0.95, 1.6].map((d, i) => {
+      {[0.15, 0.95, 1.7, 2.6, 3.4, 4.2].map((d, i) => {
         const x = tt - d; if (x < 0) return null;
-        const k = smooth(x / 0.25) * (1 - 0.55 * smooth((x - 0.8) / 0.6));
-        return <div key={i} style={{ position: "absolute", left: Math.min(W - 420, Math.max(60, ph.x - 170)), top: ph.y - 140 - i * 64, width: 340, opacity: 0.8 * k, transform: `scale(${0.85 + 0.15 * smooth(x / 0.25)})`,
+        const k = smooth(x / 0.25) * (1 - 0.5 * smooth((x - 0.8) / 0.6));
+        return <div key={i} style={{ position: "absolute", left: Math.min(W - 420, Math.max(60, ph.x - 170 + 14 * (i % 2))), top: Math.max(300, ph.y - 160 - i * 58), width: 340, opacity: 0.8 * k, transform: `scale(${0.85 + 0.15 * smooth(x / 0.25)})`,
           display: "flex", alignItems: "center", gap: 12, background: "rgba(225,228,234,0.82)", borderRadius: 18, padding: "10px 14px", fontFamily: FONT.caption, fontWeight: 700, fontSize: 22, color: "#20242c" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 8, background: ["#5a6a80", "#7a5050", "#5a6a80"][i] }} />{NOTES[i]}</div>;
+          <div style={{ width: 28, height: 28, borderRadius: 8, background: ["#7a5050", "#5a6a80", "#7a5050", "#5a6a80", "#5a6a80", "#7a5050"][i] }} />{NOTES[i]}</div>;
       })}
     </AbsoluteFill>
   );
 };
-const WORK = ["Meeting moved to 08:00", "Q4 targets - urgent", "Invoice #2291 paid", "Bonus approved", "12 unread emails"];
+const WORK = ["Payment failed", "Overdraft: -£1,240", "Meeting moved to 08:00", "Q4 targets - URGENT", "Rent due tomorrow", "Final reminder", "37 unread emails", "Your card was declined"];
 const WorkNotes: React.FC<{ f: number }> = ({ f }) => {
-  const a = span("laptopBank"); if (!a) return null; const b = span("laptopClose") ?? a; if (f < a.from || f >= b.to) return null;
+  const a = span("bankPanic"); if (!a) return null; const b = a; if (f < a.from || f >= b.to) return null;
   const tt = (f - a.from) / FPS, k = 1 - smooth((f - b.to + 8) / 8);
   return (
     <AbsoluteFill style={{ opacity: k }}>
       {WORK.map((n, i) => {
-        const x = tt - 0.15 - i * 0.38; if (x < 0) return null;
+        const x = tt - 0.1 - i * 0.3; if (x < 0) return null;
         const s2 = Math.min(i, WORK.length) , kk = smooth(x / 0.3) * 1;
-        return <div key={n} style={{ position: "absolute", right: 150, top: 470 + ((i % 3) * 78) - Math.floor(i / 3) * 30, width: 360, opacity: 0.85 * kk, transform: `translateX(${(1 - smooth(x / 0.3)) * 40}px)`,
+        return <div key={n} style={{ position: "absolute", right: 120 + ((i * 37) % 80), top: 330 + ((i * 53) % 210), width: 380, opacity: 0.9 * kk, transform: `translateX(${(1 - smooth(x / 0.3)) * 40}px) rotate(${((i * 7) % 9) - 4}deg)`, boxShadow: "0 8px 20px rgba(0,0,0,0.5)",
           display: "flex", alignItems: "center", gap: 12, background: "rgba(225,228,234,0.86)", borderRadius: 18, padding: "10px 14px", fontFamily: FONT.caption, fontWeight: 700, fontSize: 22, color: "#20242c" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 8, background: ["#4a6a96", "#8a5a3a", "#3f7a5a", "#4a6a96", "#6a5a8a"][i] }} />{n}{void s2}</div>;
+          <div style={{ width: 28, height: 28, borderRadius: 8, background: i < 2 || i > 5 ? "#c0443e" : "#4a6a96" }} />{n}{void s2}</div>;
       })}
     </AbsoluteFill>
   );
@@ -154,6 +155,40 @@ const WorkNotes: React.FC<{ f: number }> = ({ f }) => {
 const Lightning: React.FC<{ f: number }> = ({ f }) => {
   const [a, b] = EV.lightning, p = (x: number) => (x >= 0 && x < 6 ? Math.exp(-x / 1.8) : 0), k = Math.max(p(f - a), 0.7 * p(f - b));
   return k > 0.01 ? <AbsoluteFill style={{ background: "radial-gradient(circle at 60% 30%, rgba(210,225,255,1), rgba(150,170,210,0.4) 50%, rgba(0,0,0,0) 85%)", opacity: 0.5 * k, mixBlendMode: "screen" }} /> : null;
+};
+
+// ---------------- eerie transitions and the barakah draining ----------------
+/** blink: eyelids closing to black and opening; cut: black from the cut until the next blinkOpen; smear: smearing into
+ *  darkness; heart: a dark thump on a heartbeat cut; glass: a dissolve through rain on glass; flash: the lightning */
+const Transitions: React.FC<{ f: number }> = ({ f }) => {
+  let lid = 0, dark = 0, glass = 0, thump = 0;
+  for (const tr of TRANSITIONS) {
+    const d = f - tr.f;
+    if (tr.kind === "blink") lid = Math.max(lid, d < 0 ? smooth((d + 7) / 7) : 1 - smooth(d / 9));
+    if (tr.kind === "cut") { const open = TRANSITIONS.find((x) => x.kind === "blinkOpen" && x.f > tr.f); if (d >= 0 && (!open || f < open.f)) dark = 1; }
+    if (tr.kind === "blinkOpen" && d >= 0) lid = Math.max(lid, 1 - smooth(d / 12));
+    if (tr.kind === "smear") dark = Math.max(dark, d < 0 ? smooth((d + 10) / 10) * 0.92 : 0.92 * (1 - smooth(d / 8)));
+    if (tr.kind === "heart") thump = Math.max(thump, Math.max(0, 1 - Math.abs(d) / 5));
+    if (tr.kind === "glass") glass = Math.max(glass, Math.max(0, 1 - Math.abs(d) / 9));
+  }
+  return (
+    <>
+      {glass > 0.01 ? <AbsoluteFill style={{ opacity: glass, backdropFilter: `blur(${10 * glass}px)`, WebkitBackdropFilter: `blur(${10 * glass}px)`,
+        background: "radial-gradient(circle at 20% 30%, rgba(220,230,255,0.35) 0 2%, transparent 3%), radial-gradient(circle at 70% 22%, rgba(220,230,255,0.3) 0 1.5%, transparent 2.5%), radial-gradient(circle at 55% 64%, rgba(220,230,255,0.3) 0 2.5%, transparent 3.5%), radial-gradient(circle at 32% 78%, rgba(220,230,255,0.25) 0 1.8%, transparent 2.8%), linear-gradient(rgba(120,140,170,0.25), rgba(60,70,90,0.35))" }} /> : null}
+      {thump > 0.01 ? <AbsoluteFill style={{ background: `radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 35%, rgba(0,0,0,${0.75 * thump}) 100%)` }} /> : null}
+      {dark > 0.01 ? <AbsoluteFill style={{ background: `linear-gradient(90deg, rgba(2,3,6,${dark}) 0%, rgba(2,3,6,${Math.min(1, dark * 1.15)}) 100%)` }} /> : null}
+      {lid > 0.01 ? <AbsoluteFill>
+        <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: `${51 * lid}%`, background: "#020306", borderBottomLeftRadius: "50% 30%", borderBottomRightRadius: "50% 30%" }} />
+        <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: `${51 * lid}%`, background: "#020306", borderTopLeftRadius: "50% 30%", borderTopRightRadius: "50% 30%" }} />
+      </AbsoluteFill> : null}
+    </>
+  );
+};
+/** the colour drains out of his room in a wave (a grey front sweeping across), then stays drained */
+const Drain: React.FC<{ f: number }> = ({ f }) => {
+  const a = span("drainWave"), c = span("collapseBed"); if (!a || !c || f < a.from || f >= c.to) return null;
+  const x = 130 * smooth((f - a.from) / (a.to - a.from)) - 15, mask = `linear-gradient(100deg, #000 ${x - 15}%, rgba(0,0,0,0) ${x + 5}%)`;
+  return <AbsoluteFill style={{ background: "#7a7a7a", mixBlendMode: "saturation", opacity: 0.95, maskImage: mask, WebkitMaskImage: mask }} />;
 };
 
 // ---------------- the end card ----------------
@@ -168,7 +203,7 @@ const EndCard: React.FC<{ f: number }> = ({ f }) => {
         <Img src={staticFile(LOGO)} style={{ width: 400, height: 400, objectFit: "contain", opacity: 0.75 * lk, filter: "grayscale(0.75) brightness(0.8)" }} />
         <div style={{ height: 60 }} />
         <div style={{ width: 110, height: 2, background: "rgba(229,72,77,0.7)", margin: "0 auto 30px", opacity: lk }} />
-        <div style={{ textAlign: "center" }}>{[`Quran ${TIMING.range}`, `Recitation: ${TIMING.reciter}`, `Translation: ${TIMING.translation}`].map(line)}</div>
+        <div style={{ textAlign: "center" }}>{[`Quran ${TIMING.range}`, ...(TIMING.reciter ? [`Recitation: ${TIMING.reciter}`] : []), `Translation: ${TIMING.translation}`].map(line)}</div>
       </div>
     </AbsoluteFill>
   );
@@ -178,15 +213,18 @@ const EndCard: React.FC<{ f: number }> = ({ f }) => {
 export const Overlay: React.FC = () => {
   const ready = useFonts(), f = useCurrentFrame();
   const ys = useMemo(() => {
-    if (!ready) return [] as number[];
+    if (!ready) return { rec: [] as number[], voice: [] as number[] };
     const y = PH.map(placeOf);
+    // the voice captions (a 2-line block): the lower third unless a head is there, then the upper third
+    const voice = CHUNKS.map((c) => { const bx = heads(F(c[0].start), F(c[c.length - 1].end + 0.3)), X0 = (CAP_CX - MAXW / 2) / W, X1 = (CAP_CX + MAXW / 2) / W;
+      const hit = (cy: number) => bx.some((b) => cy + 0.035 > b.y0 && cy - 0.035 < b.y1 && X1 > b.x0 && X0 < b.x1); return [0.72, 0.78, 0.66, 0.3, 0.36].find((cy) => !hit(cy)) ?? 0.72; });
     const post = (getInputProps() as { post?: { pitchReport?: boolean; camReport?: boolean } }).post;
     if (post?.pitchReport || post?.camReport) {
       PH.forEach((p, i) => console.log(`TEXT LAYOUT: ${p.i} ${p.verse} ${p.from}-${p.to} @${y[i].toFixed(2)} half ${half(p).toFixed(3)}`));
       let worst = -90, at = 0; for (let g = 0; g < FRAMES; g++) { const pp = pitchAt(g); if (pp > worst) { worst = pp; at = g; } }
       console.log(`PITCH REPORT: steepest downward look ${worst.toFixed(1)} degrees at frame ${at} (${shotOf(at).kind}); limit 45`);
     }
-    return y;
+    return { rec: y, voice };
   }, [ready]);
   if (!ready) return null;
   const pi = PH.findIndex((p) => f >= p.from && f < p.to);
@@ -194,12 +232,14 @@ export const Overlay: React.FC = () => {
     <AbsoluteFill style={{ pointerEvents: "none" }}>
       <AbsoluteFill style={{ background: "#24344c", mixBlendMode: "soft-light", opacity: 0.55 }} />
       <AbsoluteFill style={{ background: "#2a3446", mixBlendMode: "color", opacity: 0.22 }} />
+      <Drain f={f} />
       <Lightning f={f} />
       <MatNotes f={f} />
       <WorkNotes f={f} />
       <Tracker0 f={f} />
-      <VoiceCaption f={f} />
-      {pi >= 0 ? <RecCaption p={PH[pi]} f={f} y={ys[pi]} /> : null}
+      <Transitions f={f} />
+      <VoiceCaption f={f} ys={ys.voice} />
+      {pi >= 0 ? <RecCaption p={PH[pi]} f={f} y={ys.rec[pi]} /> : null}
       <VerseTag f={f} />
       <EndCard f={f} />
     </AbsoluteFill>

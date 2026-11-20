@@ -731,7 +731,7 @@ export const phoneInHand = (p: Pen, x: number, y: number, ang: number, light: nu
  *  as part of the drawing, so no 3D chair ever cuts through him. Hands typing at 0.78 m (above a 0.75 m desk top). */
 /** arms "phone": both hands hold a phone in front of his chest, head bowed to it (scroll = 0..1 thumb, glow = the
  *  screen's brightness); "call": the near hand holds a phone to his ear, the far hand rests on his knee. */
-export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | "rest" | "phone" | "call"; wave?: number; tilt?: number; wind?: number; chair?: boolean; scroll?: number } = {}) => {
+export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | "rest" | "phone" | "call" | "head"; wave?: number; tilt?: number; wind?: number; chair?: boolean; scroll?: number } = {}) => {
   const light = o.light ?? DEF_LIGHT, arms = o.arms ?? "type";
   const hip: P2 = [272, 742], knee: P2 = [445, 748], ankle: P2 = [455, 952], sh: P2 = [292, 545];
   const hc = 404;
@@ -746,7 +746,8 @@ export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | 
     for (const x of [190, 352]) p.dot(x, 962, 12, "#17181c");
   }
   const rest = (o.arms ?? "type") === "rest" || arms === "call";
-  if (rest) { sleeve(p, [290, 560], [330, 680], [420, 735]); p.dot(426, 740, 12); }
+  if (arms === "head") { sleeve(p, [290, 560], [372, 482], [334, 372]); p.dot(330, 366, 12); } // far hand on the back of his head
+  else if (rest) { sleeve(p, [290, 560], [330, 680], [420, 735]); p.dot(426, 740, 12); }
   else if (arms === "phone") { sleeve(p, [290, 560], [330, 690], [398, 628]); p.dot(402, 624, 12); }
   else { sleeve(p, [290, 560], [342, 670], [528, 612]); p.dot(534, 616, 12); }
   neck(p, [298, 552], [305, hc + 50], light);
@@ -775,6 +776,11 @@ export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | 
     sleeve(p, [300, 562], [318, 652], [292, 470]);
     phoneInHand(p, 290, 428, 0.08, light, true);
     p.dot(294, 466, 12.5);
+  } else if (arms === "head") { // both hands on his head, elbows forward, head bowed low: despair
+    if (o.shawlNear) shawl.cap(p);
+    profileHead(p, 322, hc + 18, 0.55 - 0.28 * tilt, light, o.seed ?? 1);
+    sleeve(p, [300, 562], [392, 492], [356, 382]);
+    p.dot(352, 376, 12.5);
   } else if (arms === "type") {
     sleeve(p, [300, 562], [352, 680], [548, 622]);
     p.dot(556, 626, 12.5);

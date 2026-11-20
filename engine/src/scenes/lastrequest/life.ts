@@ -14,10 +14,11 @@ import { mat, box, cyl, glow, liveCanvas } from "../../sets/common";
 import { buildMat } from "../motion-test/mat";
 import { applyCam } from "../../camera/ease";
 import type { Frame, SetId } from "../../story/story";
-import { FPS, F, EV, SHOTS, shotOf, procX, PROC, FRAMES } from "./timeline";
+import { FPS, F, EV, SHOTS, shotOf, procX, PROC, FRAMES, runX, BUS } from "./timeline";
 import { CEMETERY } from "../../sets/cemetery";
 
 const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
+void clamp01;
 const sm = (x: number) => { const u = clamp01(x); return u * u * (3 - 2 * u); };
 const fract = (x: number) => x - Math.floor(x);
 const rnd = (seed: number) => { let s = seed; return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; };
@@ -79,77 +80,126 @@ const glassRain = (parent: THREE.Object3D, w: number, h: number, pos: [number, n
 };
 
 // =====================================================================================================================
+const span = (k: string) => SHOTS.find((s) => s.kind === k) ?? { from: -1e9, to: -1e9 };
+const smokeTex = () => ctex("warmSmoke", 128, 128, (g, r) => { for (let i = 0; i < 18; i++) { const x = 30 + r() * 68, y = 30 + r() * 68, rad = 14 + 30 * r(); const gr = g.createRadialGradient(x, y, 0, x, y, rad); gr.addColorStop(0, "rgba(255,255,255,0.22)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(x - rad, y - rad, rad * 2, rad * 2); } });
+
 const bedroomLife = (root: THREE.Object3D) => {
   const rainOn = glassRain(root, 1.3, 1.2, [1.05, 1.6, -2.17], 3);
-  // the dusty prayer mat on the floor by the window; a layer of dust over it
+  // the dusty prayer mat on the floor by the window; a layer of dust over it; a shadow that darkens it
   const pm = buildMat(1.0, 0.25, 1.25, 0.7); pm.position.y += 0.013; pm.rotation.y = 0.12; root.add(pm);
   const dustT = ctex("dustLayer", 256, 256, (g, r) => { for (let i = 0; i < 2600; i++) { g.fillStyle = `rgba(200,200,190,${0.05 + 0.12 * r()})`; g.fillRect(r() * 256, r() * 256, 1 + r() * 2, 1 + r() * 2); } });
   const dust = new THREE.Mesh(new THREE.PlaneGeometry(1.25, 0.7), new THREE.MeshBasicMaterial({ map: dustT, transparent: true, depthWrite: false, fog: false, color: new THREE.Color(0.55, 0.57, 0.62) }));
   dust.rotation.set(-Math.PI / 2, 0, -0.12); dust.position.set(1.0, 0.03, 0.25); dust.layers.set(NOINK); root.add(dust);
-  // the phone on the mat (after he is gone): its screen lights up with each notification
+  const shade = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.95), new THREE.MeshBasicMaterial({ color: "#000000", transparent: true, opacity: 0, depthWrite: false, fog: false }));
+  shade.rotation.set(-Math.PI / 2, 0, -0.12); shade.position.set(1.0, 0.032, 0.25); shade.layers.set(NOINK); root.add(shade);
+  // the phone on the mat (after he is gone): it lights up with each notification and buzzes
   const phone = new THREE.Group(); phone.position.set(1.12, 0.032, 0.3); phone.rotation.y = 0.5; root.add(phone);
   box(phone, [-0.04, 0, -0.075], [0.04, 0.01, 0.075], mat("#1b1d24"), false);
   const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.07, 0.135), new THREE.MeshBasicMaterial({ color: new THREE.Color("#cfe6ff"), fog: false })); scr.rotation.x = -Math.PI / 2; scr.position.y = 0.011; phone.add(scr);
   const phL = new THREE.PointLight("#cfe1ff", 0, 2.5, 2); phL.position.set(1.12, 0.2, 0.3); root.add(phL);
-  // the mushaf on the top of the bookshelf, closed, dust on it
+  // the mushaf on the top of the bookshelf, closed; its dust thickens
   const book = new THREE.Group(); book.position.set(-2.63, 1.9, -2.03); book.rotation.y = 0.2; root.add(book);
   box(book, [-0.13, 0, -0.09], [0.13, 0.05, 0.09], mat("#2f4a35"));
   box(book, [-0.125, 0.006, -0.085], [0.125, 0.044, 0.088], mat("#e8dfc6"), false);
-  box(book, [-0.05, 0.05, -0.05], [0.05, 0.052, 0.05], mat("#9c8a50"), false);                // a plain gold medallion (no writing)
-  const bdust = new THREE.Mesh(new THREE.PlaneGeometry(0.27, 0.19), new THREE.MeshBasicMaterial({ map: dustT, transparent: true, depthWrite: false, fog: false, color: new THREE.Color(0.7, 0.7, 0.72) }));
-  bdust.rotation.x = -Math.PI / 2; bdust.position.y = 0.056; bdust.layers.set(NOINK); book.add(bdust);
-  // his prayer beads on the nightstand
-  const beads = new THREE.Group(); beads.position.set(-0.45, 0.556, -0.95); root.add(beads);   // on the bed, beside him
-  for (let i = 0; i < 33; i++) { const a = (i / 33) * Math.PI * 2; const b = new THREE.Mesh(new THREE.SphereGeometry(0.009, 8, 6), mat("#4a2e22")); b.position.set(0.06 * Math.cos(a) * 1.3, 0.009, 0.06 * Math.sin(a)); beads.add(b); }
-  const tassel = new THREE.Mesh(new THREE.ConeGeometry(0.012, 0.05, 8), mat("#6b4a33")); tassel.rotation.z = Math.PI / 2; tassel.position.set(0.12, 0.012, 0); beads.add(tassel);
-  // his laptop open on the bed: a bank screen (balance, salary in, a rising line), lit in the dark
-  const lap = new THREE.Group(); lap.position.set(0.12, 0.55, -1.25); lap.rotation.y = 0.5; root.add(lap);
+  box(book, [-0.05, 0.05, -0.05], [0.05, 0.052, 0.05], mat("#9c8a50"), false);
+  const bdust = [0, 1, 2].map((i) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.27, 0.19), new THREE.MeshBasicMaterial({ map: dustT, transparent: true, opacity: 0.6, depthWrite: false, fog: false, color: new THREE.Color(0.75, 0.75, 0.76) }));
+    m.rotation.set(-Math.PI / 2, 0, i * 1.1); m.position.y = 0.056 + 0.001 * i; m.layers.set(NOINK); book.add(m); return m; });
+  // his prayer beads on the nightstand: they slip off its edge and scatter across the floor
+  const BEADS = 33, beadM = mat("#b07a4a"), bead = Array.from({ length: BEADS }, (_, i) => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.013, 8, 6), beadM); root.add(m); return { m, a: (i / BEADS) * Math.PI * 2 }; });
+  const br = rnd(31), bv = bead.map(() => ({ vx: -0.05 - 0.3 * br(), vz: 0.25 + 0.55 * br(), d: br() * 0.25 }));   // off the front edge, away from the bed
+  const BX = -1.98, BY = 0.556, BZ = -1.5;
+  // his laptop on the bed corner: the bank screen; the money ticks down as the barakah drains
+  const lap = new THREE.Group(); lap.position.set(0.18, 0.55, -0.85); lap.rotation.y = 0.75; root.add(lap);
   box(lap, [-0.17, 0, -0.12], [0.17, 0.018, 0.12], mat("#8e939b"));
   const lid = new THREE.Group(); lid.position.set(0, 0.018, -0.12); lid.rotation.x = -0.32; lap.add(lid);
   box(lid, [-0.17, 0, -0.012], [0.17, 0.23, 0], mat("#8e939b"));
   const bank = liveCanvas(512, 320);
   const lscr = new THREE.Mesh(new THREE.PlaneGeometry(0.32, 0.2), glow("#ffffff", 1.1, bank.tex)); lscr.position.set(0, 0.118, 0.002); lid.add(lscr);
-  const lapL = new THREE.PointLight("#bcd4ff", 0, 2.5, 2); lapL.position.set(0.12, 0.85, -1.0); root.add(lapL);
-  const drawBank = (t: number) => bank.redraw((g) => {
+  const lapL = new THREE.PointLight("#bcd4ff", 0, 2.5, 2); lapL.position.set(0.3, 0.85, -0.5); root.add(lapL);
+  const drawBank = (money: number, red: boolean) => bank.redraw((g) => {
     g.fillStyle = "#0f1622"; g.fillRect(0, 0, 512, 320);
     g.fillStyle = "#6f8fb8"; g.font = "600 20px Inter, Arial"; g.fillText("CURRENT ACCOUNT", 28, 44);
-    g.fillStyle = "#ffffff"; g.font = "800 54px Inter, Arial"; g.fillText(`£${(24812.4 + Math.floor(t * 37) * 3.5).toLocaleString("en-GB", { minimumFractionDigits: 2 })}`, 28, 108);
-    g.strokeStyle = "#5fd18a"; g.lineWidth = 4; g.beginPath();
-    for (let x = 0; x <= 456; x += 8) { const y = 230 - x * 0.18 - 14 * Math.sin(x * 0.05) - 6 * Math.sin(x * 0.17); if (x) g.lineTo(28 + x, y); else g.moveTo(28, y); }
+    g.fillStyle = red ? "#ff6a6a" : "#ffffff"; g.font = "800 54px Inter, Arial"; g.fillText(`£${money.toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 28, 108);
+    g.strokeStyle = red ? "#e5484d" : "#5fd18a"; g.lineWidth = 4; g.beginPath();
+    for (let x = 0; x <= 456; x += 8) { const y = 150 + x * (red ? 0.22 : -0.1) - 14 * Math.sin(x * 0.05) - 6 * Math.sin(x * 0.17); if (x) g.lineTo(28 + x, y); else g.moveTo(28, y); }
     g.stroke();
-    g.fillStyle = "#5fd18a"; g.font = "700 22px Inter, Arial"; g.fillText("+£3,250.00  Salary", 28, 290); g.fillStyle = "#8aa0bf"; g.fillText("Savings goal 82%", 300, 290);
+    g.fillStyle = red ? "#e5484d" : "#5fd18a"; g.font = "700 22px Inter, Arial"; g.fillText(red ? "-£1,240.00  Overdue" : "+£3,250.00  Salary", 28, 290);
   });
-  // the ceiling light (a dim, lonely lamp) that flickers and dies; lightning through the window
+  // the windowsill: a plant that wilts, a plate of food that goes cold (its steam stops)
+  const sill = new THREE.Group(); sill.position.set(1.05, 1.02, -2.13); root.add(sill);
+  cyl(sill, 0.06, 0.045, 0.1, mat("#8a4b2e"), [0.32, 0.05, 0], 12);
+  const stem = cyl(sill, 0.006, 0.008, 0.22, mat("#4a6a3a"), [0.32, 0.21, 0], 6);
+  const leafG = new THREE.PlaneGeometry(0.09, 0.035); leafG.translate(0.045, 0, 0);
+  const leaves = Array.from({ length: 7 }, (_, i) => { const m = new THREE.Mesh(leafG, new THREE.MeshLambertMaterial({ color: "#4f8a4a", side: THREE.DoubleSide })); m.position.set(0.32, 0.14 + 0.03 * i, 0); m.rotation.set(0, (i / 7) * Math.PI * 2, 0.5); sill.add(m); return m; });
+  cyl(sill, 0.11, 0.11, 0.012, mat("#e9e1cf"), [-0.25, 0.006, 0], 20);
+  const food = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 8), new THREE.MeshLambertMaterial({ color: "#c98a4a" })); food.scale.set(1, 0.4, 1); food.position.set(-0.25, 0.02, 0); sill.add(food);
+  const steamS = Array.from({ length: 3 }, () => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: smokeTex(), color: new THREE.Color("#ffffff"), transparent: true, opacity: 0, depthWrite: false, fog: false })); s.layers.set(NOINK); sill.add(s); return s; });
+  void stem;
+  // warm light leaking out of the window like smoke
+  const leak = Array.from({ length: 14 }, (_, i) => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: smokeTex(), color: new THREE.Color(1.4, 0.95, 0.5), blending: THREE.AdditiveBlending, transparent: true, opacity: 0, depthWrite: false, fog: false })); s.layers.set(NOINK); root.add(s); return { s, ph: i / 14 }; });
+  // lights: the dim ceiling bulb, the window's cold light, a light on the shelf, lightning
   const ceil = new THREE.PointLight("#ffd9a8", 0, 7, 1.5); ceil.position.set(0, 2.6, -0.6); root.add(ceil);
-  const cold = new THREE.PointLight("#8fa6d8", 0, 9, 1.3); cold.position.set(0.9, 1.9, -0.6); root.add(cold);   // the window's cold light (rain-grey night)
+  const cold = new THREE.PointLight("#8fa6d8", 0, 9, 1.3); cold.position.set(0.9, 1.9, -0.6); root.add(cold);
   const shelfL = new THREE.PointLight("#9fb2d8", 0, 2.5, 1.6); shelfL.position.set(-2.2, 2.4, -1.4); root.add(shelfL);
   const flash = new THREE.PointLight("#c8d8ff", 0, 12, 1.2); flash.position.set(1.05, 1.8, -1.6); root.add(flash);
+  const bedside = new THREE.PointLight("#ffc890", 0, 4, 1.5); bedside.position.set(-2.3, 0.95, -1.6); root.add(bedside);
+  const sillL = new THREE.PointLight("#c8d4ec", 0, 2.5, 1.6); sillL.position.set(1.05, 1.6, -1.6); root.add(sillL);
   const clock = root.getObjectByName("wallClock"), hourC = root.getObjectByName("clockHour"), minC = root.getObjectByName("clockMin");
   const sec = new THREE.Group(); sec.position.z = 0.062; clock?.add(sec); box(sec, [-0.004, -0.03, 0], [0.004, 0.17, 0.006], mat("#7a2a26"), false);
-  const [f0, f1] = EV.flicker, [l0, l1] = EV.lightning;
+  const [l0, l1] = EV.lightning, dw = span("drainWave"), dc = span("drainClose"), mp = span("matPhone"), mb = span("matBuzz"), gp = span("grabPhone"), ps = span("pastShelf"), bp2 = span("bankPanic");
   return (_fr: Frame, f: number) => {
-    const t = f / FPS, kind = kindAt(f);
-    rainOn(t, 1);
-    // the ceiling light: steady and dim, flickering from f0, dead at lightOut; never back
-    // a dying bulb: soft, uneven dips (never a hard on/off strobe), weaker and weaker until it goes
-    let k = f < f0 ? 1 : f < EV.lightOut ? Math.max(0, 1 - 0.85 * sm((f - f0) / (EV.lightOut - f0))) * (1 - 0.45 * sm((Math.sin(t * 2.3) * Math.sin(t * 0.9 + 1) - 0.2) / 0.5)) : 0;
-    if (f >= SHOTS.find((s) => s.kind === "hospRain")!.from) k = 0;
-    ceil.intensity = 1.1 * k; cold.intensity = kind === "dustyMat" ? 6.0 : kind === "matPhone" ? 3.2 : kind === "lightning" ? 2.6 : kind === "lightOut" ? 0.5 * (1 - sm((f - EV.phoneOff) / 20)) + 0.25 : f >= EV.lightOut ? 1.4 : 0.6; shelfL.intensity = kind === "mushaf" || kind === "leftBehind" ? 1.6 : 0;
-    // the clock: 03:12 and ticking; racing in "clockSpin"; stopped at 03:47 once he is gone
-    const spin = kind === "clockSpin" ? (f - SHOTS.find((s) => s.kind === "clockSpin")!.from) / FPS : 0, gone = f >= SHOTS.find((s) => s.kind === "hospRain")!.from;
-    const secs = gone ? 47 * 60 : 12 * 60 + Math.floor(t) + spin * 1800;
+    const t = f / FPS, kind = kindAt(f), gone = f >= span("walkHome").from;
+    rainOn(t, kind === "windowRain" ? 1.6 : 1);
+    // the bulb: steady and dim; during the draining it dips unevenly; gone after he collapses
+    const dr = clamp01((f - dw.from) / (dc.to - dw.from));
+    ceil.intensity = f >= EV.lightOut ? 0 : 1.1 * (1 - 0.55 * dr) * (f >= dw.from ? 1 - 0.35 * sm((Math.sin(t * 2.3) * Math.sin(t * 0.9 + 1) - 0.2) / 0.5) : 1);
+    cold.intensity = kind === "matPhone" || kind === "matBuzz" ? 3.2 : kind === "lightning2" ? 2.4 : gone ? 1.4 : 0.7;
+    shelfL.intensity = kind === "pastShelf" || kind === "leftBehind" ? 1.6 : 0;
+    bedside.intensity = kind === "beadsFall" ? 3.0 : 0; sillL.intensity = kind === "drainClose" ? 2.4 : 0;
+    // the clock: 03:12 ticking; racing while the barakah drains; stopped once he is gone
+    const race = f >= dw.from && f < dc.to ? Math.pow((f - dw.from) / FPS, 2) * 900 : 0;
+    const secs = gone ? 47 * 60 : 12 * 60 + Math.floor(t) + race;
     if (hourC && minC) { minC.rotation.z = -((secs / 60) % 60) / 60 * Math.PI * 2; hourC.rotation.z = -((3 + secs / 3600) % 12) / 12 * Math.PI * 2; }
-    sec.rotation.z = -((gone ? 31 : Math.floor(t + spin * 60)) % 60) / 60 * Math.PI * 2;
-    const lapOn = kind === "laptopBank" || kind === "laptopClose" || kind === "trackerRoom" || kind === "phoneGlow";
-    lap.visible = lapOn; lapL.intensity = lapOn ? 0.7 : 0; if (lapOn) drawBank(t);
-    shelfL.intensity = kind === "mushaf" || kind === "leftBehind" || kind === "mushafDust" ? 1.6 : shelfL.intensity;
-    // the phone on the mat: dark until he is gone; then it lights up with each notification and fades again
-    const mp = SHOTS.find((s) => s.kind === "matPhone")!, onMat = f >= mp.from;
-    phone.visible = onMat; const blink = onMat ? Math.max(0, ...[0.15, 0.95, 1.6].map((d) => { const x = (f - mp.from) / FPS - d; return x >= 0 && x < 1.4 ? (x < 0.1 ? x / 0.1 : 1 - (x - 0.1) / 1.3) : 0; })) : 0;
-    (scr.material as THREE.MeshBasicMaterial).color.set("#cfe6ff").multiplyScalar(0.12 + 1.6 * blink); phL.intensity = 0.15 + 0.6 * blink;
-    // lightning ("No!"): two cold pulses
-    const lp = (x: number) => (x >= 0 && x < 5 ? Math.exp(-x / 1.6) : 0);
-    flash.intensity = 9 * Math.max(lp(f - l0), 0.7 * lp(f - l1));
+    sec.rotation.z = -((gone ? 31 : Math.floor(t + race)) % 60) / 60 * Math.PI * 2;
+    // the mat goes darker when he grabs his phone; the mushaf's dust thickens as he walks past
+    (shade.material as THREE.MeshBasicMaterial).opacity = 0.55 * sm((f - gp.from) / (gp.to - gp.from)) * (gone ? 0.4 : 1);
+    const thick = 0.35 + 0.65 * sm((f - ps.from) / (ps.to - ps.from));
+    bdust.forEach((m, i) => { (m.material as THREE.MeshBasicMaterial).opacity = Math.min(1, thick * (1.2 - 0.25 * i)); });
+    // the beads: on the nightstand, then slipping off its edge (string first), falling, bouncing, scattering
+    bead.forEach(({ m, a }, i) => {
+      const v = bv[i], s = (f - EV.beads) / FPS - v.d;
+      const x0 = BX + 0.075 * Math.cos(a), z0 = BZ + 0.06 * Math.sin(a);
+      if (s <= 0) { m.position.set(x0, BY + 0.013, z0 + 0.04 * clamp01(((f - EV.beads) / FPS + 0.6) / 0.6)); return; }
+      const fallT = Math.sqrt(2 * BY / 9.8), x = x0 + v.vx * Math.min(s, 1.6), z = z0 + 0.08 + v.vz * Math.min(s, 1.6);
+      let y: number; if (s < fallT) y = BY - 0.5 * 9.8 * s * s; else { const b = s - fallT, h = 0.08 * Math.exp(-b * 3); y = Math.abs(Math.sin(b * 9)) * h; }
+      m.position.set(x, Math.max(0.013, y + 0.013), z);
+    });
+    // the laptop: the bank screen (money ticking down while the barakah drains; red and falling in the panic)
+    const lapOn = kind === "drainWave" || kind === "bankPanic";
+    lap.visible = lapOn; lapL.intensity = lapOn ? 0.8 : 0;
+    if (lapOn) drawBank(kind === "bankPanic" ? Math.max(-1240, 812.4 - (f - bp2.from) / FPS * 690) : 24812.4 - Math.pow((f - dw.from) / FPS, 1.6) * 3100, kind === "bankPanic");
+    // the plant wilts and browns; the food's steam stops and it greys
+    const w = sm((f - dc.from) / (dc.to - dc.from)) * (f >= dc.from ? 1 : 0) + (f >= dc.to ? 1 : 0) * 0;
+    const wl = f >= dc.to ? 1 : w;
+    leaves.forEach((m, i) => { m.rotation.z = 0.5 - 2.0 * wl * (0.8 + 0.2 * Math.sin(i)); (m.material as THREE.MeshLambertMaterial).color.set("#4f8a4a").lerp(new THREE.Color("#5a4630"), wl); });
+    (food.material as THREE.MeshLambertMaterial).color.set("#c98a4a").lerp(new THREE.Color("#6a625a"), wl);
+    steamS.forEach((s, i) => { const life = fract(t * 0.6 + i / 3); s.position.set(-0.25 + 0.02 * Math.sin(t * 2 + i), 0.06 + 0.2 * life, 0); s.scale.set(0.08 + 0.08 * life, 0.14 + 0.1 * life, 1); s.material.opacity = 0.45 * Math.sin(Math.PI * life) * (1 - wl); });
+    // the warm light leaking out through the window like smoke (while the barakah drains)
+    const lk = f >= dw.from && f < dc.to ? 1 : 0;
+    leak.forEach(({ s, ph }, i) => { const life = fract(t * 0.35 + ph), x0 = -0.6 + 0.3 * Math.sin(i * 2.3), z0 = -0.4 + 0.3 * Math.cos(i * 1.7);
+      s.position.set(x0 + (1.05 - x0) * life, 1.2 + 0.5 * life + 0.1 * Math.sin(t + i), z0 + (-2.25 - z0) * life); s.scale.setScalar(0.5 + 0.4 * (1 - life));
+      s.material.opacity = lk * 0.35 * Math.sin(Math.PI * life); });
+    // the phone on the mat: dark until he is gone; it lights with each notification; it buzzes in the close shot
+    const onMat = f >= mp.from;
+    phone.visible = onMat;
+    const blinks = [0.15, 0.95, 1.7, 2.6, 3.4, 4.2];
+    const blink = onMat ? Math.max(0, ...blinks.map((d) => { const x = (f - mp.from) / FPS - d; return x >= 0 && x < 0.9 ? (x < 0.08 ? x / 0.08 : 1 - (x - 0.08) / 0.82) : 0; })) : 0;
+    (scr.material as THREE.MeshBasicMaterial).color.set("#cfe6ff").multiplyScalar(0.12 + 1.6 * blink); phL.intensity = 0.15 + 0.7 * blink;
+    const buzz = f >= mb.from && f < mb.to ? blink : 0;
+    phone.position.set(1.12 + 0.004 * Math.sin(f * 2.7) * buzz + 0.02 * clamp01((f - mb.from) / (mb.to - mb.from)) * (f >= mb.from ? 1 : 0), 0.032, 0.3); phone.rotation.y = 0.5 + 0.06 * Math.sin(f * 3.1) * buzz;
+    // lightning: two cold flashes
+    const lp = (x: number) => (x >= 0 && x < 5 ? Math.exp(-x / 1.4) : 0);
+    flash.intensity = 10 * Math.max(lp(f - l0), lp(f - l1));
   };
 };
 
@@ -157,76 +207,130 @@ const bedroomLife = (root: THREE.Object3D) => {
 const hospitalLife = (root: THREE.Object3D) => {
   const rainOn = glassRain(root, 1.1, 1.6, [-1.6, 1.5, -2.37], 5);
   const pil = root.getObjectByName("hospPillow"), sh = root.getObjectByName("hospSheet");
-  return (_fr: Frame, f: number) => { rainOn(f / FPS, 1); const lying = kindAt(f) === "hospitalWide"; if (pil) pil.visible = !lying; if (sh) sh.visible = !lying; };
+  // a sheer curtain by the window that moves in the draft
+  const geo = new THREE.PlaneGeometry(0.7, 2.0, 6, 16), base = Float32Array.from(geo.attributes.position.array as Float32Array);
+  const cur = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: new THREE.Color("#7f8fa0").multiplyScalar(0.6), transparent: true, opacity: 0.6, side: THREE.DoubleSide, depthWrite: false, fog: false }));
+  cur.position.set(-0.75, 1.55, -2.2); cur.layers.set(NOINK); root.add(cur);
+  return (_fr: Frame, f: number) => {
+    const t = f / FPS, kind = kindAt(f);
+    rainOn(t, kind === "bedRail" || kind === "flatline" ? 1.7 : 1.2);
+    const lying = kind === "bedRail"; if (pil) pil.visible = !lying; if (sh) sh.visible = !lying;
+    const draft = kind === "emptyCurtain" ? 1 : 0.3, p = geo.attributes.position as THREE.BufferAttribute;
+    for (let i = 0; i < p.count; i++) { const x = base[i * 3], y = base[i * 3 + 1], down = clamp01((1.0 - y) / 2.0);
+      const wv = draft * down * (0.09 * Math.sin(t * 1.6 + y * 2.5 + x * 3) + 0.05 * Math.sin(t * 3.1 + y * 5)); p.setXYZ(i, x + wv * 0.5, y, base[i * 3 + 2] + Math.abs(wv) * 2.2); }
+    p.needsUpdate = true;
+  };
 };
 
 // =====================================================================================================================
 const cemeteryLife = (root: THREE.Object3D) => {
   const rain = rainField(root), spl = splashes(root);
-  // the bier: two poles, a board, the shrouded body (white, plain), a dark green cloth over it
   const bier = new THREE.Group(); root.add(bier);
   for (const z of [-0.42, 0.42]) { const p = cyl(bier, 0.03, 0.03, 2.6, mat("#4a3426"), [0, 0, z], 8); p.rotation.z = Math.PI / 2; }
   box(bier, [-0.9, 0.02, -0.38], [0.9, 0.06, 0.38], mat("#5a3e2c"));
   const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.21, 1.3, 6, 12), mat("#e9e6de")); body.rotation.z = Math.PI / 2; body.scale.set(1, 1, 0.8); body.position.y = 0.24; body.castShadow = true; bier.add(body);
-  const cloth = new THREE.Mesh(new THREE.CapsuleGeometry(0.23, 1.2, 6, 12), mat("#24382c")); cloth.rotation.z = Math.PI / 2; cloth.scale.set(1, 1, 0.84); cloth.position.set(0.05, 0.27, 0); cloth.visible = false; bier.add(cloth);
-  // soil falling from two shovels into the grave
+  bier.traverse((o) => o.layers.set(NOINK));                             // carried past the camera: never pushes it
+  // mud splashes at the carriers' feet
+  const NM = 60, mud = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ map: softDot(), color: new THREE.Color("#8a8a88"), size: 0.035, transparent: true, opacity: 0.7, depthWrite: false, fog: false }));
+  const mp = new Float32Array(NM * 3); mud.geometry.setAttribute("position", new THREE.BufferAttribute(mp, 3)); mud.layers.set(NOINK); mud.frustumCulled = false; root.add(mud);
   const NS = 120, soil = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ map: softDot(), color: new THREE.Color("#4a3a2c"), size: 0.05, transparent: true, depthWrite: false, fog: false }));
   const sp = new Float32Array(NS * 3); soil.geometry.setAttribute("position", new THREE.BufferAttribute(sp, 3)); soil.layers.set(NOINK); soil.frustumCulled = false; root.add(soil);
   const sr = rnd(9), ss = Float32Array.from({ length: NS * 3 }, sr);
-  // mist lying in the cemetery
   const mistT = ctex("lrMist", 512, 256, (g, r) => { for (let i = 0; i < 40; i++) { const x = r() * 512, y = 60 + r() * 140, rad = 40 + 90 * r(); const gr = g.createRadialGradient(x, y, 0, x, y, rad); gr.addColorStop(0, "rgba(255,255,255,0.12)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(x - rad, y - rad, rad * 2, rad * 2); } });
   const mists = Array.from({ length: 7 }, (_, i) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(14, 4), new THREE.MeshBasicMaterial({ map: mistT, color: new THREE.Color("#8a96a8"), transparent: true, opacity: 0.55, depthWrite: false, fog: false })); m.position.set(0, 0.9 + 0.3 * (i % 3), -1 - i * 2.4); m.layers.set(NOINK); root.add(m); return m; });
-  const key = new THREE.PointLight("#c8d2e4", 0, 10, 1.3); root.add(key);   // a soft cold key over the action
-  // a lantern standing on the ground by the grave: a small warm light in all the grey
+  const key = new THREE.PointLight("#c8d2e4", 0, 10, 1.3); root.add(key);
   const lan = new THREE.Group(); lan.position.set(0.15, 0, 0.72); root.add(lan);
   box(lan, [-0.09, 0, -0.09], [0.09, 0.03, 0.09], mat("#2a2622")); box(lan, [-0.09, 0.3, -0.09], [0.09, 0.33, 0.09], mat("#2a2622"));
   for (const [x, z] of [[-0.085, -0.085], [0.085, -0.085], [-0.085, 0.085], [0.085, 0.085]]) box(lan, [x - 0.01, 0.03, z - 0.01], [x + 0.01, 0.3, z + 0.01], mat("#2a2622"));
-  const flame = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.24, 12), glow("#ffc070", 2.0)); flame.position.y = 0.165; flame.layers.set(NOINK); lan.add(flame);
+  const flame = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.24, 12), glow("#ffc070", 2.0)); flame.position.y = 0.165; lan.add(flame);
   const handle = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.008, 6, 16, Math.PI), mat("#2a2622")); handle.position.y = 0.33; lan.add(handle);
-  const lanHalo = new THREE.Sprite(new THREE.SpriteMaterial({ map: softDot(), color: new THREE.Color(1.0, 0.6, 0.25), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, fog: false })); lanHalo.scale.set(1.1, 1.1, 1); lanHalo.position.y = 0.17; lanHalo.layers.set(NOINK); lan.add(lanHalo);
-  lan.traverse((o) => o.layers.set(NOINK));                              // a small prop: never pushes the camera (the collision check ignores it)
+  const lanHalo = new THREE.Sprite(new THREE.SpriteMaterial({ map: softDot(), color: new THREE.Color(1.0, 0.6, 0.25), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, fog: false })); lanHalo.scale.set(1.1, 1.1, 1); lanHalo.position.y = 0.17; lan.add(lanHalo);
+  lan.traverse((o) => o.layers.set(NOINK));
   const lanL = new THREE.PointLight("#ffb866", 0, 6, 1.5); lanL.position.set(0.15, 0.45, 0.72); root.add(lanL);
-  const cl = new THREE.Vector3();
+  const cl = new THREE.Vector3(), fp = span("fogPullback");
   return (fr: Frame, f: number) => {
-    const t = f / FPS, kind = kindAt(f);
+    const t = f / FPS, kind = kindAt(f), proc = kind === "janazahTrack" || kind === "mudFeet" || kind === "umbrellaLine";
     cl.set(...fr.plan.cam.pos).sub(root.position);
-    rain(cl, t, 1); spl(cl, t);
-    const kx = kind.startsWith("janazah") ? procX(t) : 0; key.position.set(kx + 0.4, kind === "burial" ? 2.6 : 3.2, kind.startsWith("janazah") ? PROC.z + 1.2 : 0.8); key.intensity = kind === "burial" ? 5.0 : kind === "graveFog" ? 2.4 - 1.2 * sm((f - SHOTS.find((s) => s.kind === "graveFog")!.from) / 120) : 3.0;
-    const lanOn = kind === "burial" || kind === "leaving" || kind === "graveFog";
-    lan.visible = lanOn; lanL.intensity = lanOn ? 2.6 * (0.94 + 0.06 * Math.sin(t * 9) * Math.sin(t * 3.1)) : 0;
-    bier.visible = kind === "janazah" || kind === "janazahLow";
-    if (bier.visible) { const x = procX(t); bier.position.set(x, 1.47 + 0.015 * Math.sin(t * 5.2), PROC.z); bier.rotation.z = 0.012 * Math.sin(t * 2.6); }
-    const [s0, s1] = EV.soil; soil.visible = kind === "burial" && f >= s0 && f < s1;
+    rain(cl, t, 1.2); spl(cl, t);
+    const kx = proc ? procX(t) : 0; key.position.set(kx + 0.4, kind === "graveSoil" ? 2.6 : 3.2, proc ? PROC.z + 1.2 : 0.8);
+    key.intensity = kind === "graveSoil" ? 5.0 : kind === "fogPullback" ? 2.4 - 1.4 * sm((f - fp.from) / (fp.to - fp.from)) : 3.0;
+    // the lantern flickers in the wind
+    const lanOn = kind === "graveSoil" || kind === "walkAway" || kind === "fogPullback", gust = 0.75 + 0.25 * Math.sin(t * 7.3) * Math.sin(t * 2.9 + 1) + 0.1 * Math.sin(t * 23);
+    lan.visible = lanOn; lanL.intensity = lanOn ? 2.6 * gust : 0; flame.scale.set(1, 0.85 + 0.2 * gust, 1); lanHalo.material.color.setRGB(1.0 * gust, 0.6 * gust, 0.25 * gust);
+    bier.visible = proc;
+    if (proc) { const x = procX(t); bier.position.set(x, 1.47 + 0.02 * Math.sin(t * 5.2), PROC.z); bier.rotation.z = 0.015 * Math.sin(t * 2.6); }
+    mud.visible = proc;
+    if (proc) { const x = procX(t); for (let i = 0; i < NM; i++) { const life = fract(t * 2.6 + i * 0.137), lane = i % 4, fx = x + [0.95, -0.95, 0.95, -0.95][lane] + 0.15 * Math.sin(i), fz = PROC.z + [-0.42, -0.42, 0.42, 0.42][lane];
+      mp.set([fx + 0.1 * life * Math.cos(i), 0.02 + 0.25 * life * (1 - life) * 4 * 0.3, fz + 0.12 * life * Math.sin(i * 1.7)], i * 3); } mud.geometry.attributes.position.needsUpdate = true; }
+    const [s0, s1] = EV.soil; soil.visible = kind === "graveSoil" && f >= s0 && f < s1;
     if (soil.visible) {
       for (let i = 0; i < NS; i++) { const side = i % 2 ? 1 : -1, life = fract(t * 1.2 + ss[i * 3] * 0.35 + (side > 0 ? 0.5 : 0)), drop = life * life;
         sp.set([side * (1.05 - 0.6 * life) + (ss[i * 3 + 1] - 0.5) * 0.25, 0.75 - 1.4 * drop, (ss[i * 3 + 2] - 0.5) * 0.4], i * 3); }
       soil.geometry.attributes.position.needsUpdate = true;
     }
-    const thick = kind === "graveFog" ? 1.25 : 1;
+    const thick = kind === "fogPullback" ? 1.25 : 1;
     mists.forEach((m, i) => { m.position.x = Math.sin(t * 0.05 + i) * 1.5; m.rotation.set(0, Math.atan2(cl.x - m.position.x, cl.z - m.position.z), 0); const up = Math.max(0, Math.min(1, (cl.y - 1.8) / 2.5)); (m.material as THREE.MeshBasicMaterial).opacity = 0.5 * thick * (1 - 0.7 * up); });
-    void CEMETERY;
   };
 };
 
 // =====================================================================================================================
 const streetLife = (root: THREE.Object3D) => {
   const rain = rainField(root, 1700), spl = splashes(root, 200);
-  // papers blowing along the empty street
   const papers = Array.from({ length: 9 }, (_, i) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.21, 0.29), new THREE.MeshBasicMaterial({ color: new THREE.Color("#b9b6ac").multiplyScalar(0.55), side: THREE.DoubleSide, fog: false })); m.layers.set(NOINK); root.add(m); return { m, ph: i / 9 }; });
-  // his family's house: a closed door, dark windows
-  const house = new THREE.Group(); root.add(house); const X = 27;
-  box(house, [X - 0.55, 0, -0.17], [X + 0.55, 2.4, -0.12], mat("#3a3f46")); box(house, [X - 0.46, 0, -0.12], [X + 0.46, 2.18, -0.09], mat("#2a1d16"));
-  box(house, [X + 0.3, 1.0, -0.09], [X + 0.36, 1.08, -0.06], mat("#5a5040"), false);
-  for (const wx of [X - 1.3, X + 1.3]) { box(house, [wx - 0.45, 3.4, -0.2], [wx + 0.45, 4.6, -0.12], mat("#1a1e26")); box(house, [wx - 0.5, 3.35, -0.2], [wx + 0.5, 3.4, -0.08], mat("#4a4f56")); }
-  const cl = new THREE.Vector3();
+  // the masjid's door: a warm arched doorway, light spilling onto the wet pavement
+  const MX = 28.85, masjid = new THREE.Group(); root.add(masjid);
+  box(masjid, [MX - 0.8, 0, -0.2], [MX + 0.8, 2.9, -0.12], mat("#5a5550"));
+  const arch = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 2.4), new THREE.MeshBasicMaterial({ color: new THREE.Color("#ffcf8a").multiplyScalar(1.5), fog: false })); arch.position.set(MX, 1.2, -0.115); masjid.add(arch);
+  const archTop = new THREE.Mesh(new THREE.CircleGeometry(0.5, 20, 0, Math.PI), arch.material); archTop.position.set(MX, 2.4, -0.115); masjid.add(archTop);
+  const spill = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 2.0), new THREE.MeshBasicMaterial({ map: softDot(), color: new THREE.Color(1.2, 0.8, 0.4), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+  spill.rotation.x = -Math.PI / 2; spill.position.set(MX, KERB_Y + 0.005, 0.7); spill.layers.set(NOINK); masjid.add(spill);
+  const warm = new THREE.PointLight("#ffc070", 0, 7, 1.5); warm.position.set(MX, 1.8, 0.5); masjid.add(warm);
+  // the bus's red tail lights and lit windows (it pulls away in the opening)
+  const tail = [0, 1].map(() => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: softDot(), color: new THREE.Color(2.0, 0.25, 0.2), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, fog: false })); s.scale.set(0.6, 0.6, 1); s.layers.set(NOINK); root.add(s); return s; });
+  const busWin = new THREE.Mesh(new THREE.PlaneGeometry(10.2, 0.85), new THREE.MeshBasicMaterial({ color: new THREE.Color("#d8e4ff").multiplyScalar(0.9), side: THREE.DoubleSide, fog: false })); busWin.layers.set(NOINK); root.add(busWin);
+  // his phone: it slips from his hand, falls into a puddle and cracks
+  const puddle = new THREE.Mesh(new THREE.CircleGeometry(0.45, 24), new THREE.MeshBasicMaterial({ color: new THREE.Color("#2a3446"), transparent: true, opacity: 0.85, fog: false })); puddle.rotation.x = -Math.PI / 2; puddle.scale.set(1.3, 0.8, 1); puddle.position.set(40.6, KERB_Y + 0.004, 1.25); puddle.layers.set(NOINK); root.add(puddle);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.9, 1.0, 32), new THREE.MeshBasicMaterial({ color: "#b8c4d8", transparent: true, opacity: 0, depthWrite: false, fog: false })); ring.rotation.x = -Math.PI / 2; ring.position.set(40.6, KERB_Y + 0.006, 1.25); ring.layers.set(NOINK); root.add(ring);
+  const ph = new THREE.Group(); root.add(ph); box(ph, [-0.04, 0, -0.075], [0.04, 0.01, 0.075], mat("#1b1d24"), false);
+  const crack = liveCanvas(64, 128); const pscr = new THREE.Mesh(new THREE.PlaneGeometry(0.07, 0.135), new THREE.MeshBasicMaterial({ map: crack.tex, fog: false })); pscr.rotation.x = -Math.PI / 2; pscr.position.y = 0.011; ph.add(pscr);
+  const drawCrack = (k: number) => crack.redraw((g) => { g.fillStyle = "#bcd6ff"; g.fillRect(0, 0, 64, 128); if (k <= 0) return; g.strokeStyle = "rgba(20,24,34,0.95)"; g.lineWidth = 2;
+    for (const [a, l] of [[0.3, 50], [1.4, 60], [2.5, 45], [3.6, 70], [4.6, 40], [5.5, 55]] as [number, number][]) { g.beginPath(); g.moveTo(40, 42); g.lineTo(40 + Math.cos(a) * l * k, 42 + Math.sin(a) * l * k); g.stroke(); } });
+  const NSP = 40, sp = new Float32Array(NSP * 3), splash = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ map: softDot(), color: new THREE.Color("#c8d4e6"), size: 0.03, transparent: true, depthWrite: false, fog: false }));
+  splash.geometry.setAttribute("position", new THREE.BufferAttribute(sp, 3)); splash.layers.set(NOINK); splash.frustumCulled = false; root.add(splash);
+  const skey = new THREE.PointLight("#b8c8e4", 0, 6, 1.4); root.add(skey);
+  const cl = new THREE.Vector3(), PD = EV.phoneDrop;
   return (fr: Frame, f: number) => {
-    const t = f / FPS, wind = kindAt(f) === "emptyStreet" || kindAt(f) === "emptyCity" ? 1.8 : 1;
+    const t = f / FPS, kind = kindAt(f), wind = 1.5;
     cl.set(...fr.plan.cam.pos).sub(root.position);
     rain(cl, t, wind); spl(cl, t, 0.13);
-    papers.forEach(({ m, ph }, i) => { const u = fract(t * 0.16 + ph), x = cl.x - 3 + 9 * u, y = 0.15 + 0.6 * Math.abs(Math.sin(u * 9 + i)) * (0.5 + 0.5 * Math.sin(t + i)), z = 1.2 + 2.0 * Math.sin(i * 2.1);
+    papers.forEach(({ m, ph: p0 }, i) => { const u = fract(t * 0.2 + p0), x = cl.x - 3 + 9 * u, y = 0.15 + 0.6 * Math.abs(Math.sin(u * 9 + i)) * (0.5 + 0.5 * Math.sin(t + i)), z = 0.6 + 1.6 * Math.abs(Math.sin(i * 2.1));
       m.position.set(x, y, z); m.rotation.set(t * (1.3 + 0.2 * i), t * 0.9 + i, t * 0.7); });
+    masjid.visible = kind === "pastMasjid"; warm.intensity = masjid.visible ? 3.2 : 0;
+    const sk = kind === "collapseStreet" ? [42.0, 3.0] : kind === "walkHome" ? [37.0, 2.0] : kind === "phoneDrop" ? [40.6, 1.6] : null;
+    skey.intensity = sk ? sk[1] : 0; if (sk) skey.position.set(sk[0], 2.4, 2.2);
+    // the bus (its body is the street set's vehicle): lights that follow it
+    const bx = BUS.passX + BUS.speed * (t - BUS.passAt), busOn = kind === "runRain" || kind === "missBus" || kind === "lookClosely";
+    tail.forEach((s, i) => { s.visible = busOn; s.position.set(bx - 5.62, 0.9, BUS.lane + (i ? 0.95 : -0.95)); });
+    busWin.visible = busOn; busWin.position.set(bx - 0.15, 2.0, BUS.lane - 1.28);
+    // the phone: in his hand until PD, a 0.3 s fall, a bounce in the puddle, the screen cracking; it stays there
+    const showPh = kind === "phoneDrop" || kind === "collapseStreet";
+    ph.visible = showPh; puddle.visible = showPh || kind === "walkHome";
+    if (showPh) {
+      const s = (f - PD) / FPS;
+      if (s < 0) ph.position.set(40.15 + 0.45 * ((f - span("phoneDrop").from) / FPS) + 0.32, 1.0, 1.05);
+      else { const k = clamp01(s / 0.3), y = KERB_Y + 0.006 + (1.0 - KERB_Y) * (1 - k * k) + (s > 0.3 ? 0.05 * Math.abs(Math.sin((s - 0.3) * 12)) * Math.exp(-(s - 0.3) * 8) : 0); ph.position.set(40.6, y, 1.05 + 0.2 * k); ph.rotation.set(0.6 * (1 - k), 0.4, 0.9 * (1 - k)); }
+      drawCrack(clamp01((s - 0.3) / 0.12));
+      const rs = s - 0.3; ring.material.opacity = rs > 0 && rs < 1.2 ? 0.5 * (1 - rs / 1.2) : 0; ring.scale.setScalar(0.05 + 0.4 * clamp01(rs / 1.2));
+      splash.visible = rs > 0 && rs < 0.6;
+      if (splash.visible) for (let i = 0; i < NSP; i++) { const a = (i / NSP) * Math.PI * 2, v = 0.3 + 0.3 * ((i * 7) % 5) / 5; sp.set([40.6 + Math.cos(a) * v * rs, KERB_Y + 0.02 + (1.2 * rs - 4.9 * rs * rs) * (0.6 + 0.4 * ((i * 3) % 4) / 4), 1.25 + Math.sin(a) * v * rs * 0.6], i * 3); }
+      splash.geometry.attributes.position.needsUpdate = true;
+    } else splash.visible = false;
+    // splashes at his feet while he runs
+    if (kind === "runRain" || kind === "missBus") { const x = runX(t); for (let i = 0; i < NSP; i++) { const life = fract(t * 3.0 + i / NSP), a = i * 2.4;
+      sp.set([x - 0.3 * life + 0.12 * Math.cos(a), KERB_Y + 0.02 + 0.35 * life * (1 - life), 1.5 + 0.12 * Math.sin(a)], i * 3); } splash.visible = true; splash.geometry.attributes.position.needsUpdate = true; }
   };
 };
+const KERB_Y = 0.12;
 
 // =====================================================================================================================
 export const buildLife = (roots: Partial<Record<SetId, THREE.Object3D>>) => {
@@ -238,4 +342,4 @@ export const buildLife = (roots: Partial<Record<SetId, THREE.Object3D>>) => {
   for (const r of Object.values(roots)) r!.updateMatrixWorld(true);
   return { update: (fr: Frame, f: number) => up[fr.set]?.(fr, Math.min(f, FRAMES - 1)) };
 };
-void applyCam; void glow; void F;
+void applyCam; void F; void CEMETERY;

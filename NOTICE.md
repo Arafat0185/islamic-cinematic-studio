@@ -48,8 +48,7 @@ to use Remotion's bundled ffmpeg and to skip intended dark spans).
 
 ## Recitation audio (video 002, "The Last Request")
 
-`engine/public/audio/recitation/063010.mp3`, `063011.mp3`: Surat Al-Munafiqun 63:10-11 recited by
-Sheikh Yasser Ad-Dussary (Al-Dossari), 128 kbps, downloaded unchanged from EveryAyah.com
-(https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/063010.mp3, .../063011.mp3; folder listed as
-"Yasser_Ad-Dussary" in https://everyayah.com/data/recitations.js), 2026-11-20. Used as the recitation inside the
-video's own sound track (joined with 0.7 s gaps); the reciter is credited on the end card.
+`engine/public/audio/recitation/recitation_63_10-11.m4a`: Surat Al-Munafiqun 63:10-11 (47.7 s, with its own echo),
+taken from a TikTok upload by @islamthetruth100 (supplied by the channel owner, 2026-11-20). The reciter is not
+confirmed, so the end card does not name one. Used unchanged (level only) inside the video's own sound track. The audio
+file is never committed (engine/public/audio/ is git-ignored).
