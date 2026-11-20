@@ -147,6 +147,7 @@ const bedroomLife = (root: THREE.Object3D) => {
   const bedside = new THREE.PointLight("#ffc890", 0, 4, 1.5); bedside.position.set(-2.3, 0.95, -1.6); root.add(bedside);
   const sillL = new THREE.PointLight("#c8d4ec", 0, 2.5, 1.6); sillL.position.set(1.05, 1.6, -1.6); root.add(sillL);
   const boxL = new THREE.PointLight("#d8c8b0", 0, 3.5, 1.5); boxL.position.set(0.85, 1.3, 1.3); root.add(boxL);
+  const doorL = new THREE.PointLight("#ffc890", 0, 3.5, 1.5); doorL.position.set(-2.3, 2.0, 0.5); root.add(doorL);
   const clock = root.getObjectByName("wallClock"), hourC = root.getObjectByName("clockHour"), minC = root.getObjectByName("clockMin");
   const sec = new THREE.Group(); sec.position.z = 0.062; clock?.add(sec); box(sec, [-0.004, -0.03, 0], [0.004, 0.17, 0.006], mat("#7a2a26"), false);
   // a box of his things on the floor (his folded clothes); his wallet goes in
@@ -175,6 +176,7 @@ const bedroomLife = (root: THREE.Object3D) => {
     shelfL.intensity = kind === "pastShelf" || kind === "leftBehind" ? 1.6 : 0;
     const family = f >= span("fatherBed").from && f < EV.familyLightOut;
     boxL.intensity = kind === "walletBox" ? 2.6 : 0;
+    doorL.intensity = kind === "kufiDoor" ? 2.6 * (f > EV.familyLightOut - 10 ? Math.max(0, Math.min(1, (EV.familyLightOut - f) / 10)) : 1) : 0;
     bedside.intensity = kind === "beadsFall" ? 3.0 : family ? 1.4 * (f > EV.familyLightOut - 10 ? clamp01((EV.familyLightOut - f) / 10) : 1) : 0; sillL.intensity = kind === "drainClose" ? 2.4 : 0;
     // the clock: 03:12 ticking; racing while the barakah drains; stopped once he is gone
     const race = f >= dw.from && f < dc.to ? Math.pow((f - dw.from) / FPS, 2) * 900 : 0;
@@ -285,6 +287,7 @@ const cemeteryLife = (root: THREE.Object3D) => {
   const lanHalo = new THREE.Sprite(new THREE.SpriteMaterial({ map: softDot(), color: new THREE.Color(1.0, 0.6, 0.25), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, fog: false })); lanHalo.scale.set(1.1, 1.1, 1); lanHalo.position.y = 0.17; lan.add(lanHalo);
   lan.traverse((o) => o.layers.set(NOINK));
   const lanL = new THREE.PointLight("#ffb866", 0, 6, 1.5); root.add(lanL);
+  const moon = new THREE.PointLight("#b8c4dc", 0, 6, 1.2); moon.position.set(0.2, 2.2, 0.6); root.add(moon);
   // water sprinkled on the grave from a jug; a low wall where the crows sit
   const NW = 70, water = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ map: softDot(), color: new THREE.Color("#c8d6ec"), size: 0.03, transparent: true, depthWrite: false, fog: false }));
   const wp = new Float32Array(NW * 3); water.geometry.setAttribute("position", new THREE.BufferAttribute(wp, 3)); water.layers.set(NOINK); water.frustumCulled = false; root.add(water);
@@ -295,6 +298,7 @@ const cemeteryLife = (root: THREE.Object3D) => {
     cl.set(...fr.plan.cam.pos).sub(root.position);
     rain(cl, t, kind === "gravesTrack" || kind === "walkAway" || kind === "fogPullback" ? 4.5 : 1.2); spl(cl, t);
     const kx = proc ? procX(t) : 0; key.position.set(kx + 0.4, kind === "graveSoil" ? 2.6 : 3.2, proc ? PROC.z + 1.2 : 0.8);
+    moon.intensity = kind === "graveSoil" || kind === "waterGrave" ? 3.5 : 0;
     key.intensity = kind === "graveSoil" ? 5.0 : kind === "fogPullback" ? 2.4 - 1.4 * sm((f - fp.from) / (fp.to - fp.from)) : 3.0;
     // the lantern flickers in the wind
     // the lantern hangs from the man's hand, swinging a little, its flame bending in the wind

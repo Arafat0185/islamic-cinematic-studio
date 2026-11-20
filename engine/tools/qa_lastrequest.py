@@ -25,7 +25,7 @@ ev = story["events"]
 trans = [(F(t0), k) for t0, k in ev.get("transitions", [])]
 # planned: the lightning, the eerie transitions (blinks, smears, the heartbeat cut, dissolves), his collapse, the phone
 # dropping and lighting up on the mat, the end card; intended dark: the cut to black, the closed eyelids, the smears
-mat = next(s2 for s2 in story["shots"] if s2["kind"] == "matPhone")["at"]
+mat = next(s2 for s2 in story["shots"] if s2["kind"] in ("matPhone", "phoneMat"))["at"]
 planned = [[F(e) - 2, F(e) + 10] for e in ev["lightning"]] + [[f0 - 12, f0 + 12] for f0, _ in trans] + [[F(timing["cardFrom"]) - 30, FRAMES]]
 planned += [[F(ev[k]) - 6, F(ev[k]) + 18] for k in ("collapseBed", "phoneDrop", "fall", "flat") if k in ev]
 planned += [[F(mat + d) - 2, F(mat + d) + 6] for d in (0.15, 0.95, 1.7, 2.6, 3.4, 4.2)]
@@ -65,8 +65,7 @@ for i, x in enumerate(rms < -55):
     elif cur: sil.append(cur); cur = None
 if cur: sil.append(cur)
 long_sil = [(round(a0 * 0.05, 2), round((b0 - a0 + 1) * 0.05, 2)) for a0, b0 in sil if (b0 - a0 + 1) * 0.05 > 0.5]
-lines.append(f"## black and silence
-black stretches over 0.5 s: {long_black or 'none'}; quietest 50 ms window {rms.min():.1f} dBFS; silences over 0.5 s (< -55 dBFS): {long_sil or 'none'}")
+lines.append(f"## black and silence\nblack stretches over 0.5 s: {long_black or 'none'}; quietest 50 ms window {rms.min():.1f} dBFS; silences over 0.5 s (< -55 dBFS): {long_sil or 'none'}")
 bad = []
 for p in timing["phrases"]:
     vv = int(p["verse"].split(":")[1]); d = json.loads((VDIR / "quran" / f"63_{vv}.json").read_text(encoding="utf-8"))["verse"]

@@ -74,7 +74,7 @@
    "why": "a hard cut to black on 'up' (0.36 s), bridged by a heavy heartbeat and a thunder crack"
   },
   {
-   "at": 20.1,
+   "at": 19.98,
    "kind": "bankPanic",
    "set": "bedroom",
    "why": "63:10 And spend...: the bank screen, work notifications piling up; his hands on his head"
@@ -250,7 +250,7 @@
     "cut"
    ],
    [
-    20.1,
+    19.98,
     "blinkOpen"
    ],
    [
@@ -278,7 +278,7 @@
     "smear"
    ]
   ],
-  "familyLightOut": 47.6,
+  "familyLightOut": 47.8,
   "laptopClose": [
    42.6,
    44.3

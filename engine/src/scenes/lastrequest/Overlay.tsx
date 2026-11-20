@@ -166,7 +166,7 @@ const Transitions: React.FC<{ f: number }> = ({ f }) => {
     const d = f - tr.f;
     if (tr.kind === "blink") lid = Math.max(lid, d < 0 ? smooth((d + 7) / 7) : 1 - smooth(d / 9));
     if (tr.kind === "cut") { const open = TRANSITIONS.find((x) => x.kind === "blinkOpen" && x.f > tr.f); if (d >= 0 && (!open || f < open.f)) dark = 1; }
-    if (tr.kind === "blinkOpen" && d >= 0) lid = Math.max(lid, 1 - smooth(d / 12));
+    if (tr.kind === "blinkOpen" && d >= 0) lid = Math.max(lid, 1 - smooth(d / 8));
     if (tr.kind === "smear") dark = Math.max(dark, d < 0 ? smooth((d + 10) / 10) * 0.92 : 0.92 * (1 - smooth(d / 8)));
     if (tr.kind === "heart") thump = Math.max(thump, Math.max(0, 1 - Math.abs(d) / 5));
     if (tr.kind === "glass") glass = Math.max(glass, Math.max(0, 1 - Math.abs(d) / 9));

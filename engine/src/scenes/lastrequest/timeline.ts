@@ -227,7 +227,7 @@ export const shotAt0 = (f: number): Shot => {
     case "janazahTrack": { const x = procX(t), c = cam([x + 0.35, 1.6, PROC.z + 3.4], [x + 0.35, 1.35, PROC.z], 46); return { set: "cemetery", state: "rain", cam: c, focus: [x + 0.95, 1.4, PROC.z + 0.42], cInf: 5, trav: null, others: procession(c, t), head: [x, 1.8, PROC.z] }; }
     case "mudFeet": { const x = procX(t), c = cam([x + 0.75, 0.4, 5.0], [x + 0.6, 0.6, PROC.z], 46); return { set: "cemetery", state: "rain", cam: c, focus: [x, 0.4, PROC.z], cInf: 5, trav: null, others: procession(c, t), head: [x, 1.8, PROC.z] }; }
     case "umbrellaLine": { const x = procX(t), c = cam([x - 2.6, 1.7, 9.0], [x - 1.4, 1.2, PROC.z], 44); return { set: "cemetery", state: "rain", cam: c, focus: [x - 1.4, 1.2, PROC.z], cInf: 2, trav: null, others: procession(c, t), head: [x, 1.8, PROC.z] }; }
-    case "graveSoil": { const c = mv(cam([0.65, 1.65, 2.05], [0.0, 0.05, 0.2], 46), cam([0.55, 1.6, 1.9], [0.0, 0.05, 0.2], 44));
+    case "graveSoil": { const c = mv(cam([1.6, 1.3, 3.3], [0.0, 0.8, 0.0], 48), cam([1.35, 1.3, 3.05], [0.0, 0.78, 0.0], 46));
       const [s0, s1] = EV.soil, fill = 0.85 * smooth((f - s0) / (s1 - s0));
       const dig = (x: number, dir: number, ph: number) => { const k = 0.35 + 0.25 * Math.max(0, Math.sin(t * 2.4 + ph)), mir = mirrorFor(c, dir, 0); return put("cemetery", stoop(["m1", "m4"][ph], k, lightOf("cem", c, mir)), [x, 0, -0.05], { mirror: mir }); };
       return { set: "cemetery", state: "rain", cam: c, focus: [0, 0, 0], cInf: 4, trav: null, others: [dig(-1.45, 1, 0), dig(1.45, -1, 1), ...mourners(c, 0).slice(0, 4), lanternMan(c, 0)], head: NOHEAD, hooks: { graveFill: fill } }; }
