@@ -168,11 +168,11 @@ const bedroomLife = (root: THREE.Object3D) => {
   const [l0, l1] = EV.lightning, dw = span("drainWave"), dc = span("drainClose"), mp = span("phoneMat"), mb = mp, gp = span("grabPhone"), ps = span("pastShelf"), bp2 = span("bankPanic"), mbl = span("mushafBlow"), lc = span("laptopClose");
   return (_fr: Frame, f: number) => {
     const t = f / FPS, kind = kindAt(f), gone = f >= span("walkHome").from;
-    rainOn(t, kind === "windowRain" ? 1.6 : 1);
+    rainOn(t, kind === "windowRain" ? 1.6 : kind === "wakePause" ? 1.45 : 1);
     // the bulb: steady and dim; during the draining it dips unevenly; gone after he collapses
     const dr = clamp01((f - dw.from) / (dc.to - dw.from));
     ceil.intensity = f >= EV.lightOut ? 0 : 1.1 * (1 - 0.55 * dr) * (f >= dw.from ? 1 - 0.35 * sm((Math.sin(t * 2.3) * Math.sin(t * 0.9 + 1) - 0.2) / 0.5) : 1);
-    cold.intensity = kind === "matPhone" || kind === "matBuzz" ? 3.2 : kind === "lightning2" ? 2.4 : gone ? 1.4 : 0.7;
+    cold.intensity = kind === "matPhone" || kind === "matBuzz" ? 3.2 : kind === "wakePause" ? 1.5 : kind === "lightning2" ? 2.4 : gone ? 1.4 : 0.7;
     shelfL.intensity = kind === "pastShelf" || kind === "leftBehind" ? 1.6 : 0;
     const family = f >= span("fatherBed").from && f < EV.familyLightOut;
     boxL.intensity = kind === "walletBox" ? 2.6 : 0;
@@ -231,6 +231,13 @@ const bedroomLife = (root: THREE.Object3D) => {
     (scr.material as THREE.MeshBasicMaterial).color.set("#cfe6ff").multiplyScalar(0.12 + 1.6 * blink); phL.intensity = 0.15 + 0.7 * blink;
     const buzz = f >= mb.from && f < mb.to ? blink : 0;
     phone.position.set(1.12 + 0.004 * Math.sin(f * 2.7) * buzz + 0.02 * clamp01((f - mb.from) / (mb.to - mb.from)) * (f >= mb.from ? 1 : 0), 0.032, 0.3); phone.rotation.y = 0.5 + 0.06 * Math.sin(f * 3.1) * buzz;
+    // the pause after the voice: his phone on the bed beside him, its light fading out
+    if (kind === "wakePause") {
+      const wp = span("wakePause"), fade = 1 - smooth((f - wp.from - 4) / (wp.to - wp.from - 6));
+      phone.visible = true; phone.position.set(-0.95, 0.6, -0.9); phone.rotation.y = 0.9;
+      (scr.material as THREE.MeshBasicMaterial).color.set("#cfe6ff").multiplyScalar(0.06 + 1.4 * fade);
+      phL.position.set(-1.0, 0.85, -0.85); phL.intensity = 2.2 * fade;
+    } else phL.position.set(1.12, 0.2, 0.3);
     // lightning: two cold flashes
     const lp = (x: number) => (x >= 0 && x < 5 ? Math.exp(-x / 1.4) : 0);
     flash.intensity = 10 * Math.max(lp(f - l0), lp(f - l1));

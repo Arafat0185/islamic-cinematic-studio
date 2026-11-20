@@ -189,7 +189,8 @@ def main():
     rt, gap = S["drainWave"]["at"], 0.5
     while rt < S["collapseBed"]["at"]: put(fx, tick(0.9), rt, -4); rt += gap; gap = max(0.07, gap * 0.9)
     put(fx, body_fall(), E["collapseBed"] + 0.25, 0); put(fx, rumble(1.6, 1.3), E["collapseBed"] + 0.1, -2)
-    put(fx, heartbeat(1.6), E["phoneOff"], 0); put(fx, thunder(close=True), E["phoneOff"] + 0.02, -2)   # the hard cut on "up": a heavy heartbeat, a crack of thunder
+    pz = S["wakePause"]                                                        # the pause after "wake up?" (never silent): two heavy heartbeats, a distant thunder roll
+    put(fx, heartbeat(1.7), pz["at"] + 0.55, 0); put(fx, heartbeat(1.7), pz["at"] + 1.3, 0); put(fx, thunder(), pz["at"] + 0.75, -1)
     for k in range(4): put(fx, buzz(0.5), S["bankPanic"]["at"] + 0.2 + 0.65 * k, -10)   # 63:10
     for at, g, w in steps(S["walkHome"]["at"] + 0.1, 8, 0.36, -4, 1.0): put(fx, splash_step(0.7, w), at, g)
     put(fx, splash_step(1.2, 1.6), E["phoneDrop"] + 0.3, 0); put(fx, crack(), E["phoneDrop"] + 0.32, -2)
@@ -209,7 +210,7 @@ def main():
     put(fx, body_fall() * 0.25, E["wallet"] + 0.15, -10)
     put(fx, tick(1.0), E["kufi"] + 0.25, -4); put(fx, creak(1.6), S["kufiDoor"]["at"] + 0.3, -12)
     put(fx, howl(3.0), S["fatherBed"]["at"], -10)
-    for at in [2.2, 12.0, 26.0, 38.5, 47.0, 58.0, 68.5]: put(fx, thunder(), at, -6)
+    for at in [2.2, 12.0, 27.3, 39.8, 48.3, 59.3, 69.8]: put(fx, thunder(), at, -6)
     for at in E["lightning"]: put(fx, thunder(close=True), at + 0.05, 0)
     jz0, jz1 = S["janazahTrack"]["at"], S["graveSoil"]["at"]                 # the janazah
     for at, g, w in steps(jz0, int((jz1 - jz0) / 0.36), 0.36, -2, 1.3): put(fx, splash_step(0.9, w), at, g)
@@ -221,8 +222,8 @@ def main():
     put(fx, wings(), E["crows"], -2); put(fx, howl(4.0), S["gravesTrack"]["at"], -4)
     put(fx, rumble(2.4, 0.8), S["fogPullback"]["at"], -6)
     for k in range(int(TOTAL)): put(amb, tick() * (0.2 + 0.8 * room[min(N - 1, int(k * SR))]), k + 0.3, -8)   # the slow clock
+    amb *= 1 + 0.8 * mask([(pz["at"] + 0.3, pz["to"] + 0.1)], 0.9)          # the rain swells through the pause
     sfx = amb + fx
-    cut = (t >= E["phoneOff"]) & (t < timing["recStart"]); sfx[:, cut] *= 0.35  # the hard cut to black: only a little rain
     v = int(timing["voiceEnd"] * SR)
     gd = load(GUIDE); g2 = np.zeros((2, N)); m = min(gd.shape[1], N); g2[:, :m] = gd[:, :m]; g2[:, v:] = 0
     sfx *= 1 - 0.3 * np.clip(envelope(g2) + envelope(rec), 0, 1)                  # dip under the voice and the recitation's peaks

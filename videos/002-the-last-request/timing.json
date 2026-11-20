@@ -1,15 +1,15 @@
 {
  "fps": 30,
  "voiceEnd": 21.7,
- "recStart": 20.35,
- "recEnd": 68.065,
+ "recStart": 21.65,
+ "recEnd": 69.365,
  "verseStarts": {
-  "63:10": 20.65,
-  "63:11": 48.1
+  "63:10": 21.95,
+  "63:11": 49.4
  },
  "gap": 0.7,
- "cardFrom": 69.065,
- "length": 72.067,
+ "cardFrom": 70.365,
+ "length": 73.367,
  "reciter": null,
  "surah": "Al-Munafiqun",
  "range": "63:10-11",
@@ -326,8 +326,8 @@
    "keys": [
     "spend"
    ],
-   "start": 20.65,
-   "end": 23.95
+   "start": 21.95,
+   "end": 25.25
   },
   {
    "i": 1,
@@ -340,8 +340,8 @@
    "keys": [
     "death"
    ],
-   "start": 23.95,
-   "end": 28.2
+   "start": 25.25,
+   "end": 29.5
   },
   {
    "i": 2,
@@ -354,8 +354,8 @@
    "keys": [
     "delay me"
    ],
-   "start": 28.2,
-   "end": 34.75
+   "start": 29.5,
+   "end": 36.05
   },
   {
    "i": 3,
@@ -368,8 +368,8 @@
    "keys": [
     "brief term"
    ],
-   "start": 34.75,
-   "end": 42.35
+   "start": 36.05,
+   "end": 43.65
   },
   {
    "i": 4,
@@ -380,8 +380,8 @@
    "keys": [
     "charity"
    ],
-   "start": 42.35,
-   "end": 48.1
+   "start": 43.65,
+   "end": 49.4
   },
   {
    "i": 5,
@@ -396,9 +396,9 @@
     "never",
     "delay a soul"
    ],
-   "start": 48.1,
-   "end": 61.25,
-   "repeatAt": 54.35
+   "start": 49.4,
+   "end": 62.55,
+   "repeatAt": 55.65
   },
   {
    "i": 6,
@@ -411,8 +411,8 @@
    "keys": [
     "Aware"
    ],
-   "start": 61.25,
-   "end": 69.065
+   "start": 62.55,
+   "end": 70.365
   }
  ],
  "sources": {

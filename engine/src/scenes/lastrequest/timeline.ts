@@ -94,6 +94,9 @@ const lerp3v = (a: V3, b: V3, k: number): V3 => [lerp(a[0], b[0], k), lerp(a[1],
 // ---------------- the shots ----------------
 type Shot = { set: SetId; state: string; cam: Cam; focus: V3; cInf: number; trav: TravellerCard | null; others?: TravellerCard[]; head: V3; hooks?: Frame["hooks"] };
 const NOHEAD: V3 = [0, -5, 0];
+/** the pause after the voice: camera from / look from, camera to / look to (a slow push-in) */
+const PAUSE_YAW = 0.4;
+const PAUSE_CAM: [V3, V3, V3, V3] = [[-2.15, 1.65, 0.95], [-0.25, 0.85, -1.75], [-1.92, 1.55, 0.58], [-0.22, 0.86, -1.75]];
 const KERB = STREET.KERB - 0.02;
 /** where he runs in the opening (street): x at time t (accelerating a little, then braking at the stop) */
 /** the bus that pulls away in the opening (the street set's vehicle: x = passX + speed * (t - passAt), in the far lane) */
@@ -155,7 +158,11 @@ export const shotAt0 = (f: number): Shot => {
       const trav = f < EV.collapseBed + 4 ? put("bedroom", stoop(T, 0.7 * k, L), P, { mirror: mir }) : lying(c, 0.05);
       return { set: "bedroom", state: "night", cam: c, focus: [0, 0.9, -0.8], cInf: 4, trav, head: f < EV.collapseBed + 4 ? [P[0], 1.7 - 0.5 * k, P[2]] : HEAD_LIE };
     }
-    case "black": return { set: "bedroom", state: "nightOff", cam: cam([0.5, 1.3, 1.0], [-1.0, 0.8, -1.3], 44), focus: [-1, 0.8, -1.3], cInf: 3, trav: null, head: NOHEAD };
+    case "wakePause": { // after "wake up?": a slow push-in on him lying in the dark room, rain on the window behind him, his phone's light fading (never dark)
+      const c = mv(cam(PAUSE_CAM[0], PAUSE_CAM[1], 42), cam(PAUSE_CAM[2], PAUSE_CAM[3], 38));
+      const L = lightOf("room", c), trav = put("bedroom", { key: `lieP|${L}`, draw: (p) => withLook(MUTED, () => travellerLying(p, { light: L, stir: 0.02 })) }, BEDROOM.LYING, { wide: true, blob: null, yaw: PAUSE_YAW });   // turned toward the camera
+      return { set: "bedroom", state: "night", cam: c, focus: HEAD_LIE, cInf: 4, trav, head: HEAD_LIE };
+    }
     // ======================= 63:10 =======================
     case "bankPanic": { const c = mv(cam([0.6, 1.08, 1.3], [-0.4, 0.8, -0.55], 46), cam([0.5, 1.05, 1.1], [-0.42, 0.8, -0.55], 44)); const L = lightOf("room", c);
       return { set: "bedroom", state: "night", cam: c, focus: [-0.4, 0.9, -0.3], cInf: 5, trav: put("bedroom", { key: `edgehead|${L}`, draw: (p) => withLook(MUTED, () => travellerChair(p, { light: L, arms: "head", tilt: 0, chair: false })) }, BEDROOM.EDGE, { yaw: 0, blob: null }), head: [BEDROOM.EDGE[0] + 0.05, 1.15, BEDROOM.EDGE[2]] }; }

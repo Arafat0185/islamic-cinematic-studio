@@ -34,8 +34,8 @@ const CHUNKS = (() => {
 const VoiceCaption: React.FC<{ f: number; ys: number[] }> = ({ f, ys }) => {
   const t = f / FPS;
   const ci = CHUNKS.findIndex((c, i) => t >= c[0].start - 0.05 && (i + 1 >= CHUNKS.length ? t < c[c.length - 1].end + 1.2 : t < CHUNKS[i + 1][0].start - 0.05));
-  if (ci < 0 || f >= EV.phoneOff) return null;                                     // gone with the hard cut on "up"
-  const c = CHUNKS[ci], last = c[c.length - 1], out = ci + 1 >= CHUNKS.length ? 1 - smooth((t - last.end - 0.6) / 0.6) : 1 - smooth((t - CHUNKS[ci + 1][0].start + 0.2) / 0.15);
+  if (ci < 0) return null;
+  const c = CHUNKS[ci], last = c[c.length - 1], out = ci + 1 >= CHUNKS.length ? 1 - smooth((t - last.end) / 0.4) /* the last ("wake up?"): a smooth 0.4 s fade */ : 1 - smooth((t - CHUNKS[ci + 1][0].start + 0.2) / 0.15);
   return (
     <div style={{ position: "absolute", left: CAP_CX - MAXW / 2, width: MAXW, top: H * (ys[ci] ?? 0.72), transform: "translateY(-50%)", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 11px", opacity: out }}>
       {c.map((w, i) => {
@@ -51,7 +51,8 @@ const VoiceCaption: React.FC<{ f: number; ys: number[] }> = ({ f, ys }) => {
 
 // ---------------- the recitation captions ----------------
 type Phrase = { i: number; verse: string; ar: string; arKeys: number[]; en: string; keys: string[]; start: number; end: number; repeatAt?: number };
-const PH = (TIMING.phrases as Phrase[]).map((p) => ({ ...p, from: F(p.start), to: Math.min(F(p.end), CARD_FROM) }));
+// the first caption fades in gently with the recitation, as the dissolve out of the pause finishes
+const PH = (TIMING.phrases as Phrase[]).map((p, i) => ({ ...p, from: i === 0 ? F(TIMING.recStart) : F(p.start), to: Math.min(F(p.end), CARD_FROM), fadeIn: i === 0 ? 24 : 14 }));
 const AR_SIZE = 50, AR_LH = 1.6, EN_SIZE = 24, EN_LH = 1.32, GAP = 52;   // smaller captions (2026-11-20): one line each where possible
 const lines = (text: string, font: string) => { let n = 1, cur = ""; for (const w of text.split(" ")) { const tt = cur ? cur + " " + w : w; if (measure(tt, font) > MAXW && cur) { n++; cur = w; } else cur = tt; } return n; };
 const half = (p: Phrase) => (lines(p.ar, `700 ${AR_SIZE}px ${FONT.arabic}`) * AR_SIZE * AR_LH + GAP + lines(p.en, `600 ${EN_SIZE}px ${FONT.caption}`) * EN_SIZE * EN_LH) / H / 2;
@@ -80,7 +81,7 @@ const enParts = (en: string, keys: string[]) => {
 };
 const RecCaption: React.FC<{ p: (typeof PH)[number]; f: number; y: number }> = ({ p, f, y }) => {
   const rep = p.repeatAt ? 1 - 0.55 * Math.max(0, 1 - Math.abs(f - F(p.repeatAt)) / 14) : 1;      // the reciter repeats the sentence: a soft breath of the caption
-  const k = rep * Math.min(smooth((f - p.from) / 14), 1 - smooth((f - p.to + 12) / 12)), ke = rep * Math.min(smooth((f - p.from - 8) / 16), 1 - smooth((f - p.to + 12) / 12));
+  const k = rep * Math.min(smooth((f - p.from) / p.fadeIn), 1 - smooth((f - p.to + 12) / 12)), ke = rep * Math.min(smooth((f - p.from - 8) / (p.fadeIn + 2)), 1 - smooth((f - p.to + 12) / 12));
   const words = p.ar.split(" "), red = { color: RED, textShadow: `0 0 10px rgba(229,72,77,0.35), ${SHADOW}` };
   return (
     <div style={{ position: "absolute", left: CAP_CX - MAXW / 2, width: MAXW, top: H * y, transform: "translateY(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: GAP }}>
@@ -159,7 +160,7 @@ const Lightning: React.FC<{ f: number }> = ({ f }) => {
 
 // ---------------- eerie transitions and the barakah draining ----------------
 /** blink: eyelids closing to black and opening; cut: black from the cut until the next blinkOpen; smear: smearing into
- *  darkness; heart: a dark thump on a heartbeat cut; glass: a dissolve through rain on glass; flash: the lightning */
+ *  darkness; heart: a dark thump on a heartbeat cut; glass: a dissolve through rain on glass (glassSlow: 0.8 s, out of the pause after the voice); flash: the lightning */
 const Transitions: React.FC<{ f: number }> = ({ f }) => {
   let lid = 0, dark = 0, glass = 0, thump = 0;
   for (const tr of TRANSITIONS) {
@@ -170,6 +171,7 @@ const Transitions: React.FC<{ f: number }> = ({ f }) => {
     if (tr.kind === "smear") dark = Math.max(dark, d < 0 ? smooth((d + 10) / 10) * 0.92 : 0.92 * (1 - smooth(d / 8)));
     if (tr.kind === "heart") thump = Math.max(thump, Math.max(0, 1 - Math.abs(d) / 5));
     if (tr.kind === "glass") glass = Math.max(glass, Math.max(0, 1 - Math.abs(d) / 9));
+    if (tr.kind === "glassSlow") glass = Math.max(glass, smooth(1 - Math.abs(d) / 12));
   }
   return (
     <>
