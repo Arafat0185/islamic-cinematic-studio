@@ -1,0 +1,409 @@
+{
+ "about": "Video 004 The Man Who Never Rested: the shot list (a new angle every 1-3 s; the Traveller never rests until 'sitDown'). Shared by the picture (engine/src/scenes/rest/), the sound (engine/tools/mix_rest.py) and QA. Times in seconds. transitions: enterPage (the book opens toward the camera, the pages flip and land on an ink drawing of the next scene, the camera pushes into the drawing and it comes to life), exitPage (the reverse: the scene drains back into an ink drawing and the camera pulls out of the page), whip, heart (a thump cut), lettersDive (flying through the gold letters into the page), pullOut (pulled back out of the page), paperBurn, pageTurn, inkSpread, match (match cut), flashGold.",
+ "shots": [
+  {
+   "at": 0.0,
+   "kind": "slamAisle",
+   "set": "library",
+   "type": "SLAM",
+   "why": "HOOK: a slam-zoom down the library aisle at speed, lamps swaying, dust in the moonlight"
+  },
+  {
+   "at": 0.8,
+   "kind": "ladderPull",
+   "set": "library",
+   "type": "LADDER",
+   "why": "on the rolling ladder he pulls a heavy book off a high shelf; dust bursts; the scholar's name card: Ibn al-Jawzi"
+  },
+  {
+   "at": 2.2,
+   "kind": "lettersPour",
+   "set": "library",
+   "type": "DIVE",
+   "why": "the book opens toward the camera: the pages flip fast and land on an ink drawing of the next scene (the comforts on the sand); the words lift off the page in gold; the camera pushes in"
+  },
+  {
+   "at": 3.2,
+   "kind": "comfortRun",
+   "set": "bookworlds",
+   "type": "WORLD",
+   "why": "INSIDE: he runs toward the comforts - the sofa crumbles into sand at his touch, then the car"
+  },
+  {
+   "at": 4.3,
+   "kind": "comfortWind",
+   "set": "bookworlds",
+   "type": "WORLD2",
+   "why": "the beach chair and the glowing phone crumble; the sand swirls away in the wind"
+  },
+  {
+   "at": 5.2,
+   "kind": "pullOut",
+   "set": "library",
+   "type": "PULL",
+   "why": "pulled back out of the page into the library; he is already climbing the ladder"
+  },
+  {
+   "at": 6.1,
+   "kind": "grabBook2",
+   "set": "library",
+   "type": "LADDER",
+   "why": "he grabs the next book (Sufyan al-Thawri): it opens toward the camera, the pages flip and land on an ink drawing of the boat in the storm"
+  },
+  {
+   "at": 7.0,
+   "kind": "stormWide",
+   "set": "bookworlds",
+   "type": "WORLD",
+   "why": "INSIDE: a small wooden boat in a storm at night, huge waves, rain lashing, lightning"
+  },
+  {
+   "at": 8.7,
+   "kind": "stormOrbit",
+   "set": "bookworlds",
+   "type": "ORBIT",
+   "why": "the camera orbits the boat low over the waves; he rows hard, standing"
+  },
+  {
+   "at": 10.6,
+   "kind": "libWalk",
+   "set": "library",
+   "type": "TRACK",
+   "why": "a page-turn back to the library: he strides along the shelves and pulls a third book (name card: Imam Ahmad)"
+  },
+  {
+   "at": 12.2,
+   "kind": "bookDive",
+   "set": "library",
+   "type": "DIVE",
+   "why": "the book opens toward the camera, the pages flip and land on an ink drawing of the desert road; the camera pushes into the drawing"
+  },
+  {
+   "at": 13.3,
+   "kind": "desertTrack",
+   "set": "bookworlds",
+   "type": "TRACK",
+   "why": "INSIDE: an endless desert road at dusk; he walks on, exhausted; the camera tracks alongside him"
+  },
+  {
+   "at": 15.05,
+   "kind": "desertDrone",
+   "set": "bookworlds",
+   "type": "DRONE",
+   "why": "a high drone pull-back over the dunes: a lone figure, a distant glow of light on the horizon (only the light)"
+  },
+  {
+   "at": 17.4,
+   "kind": "handRain",
+   "set": "bookworlds",
+   "type": "HANDS",
+   "why": "night rain: his open right hand, waiting; the rain on it"
+  },
+  {
+   "at": 20.0,
+   "kind": "rainWalk",
+   "set": "bookworlds",
+   "type": "TRACK",
+   "why": "he walks on through the rain at night, low tracking shot"
+  },
+  {
+   "at": 22.5,
+   "kind": "handLight",
+   "set": "bookworlds",
+   "type": "HANDS",
+   "why": "'my right hand': a shaft of light falls across his open hand"
+  },
+  {
+   "at": 24.9,
+   "kind": "starsLook",
+   "set": "bookworlds",
+   "type": "SKY",
+   "why": "the Messenger line: NOTHING is depicted - he looks up into a night sky full of stars, warm light on him"
+  },
+  {
+   "at": 27.0,
+   "kind": "dawnBreak",
+   "set": "bookworlds",
+   "type": "WORLD",
+   "why": "'the people of Paradise': at sea, the storm clouds tear open, dawn breaks"
+  },
+  {
+   "at": 29.5,
+   "kind": "dawnRain",
+   "set": "bookworlds",
+   "type": "ORBIT",
+   "why": "35:34: the rain freezes in mid-air and rises as light; gold floods everything (Arabic + English, verse tag)"
+  },
+  {
+   "at": 33.4,
+   "kind": "forge",
+   "set": "bookworlds",
+   "type": "MONTAGE",
+   "why": "Ibn al-Qayyim (name card): a sword hammered in a forge..."
+  },
+  {
+   "at": 34.6,
+   "kind": "forgeWater",
+   "set": "bookworlds",
+   "type": "MONTAGE2",
+   "why": "...then plunged hissing into water (match cut)"
+  },
+  {
+   "at": 35.8,
+   "kind": "oyster",
+   "set": "bookworlds",
+   "type": "MONTAGE",
+   "why": "an oyster on the seabed opens on a glowing pearl"
+  },
+  {
+   "at": 37.4,
+   "kind": "seed",
+   "set": "bookworlds",
+   "type": "MONTAGE2",
+   "why": "a seed under a rock cracks it apart and grows"
+  },
+  {
+   "at": 39.2,
+   "kind": "coal",
+   "set": "bookworlds",
+   "type": "MONTAGE",
+   "why": "coal crushed under stone into a diamond"
+  },
+  {
+   "at": 40.6,
+   "kind": "treeJoy",
+   "set": "bookworlds",
+   "type": "MONTAGE2",
+   "why": "'joy and delight': the tree in full leaf in the sun"
+  },
+  {
+   "at": 43.0,
+   "kind": "hourglass",
+   "set": "bookworlds",
+   "type": "HOUR",
+   "why": "an hourglass, the sand running"
+  },
+  {
+   "at": 45.4,
+   "kind": "hourStop",
+   "set": "bookworlds",
+   "type": "HOUR2",
+   "why": "the sand stops... and rises"
+  },
+  {
+   "at": 47.1,
+   "kind": "starBurst",
+   "set": "bookworlds",
+   "type": "SKY",
+   "why": "the sand bursts into stars filling the sky ('cf. QURAN 39:10')"
+  },
+  {
+   "at": 50.4,
+   "kind": "pullOutFinal",
+   "set": "library",
+   "type": "PULL",
+   "why": "pulled out into the library one last time; he closes the book softly and places it on the table"
+  },
+  {
+   "at": 52.6,
+   "kind": "sitDown",
+   "set": "library",
+   "type": "SIT",
+   "why": "he FINALLY SITS in the chair by the lamp - the first rest of the whole film; a long exhale (13:24 caption)"
+  },
+  {
+   "at": 55.2,
+   "kind": "craneUp",
+   "set": "library",
+   "type": "CRANE",
+   "why": "the camera cranes slowly up and away through the lamplight and the dust"
+  },
+  {
+   "at": 59.0,
+   "kind": "endCard",
+   "set": "library",
+   "type": "END",
+   "why": "the end card: the Traveller logo, warm gold on dark, the sources line, dust drifting"
+  }
+ ],
+ "events": {
+  "transitions": [
+   [
+    0.8,
+    "whip"
+   ],
+   [
+    2.2,
+    "heart"
+   ],
+   [
+    3.2,
+    "enterPage"
+   ],
+   [
+    4.3,
+    "match"
+   ],
+   [
+    5.2,
+    "exitPage"
+   ],
+   [
+    6.1,
+    "whip"
+   ],
+   [
+    7.0,
+    "enterPage"
+   ],
+   [
+    8.7,
+    "match"
+   ],
+   [
+    10.6,
+    "exitPage"
+   ],
+   [
+    12.2,
+    "whip"
+   ],
+   [
+    13.3,
+    "enterPage"
+   ],
+   [
+    15.05,
+    "inkSpread"
+   ],
+   [
+    17.4,
+    "inkSpread"
+   ],
+   [
+    20.0,
+    "match"
+   ],
+   [
+    22.5,
+    "inkSpread"
+   ],
+   [
+    24.9,
+    "pageTurn"
+   ],
+   [
+    27.0,
+    "paperBurn"
+   ],
+   [
+    29.5,
+    "flashGold"
+   ],
+   [
+    33.4,
+    "pageTurn"
+   ],
+   [
+    34.6,
+    "match"
+   ],
+   [
+    35.8,
+    "inkSpread"
+   ],
+   [
+    37.4,
+    "match"
+   ],
+   [
+    39.2,
+    "match"
+   ],
+   [
+    40.6,
+    "flashGold"
+   ],
+   [
+    43.0,
+    "pageTurn"
+   ],
+   [
+    45.4,
+    "match"
+   ],
+   [
+    47.1,
+    "flashGold"
+   ],
+   [
+    50.4,
+    "exitPage"
+   ],
+   [
+    52.6,
+    "match"
+   ],
+   [
+    55.2,
+    "match"
+   ],
+   [
+    59.0,
+    "inkSpread"
+   ]
+  ],
+  "bookThud": [
+   2.25,
+   6.5,
+   11.6
+  ],
+  "crumble": [
+   3.55,
+   3.95,
+   4.55,
+   4.85
+  ],
+  "lightning": [
+   7.6,
+   8.3,
+   9.9
+  ],
+  "sit": 52.6,
+  "exhale": 53.4,
+  "closeBook": 51.4,
+  "pages": {
+   "enter": [
+    [
+     3.2,
+     "comfort"
+    ],
+    [
+     7.0,
+     "storm"
+    ],
+    [
+     13.3,
+     "desert"
+    ]
+   ],
+   "exit": [
+    [
+     5.2,
+     "comfort"
+    ],
+    [
+     10.6,
+     "storm"
+    ],
+    [
+     50.4,
+     "stars"
+    ]
+   ],
+   "enterLen": 1.2,
+   "exitLen": 0.8,
+   "flipLen": 0.55
+  }
+ }
+}

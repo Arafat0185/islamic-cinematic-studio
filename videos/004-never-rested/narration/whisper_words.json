@@ -1,0 +1,636 @@
+{
+ "model": "small.en",
+ "audio": "rest_guide.mp4",
+ "words": [
+  {
+   "w": "He",
+   "start": 0.0,
+   "end": 0.26
+  },
+  {
+   "w": "says",
+   "start": 0.26,
+   "end": 1.02
+  },
+  {
+   "w": "whoever",
+   "start": 1.02,
+   "end": 1.26
+  },
+  {
+   "w": "seek",
+   "start": 1.26,
+   "end": 1.66
+  },
+  {
+   "w": "an",
+   "start": 1.66,
+   "end": 1.84
+  },
+  {
+   "w": "absolute",
+   "start": 1.84,
+   "end": 2.14
+  },
+  {
+   "w": "comfort",
+   "start": 2.14,
+   "end": 2.62
+  },
+  {
+   "w": "is",
+   "start": 2.62,
+   "end": 3.26
+  },
+  {
+   "w": "seeking",
+   "start": 3.26,
+   "end": 3.58
+  },
+  {
+   "w": "something",
+   "start": 3.58,
+   "end": 3.9
+  },
+  {
+   "w": "that",
+   "start": 3.9,
+   "end": 4.14
+  },
+  {
+   "w": "was",
+   "start": 4.14,
+   "end": 4.28
+  },
+  {
+   "w": "never",
+   "start": 4.28,
+   "end": 4.58
+  },
+  {
+   "w": "created",
+   "start": 4.58,
+   "end": 5.22
+  },
+  {
+   "w": "Safiyyah",
+   "start": 5.22,
+   "end": 5.84
+  },
+  {
+   "w": "in",
+   "start": 5.84,
+   "end": 5.9
+  },
+  {
+   "w": "authority",
+   "start": 5.9,
+   "end": 6.16
+  },
+  {
+   "w": "says",
+   "start": 6.16,
+   "end": 6.62
+  },
+  {
+   "w": "that",
+   "start": 6.62,
+   "end": 6.98
+  },
+  {
+   "w": "this",
+   "start": 6.98,
+   "end": 7.26
+  },
+  {
+   "w": "dunya",
+   "start": 7.26,
+   "end": 7.56
+  },
+  {
+   "w": "is",
+   "start": 7.56,
+   "end": 7.7
+  },
+  {
+   "w": "created",
+   "start": 7.7,
+   "end": 7.96
+  },
+  {
+   "w": "for",
+   "start": 7.96,
+   "end": 8.22
+  },
+  {
+   "w": "hardships",
+   "start": 8.22,
+   "end": 8.52
+  },
+  {
+   "w": "and",
+   "start": 8.52,
+   "end": 8.74
+  },
+  {
+   "w": "anxiety",
+   "start": 8.74,
+   "end": 9.18
+  },
+  {
+   "w": "not",
+   "start": 9.18,
+   "end": 9.44
+  },
+  {
+   "w": "rest",
+   "start": 9.44,
+   "end": 9.68
+  },
+  {
+   "w": "in",
+   "start": 9.68,
+   "end": 9.88
+  },
+  {
+   "w": "tranquility",
+   "start": 9.88,
+   "end": 10.62
+  },
+  {
+   "w": "and",
+   "start": 10.62,
+   "end": 10.96
+  },
+  {
+   "w": "Imam",
+   "start": 10.96,
+   "end": 11.14
+  },
+  {
+   "w": "Ahmed",
+   "start": 11.14,
+   "end": 11.48
+  },
+  {
+   "w": "was",
+   "start": 11.48,
+   "end": 11.66
+  },
+  {
+   "w": "asked",
+   "start": 11.66,
+   "end": 12.22
+  },
+  {
+   "w": "when",
+   "start": 12.22,
+   "end": 12.8
+  },
+  {
+   "w": "does",
+   "start": 12.8,
+   "end": 12.98
+  },
+  {
+   "w": "one",
+   "start": 12.98,
+   "end": 13.16
+  },
+  {
+   "w": "feel",
+   "start": 13.16,
+   "end": 13.54
+  },
+  {
+   "w": "true",
+   "start": 13.54,
+   "end": 14.16
+  },
+  {
+   "w": "rest",
+   "start": 14.16,
+   "end": 14.62
+  },
+  {
+   "w": "he",
+   "start": 14.62,
+   "end": 14.82
+  },
+  {
+   "w": "says",
+   "start": 14.82,
+   "end": 14.98
+  },
+  {
+   "w": "The",
+   "start": 24.06,
+   "end": 24.62
+  },
+  {
+   "w": "people",
+   "start": 24.62,
+   "end": 25.18
+  },
+  {
+   "w": "of",
+   "start": 25.18,
+   "end": 27.8
+  },
+  {
+   "w": "paradise",
+   "start": 27.8,
+   "end": 28.12
+  },
+  {
+   "w": "when",
+   "start": 28.12,
+   "end": 28.34
+  },
+  {
+   "w": "they",
+   "start": 28.34,
+   "end": 28.48
+  },
+  {
+   "w": "first",
+   "start": 28.48,
+   "end": 28.66
+  },
+  {
+   "w": "enter",
+   "start": 28.66,
+   "end": 29.04
+  },
+  {
+   "w": "they",
+   "start": 29.04,
+   "end": 29.2
+  },
+  {
+   "w": "will",
+   "start": 29.2,
+   "end": 29.34
+  },
+  {
+   "w": "say",
+   "start": 29.34,
+   "end": 29.54
+  },
+  {
+   "w": "praise",
+   "start": 29.54,
+   "end": 29.84
+  },
+  {
+   "w": "me",
+   "start": 29.84,
+   "end": 30.12
+  },
+  {
+   "w": "to",
+   "start": 30.12,
+   "end": 30.28
+  },
+  {
+   "w": "Allah",
+   "start": 30.28,
+   "end": 30.58
+  },
+  {
+   "w": "who",
+   "start": 30.58,
+   "end": 30.84
+  },
+  {
+   "w": "has",
+   "start": 30.84,
+   "end": 30.96
+  },
+  {
+   "w": "removed",
+   "start": 30.96,
+   "end": 31.18
+  },
+  {
+   "w": "all",
+   "start": 31.18,
+   "end": 31.62
+  },
+  {
+   "w": "sorrow.",
+   "start": 31.62,
+   "end": 32.18
+  },
+  {
+   "w": "True",
+   "start": 33.58,
+   "end": 33.74
+  },
+  {
+   "w": "bliss",
+   "start": 33.74,
+   "end": 33.96
+  },
+  {
+   "w": "is",
+   "start": 33.96,
+   "end": 34.16
+  },
+  {
+   "w": "not",
+   "start": 34.16,
+   "end": 34.34
+  },
+  {
+   "w": "attained",
+   "start": 34.34,
+   "end": 34.58
+  },
+  {
+   "w": "through",
+   "start": 34.58,
+   "end": 34.82
+  },
+  {
+   "w": "bliss",
+   "start": 34.82,
+   "end": 35.18
+  },
+  {
+   "w": "and",
+   "start": 35.18,
+   "end": 35.7
+  },
+  {
+   "w": "whoever",
+   "start": 35.7,
+   "end": 35.9
+  },
+  {
+   "w": "chooses",
+   "start": 35.9,
+   "end": 36.26
+  },
+  {
+   "w": "comfort",
+   "start": 36.26,
+   "end": 36.76
+  },
+  {
+   "w": "misses",
+   "start": 36.76,
+   "end": 37.02
+  },
+  {
+   "w": "out",
+   "start": 37.02,
+   "end": 37.3
+  },
+  {
+   "w": "on",
+   "start": 37.3,
+   "end": 37.46
+  },
+  {
+   "w": "comfort",
+   "start": 37.46,
+   "end": 37.8
+  },
+  {
+   "w": "in",
+   "start": 37.8,
+   "end": 38.0
+  },
+  {
+   "w": "that",
+   "start": 38.0,
+   "end": 38.08
+  },
+  {
+   "w": "in",
+   "start": 38.08,
+   "end": 38.18
+  },
+  {
+   "w": "proportion",
+   "start": 38.18,
+   "end": 38.5
+  },
+  {
+   "w": "to",
+   "start": 38.5,
+   "end": 38.8
+  },
+  {
+   "w": "facing",
+   "start": 38.8,
+   "end": 39.12
+  },
+  {
+   "w": "hardships",
+   "start": 39.12,
+   "end": 39.56
+  },
+  {
+   "w": "and",
+   "start": 39.56,
+   "end": 39.84
+  },
+  {
+   "w": "enduring",
+   "start": 39.84,
+   "end": 40.12
+  },
+  {
+   "w": "struggles.",
+   "start": 40.12,
+   "end": 40.64
+  },
+  {
+   "w": "Do",
+   "start": 40.64,
+   "end": 41.34
+  },
+  {
+   "w": "joy",
+   "start": 41.34,
+   "end": 41.62
+  },
+  {
+   "w": "and",
+   "start": 41.62,
+   "end": 41.84
+  },
+  {
+   "w": "delight",
+   "start": 41.84,
+   "end": 42.16
+  },
+  {
+   "w": "come.",
+   "start": 42.16,
+   "end": 42.52
+  },
+  {
+   "w": "If",
+   "start": 43.06,
+   "end": 43.08
+  },
+  {
+   "w": "you're",
+   "start": 43.08,
+   "end": 43.22
+  },
+  {
+   "w": "going",
+   "start": 43.22,
+   "end": 43.36
+  },
+  {
+   "w": "through",
+   "start": 43.36,
+   "end": 43.58
+  },
+  {
+   "w": "hardships",
+   "start": 43.58,
+   "end": 43.98
+  },
+  {
+   "w": "and",
+   "start": 43.98,
+   "end": 44.34
+  },
+  {
+   "w": "struggles,",
+   "start": 44.34,
+   "end": 44.76
+  },
+  {
+   "w": "know",
+   "start": 45.38,
+   "end": 45.58
+  },
+  {
+   "w": "that",
+   "start": 45.58,
+   "end": 45.76
+  },
+  {
+   "w": "this",
+   "start": 45.76,
+   "end": 45.96
+  },
+  {
+   "w": "patience",
+   "start": 45.96,
+   "end": 46.36
+  },
+  {
+   "w": "that",
+   "start": 46.36,
+   "end": 46.6
+  },
+  {
+   "w": "you're",
+   "start": 46.6,
+   "end": 46.8
+  },
+  {
+   "w": "upon",
+   "start": 46.8,
+   "end": 47.08
+  },
+  {
+   "w": "is",
+   "start": 47.08,
+   "end": 47.46
+  },
+  {
+   "w": "your",
+   "start": 47.46,
+   "end": 47.78
+  },
+  {
+   "w": "ticket",
+   "start": 47.78,
+   "end": 48.08
+  },
+  {
+   "w": "to",
+   "start": 48.08,
+   "end": 48.88
+  },
+  {
+   "w": "a",
+   "start": 48.88,
+   "end": 49.0
+  },
+  {
+   "w": "reward",
+   "start": 49.0,
+   "end": 49.3
+  },
+  {
+   "w": "that",
+   "start": 49.3,
+   "end": 49.52
+  },
+  {
+   "w": "has",
+   "start": 49.52,
+   "end": 49.72
+  },
+  {
+   "w": "no",
+   "start": 49.72,
+   "end": 49.94
+  },
+  {
+   "w": "limit.",
+   "start": 49.94,
+   "end": 50.28
+  },
+  {
+   "w": "Asalaamu",
+   "start": 50.9,
+   "end": 51.54
+  },
+  {
+   "w": "alaikum",
+   "start": 51.54,
+   "end": 52.06
+  },
+  {
+   "w": "bismat,",
+   "start": 52.06,
+   "end": 52.5
+  },
+  {
+   "w": "sabartum.",
+   "start": 52.5,
+   "end": 53.42
+  },
+  {
+   "w": "Faneer",
+   "start": 53.86,
+   "end": 54.2
+  },
+  {
+   "w": "maha",
+   "start": 54.2,
+   "end": 54.38
+  },
+  {
+   "w": "rakabat",
+   "start": 54.38,
+   "end": 54.8
+  },
+  {
+   "w": "dar.",
+   "start": 54.8,
+   "end": 55.12
+  }
+ ]
+}

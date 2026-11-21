@@ -52,3 +52,5 @@ Read this first. Full detail lives in `docs/phase-1-plan.md` and `characters/tra
 - npm packages are fine to install. **Ask before installing anything else** (Python, system tools, fonts,
   browser builds, global installs).
 - Preview the result (a still frame or low-res render) before calling visual work done.
+- **After any render, show me the files (where they are, what QA found) and STOP. Never re-render without my explicit OK.**
+  Never run two renders at the same time.

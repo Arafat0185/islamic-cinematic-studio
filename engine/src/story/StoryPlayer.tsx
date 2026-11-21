@@ -34,6 +34,8 @@ import { buildSofa } from "../sets/sofa";
 import { buildHospital } from "../sets/hospital";
 import { buildCemetery } from "../sets/cemetery";
 import { buildAbyss } from "../sets/abyss";
+import { buildLibrary } from "../sets/library";
+import { buildBookWorlds } from "../sets/bookworlds";
 import type { SetLook, StorySet } from "../sets/common";
 import { SET_OFFSET, SetId, StoryFilm, FrameFx, Shatter } from "./story";
 import { buildCourtyardFx } from "../brand/courtyardFx";
@@ -72,7 +74,7 @@ const buildWorld = (traffic: Vehicle[], ids: SetId[] = DEFAULT_SETS) => {
   if (has("office")) { office = buildOffice(SET_OFFSET.office); sets.office = office.set; }
   const simple: [SetId, (o: [number, number, number]) => StorySet][] = [
     ["bedroom", buildBedroom], ["gym", buildGym], ["feed", buildFeed], ["void", buildVoid], ["deadlines", buildDeadlines],
-    ["airport", buildAirport], ["car", buildCar], ["sofa", buildSofa], ["hospital", buildHospital], ["abyss", buildAbyss],
+    ["airport", buildAirport], ["car", buildCar], ["sofa", buildSofa], ["hospital", buildHospital], ["abyss", buildAbyss], ["library", buildLibrary], ["bookworlds", buildBookWorlds],
   ];
   for (const [id, b] of simple) if (has(id)) sets[id] = b(SET_OFFSET[id]);
   let cemetery: ReturnType<typeof buildCemetery> | null = null;
@@ -372,7 +374,7 @@ export const StoryPlayer: React.FC<{ film: StoryFilm; traffic?: Vehicle[] }> = (
       {!fx && whip ? <WhipBlurDefs px={whip.blur} /> : null}
       {fx ? <FxDefs fx={fx} whipBlur={whip?.blur ?? 0} f={f} /> : null}
       <View film={film} traffic={traffic} style={fx
-        ? { filter: "url(#storyFx)" + (fx.css ? " " + fx.css : ""), ...(fx.zoom ? { transform: `scale(${fx.zoom.scale})`, transformOrigin: `${fx.zoom.x}px ${fx.zoom.y}px` } : {}) }
+        ? { filter: "url(#storyFx)" + (fx.css ? " " + fx.css : ""), ...(fx.zoom ? { transform: `scale(${fx.zoom.scale})`, transformOrigin: `${fx.zoom.x}px ${fx.zoom.y}px` } : {}), ...(fx.clip ? { clipPath: fx.clip } : {}) }
         : whip ? { filter: "url(#whipBlur)" } : undefined} />
       {ir && iris ? <View film={film} outgoing traffic={traffic} style={{ clipPath: irisClip(iris.R, iris.rot, wd, h) }} /> : null}
       {iris ? <IrisRim R={iris.R} rot={iris.rot} u={iris.u} /> : null}
