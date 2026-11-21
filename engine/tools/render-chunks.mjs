@@ -2,7 +2,7 @@
 // (one long render of a 3D scene can run this PC out of memory). Then join the chunks losslessly (ffmpeg concat,
 // stream copy: no re-encoding) and add the audio track.
 //
-//   node tools/render-chunks.mjs <CompositionId> <out.mp4> [--chunk 600] [--audio public/audio/x.wav] [--keep]
+//   node tools/render-chunks.mjs <CompositionId> <out.mp4> [--chunk 600] [--audio public/audio/x.wav] [--dir out/chunks/x] [--keep]
 //
 // - chunks: frames 0-599, 600-1199, ... to the last frame; each one H.264 CRF 16, muted, into out/chunks/<id>/
 // - resumable: a chunk that already exists with the right number of frames is not rendered again
@@ -14,11 +14,11 @@ import { existsSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const args = process.argv.slice(2);
-const VALUED = ["--chunk", "--audio"];
+const VALUED = ["--chunk", "--audio", "--dir", "--max"];
 const opt = (name, def) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : def; };
 const [id, outFile] = args.filter((a, i) => !a.startsWith("--") && !VALUED.includes(args[i - 1]));
 if (!id || !outFile) { console.error("usage: node tools/render-chunks.mjs <CompositionId> <out.mp4> [--chunk 600] [--audio file.wav] [--keep]"); process.exit(1); }
-const CHUNK = Number(opt("--chunk", 600)), AUDIO = opt("--audio", null), KEEP = args.includes("--keep");
+const CHUNK = Number(opt("--chunk", 600)), AUDIO = opt("--audio", null), KEEP = args.includes("--keep"), MAX = Number(opt("--max", 1e9));   // --max n: render at most n chunks this run, then exit 3 (run again to continue)
 const shell = process.platform === "win32";
 const run = (cmd, a, quiet = false) => {
   const r = spawnSync(cmd, a, { stdio: quiet ? "pipe" : "inherit", shell, encoding: "utf8" });
@@ -35,13 +35,19 @@ const row = list.split(/\r?\n/).map((l) => l.trim().match(/^(\S+)\s+(\d+)\s+(\d+
 if (!row) { console.error(`could not find composition "${id}" in:\n${list}`); process.exit(1); }
 const frames = Number(row[5]);
 
-const dir = resolve("out", "chunks", id);
+const dir = opt("--dir", null) ? resolve(opt("--dir", null)) : resolve("out", "chunks", id);   // --dir: where the chunks go (default out/chunks/<id>)
 mkdirSync(dir, { recursive: true });
 const parts = [];
+let rendered = 0;
 for (let a = 0, k = 0; a < frames; a += CHUNK, k++) {
   const b = Math.min(frames - 1, a + CHUNK - 1), file = join(dir, `part_${String(k).padStart(2, "0")}.mp4`);
   parts.push(file);
-  if (existsSync(file) && frameCount(file) === b - a + 1) { console.log(`chunk ${k}: frames ${a}-${b} already rendered, skipped`); continue; }
+  // a chunk left half-written by a crash cannot be probed: treat it as missing, delete it and render it again
+  const have = (() => { if (!existsSync(file)) return -1; try { return frameCount(file); } catch { return -1; } })();
+  if (have === b - a + 1) { console.log(`chunk ${k}: frames ${a}-${b} already rendered, skipped`); continue; }
+  if (existsSync(file)) { console.log(`chunk ${k}: incomplete file (${have} frames), rendering it again`); rmSync(file, { force: true }); }
+  if (rendered >= MAX) { console.log(`stopping after ${rendered} chunk(s) this run (--max); run again to continue`); process.exit(3); }
+  rendered++;
   console.log(`chunk ${k}: rendering frames ${a}-${b} (${b - a + 1} frames) in its own process`);
   const t0 = Date.now();
   run("npx", ["remotion", "render", "src/index.ts", id, `"${file}"`, `--frames=${a}-${b}`, "--codec=h264", "--crf=16", "--muted", "--timeout=600000", "--log=error"]);

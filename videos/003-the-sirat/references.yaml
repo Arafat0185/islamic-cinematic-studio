@@ -1,0 +1,90 @@
+# References for video 003 · The Sirat (the bridge over Hell)
+# Rule: nothing ships until every source is checked and reviewer.approved is true.
+
+video: 003-the-sirat
+sources:
+  - id: quran-19-66-72
+    type: quran
+    used_in: on-screen captions; the recitation itself is a TikTok sound the channel owner adds in TikTok from 0:00 (only
+      mixed into The_Sirat_PREVIEW.mp4 for checking, never in the upload file, never committed)
+    reference: Surat Maryam 19:66-72 (19:71 "there is none of you except he will come to it": the passing over Hell)
+    recited_by: Sheikh Yasser Al-Dossari (a Taraweeh recording, engine/public/audio/guide/sirat_recitation.mp4)
+    recited_as: the reciter stops after "wa nadharu z-zalimin" (19:72) and restarts the phrase in full; the video ends at
+      110.2 s, in the breath after 19:72 (the voice stops at 110.05 s) and before 19:73 (from 110.3 s)
+    timing: the guide's burned-in captions (one per recited phrase, change times measured at 10 fps), cross-checked with
+      local Whisper word timings (quran/whisper_words.json, model "small", Arabic); they agree within ~0.3 s except where
+      Whisper smears a long held note
+    grade: n/a (Quran)
+    arabic_text: quran.com API v4, text_uthmani, saved verbatim in quran/19_66.json .. quran/19_72.json
+    translation_used: Saheeh International (quran.com translation id 20, name confirmed in quran/translations_list.json)
+    link: https://quran.com/19/66-72
+    api: https://api.quran.com/api/v4/verses/by_key/19:{66..72}?fields=text_uthmani&translations=20
+    quoted_exactly: >-
+      Every caption is an exact slice of the saved API text (not of the guide's own English); tools/build_sirat_timing.py
+      fails unless each verse's phrases join back into the API text exactly (Arabic) and into the translation with the
+      footnote markers removed (English). Phrase list and timing: timing.json.
+    checked_on: 2026-11-21
+    checked_by: Claude (API responses saved; translation name confirmed; text checked mechanically)
+
+  - id: bukhari-6573
+    type: hadith
+    used_in: the hooks (on-screen tag "SAHIH AL-BUKHARI 6573" while the hooks are shown); no text of it is quoted
+    reference: Sahih al-Bukhari 6573 (Book of Riqaq), narrated by Abu Hurairah
+    grade: sahih
+    grader: al-Bukhari (included in his Sahih)
+    detail_used: "over that bridge there will be hooks Similar to the thorns of As Sa'dan ... except that their greatness
+      in size is only known to Allah. These hooks will snatch the people according to their deeds."
+    link: https://sunnah.com/bukhari:6573
+    text_checked_from: hadith/eng-bukhari_6573.json, hadith/ara-bukhari_6573.json (fawazahmed0/hadith-api, the
+      sunnah.com USC-MSA English; sunnah.com itself refuses automated downloads)
+    checked_on: 2026-11-20
+
+  - id: bukhari-7439
+    type: hadith
+    used_in: the people crossing at different speeds, the scratched, the last one dragged (tag "SAHIH AL-BUKHARI 7439 ·
+      MUSLIM 183" while the crossers are on screen); no text of it is quoted
+    reference: Sahih al-Bukhari 7439 (Book of Tawhid), narrated by Abu Sa'id al-Khudri; its parallel is Sahih Muslim 183
+    grade: sahih
+    grader: al-Bukhari; Muslim (both include it)
+    detail_used: "Some of the believers will cross the bridge as quickly as the wink of an eye, some others as quick as
+      lightning, a strong wind, fast horses or she-camels. So some will be safe without any harm; some will be safe
+      after receiving some scratches, and some will fall down into Hell (Fire). The last person will cross by being
+      dragged (over the bridge)."
+    link: https://sunnah.com/bukhari:7439 ; https://sunnah.com/muslim:183a
+    text_checked_from: hadith/eng-bukhari_7439.json, hadith/ara-bukhari_7439.json
+    checked_on: 2026-11-20
+
+  - id: muslim-195
+    type: hadith
+    used_in: the one crawling (tag "... · MUSLIM 195" in the crawling shot); no text of it is quoted
+    reference: Sahih Muslim 195 (Book of Faith), narrated by Abu Hurairah and Hudhaifah
+    grade: sahih
+    grader: Muslim (included in his Sahih)
+    detail_used: "till a man would come who would find it hard to go along (that Path) but crawlingly ... on the sides of
+      the Path hooks would be suspended ready to catch anyone"
+    link: https://sunnah.com/muslim:195
+    text_checked_from: hadith/eng-muslim_482.json, hadith/ara-muslim_482.json (the dataset numbers it 482; reference 195)
+    checked_on: 2026-11-20
+
+  - id: muslim-183b-abu-said
+    type: statement of a Companion (not the Prophet's words)
+    used_in: NOT shown in this video
+    reference: Sahih Muslim 183b (the dataset's 183.02), Abu Sa'id al-Khudri
+    text: "Abu Sa'id said: I have come to know that the bridge would be thinner even than the hair and sharper than the sword"
+    arabic: قَالَ أَبُو سَعِيدٍ بَلَغَنِي أَنَّ الْجِسْرَ أَدَقُّ مِنَ الشَّعْرَةِ وَأَحَدُّ مِنَ السَّيْفِ
+    credit_if_used: "Abu Sa'id al-Khudri · Sahih Muslim 183b" (never as the Prophet's words)
+    text_checked_from: hadith/eng-muslim_455.json, hadith/ara-muslim_455.json
+    checked_on: 2026-11-20
+
+  - id: template
+    type: visual template (not a religious source)
+    used_in: the order, pacing and shot types only (engine/public/audio/guide/sirat_guide.mp4, never committed). None of
+      its pictures, English lines or sound are used (its verses, Al-Mu'minun 23:46-54, were replaced by Maryam 19:66-72,
+      whose meaning matches the video); our faceless characters replace its faces.
+
+reviewer:
+  name: Arafat Rouf
+  role: channel owner
+  approved: pending
+  notes: "2026-11-21: the channel owner chose Maryam 19:66-72 (Sheikh Yasser Al-Dossari, Taraweeh) and the end card text;
+    the caption table and hadith tags above still need the owner's review before upload."
