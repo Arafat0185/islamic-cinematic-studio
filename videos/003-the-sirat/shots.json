@@ -1,5 +1,5 @@
 {
- "about": "Video 003 The Sirat: the shot list for Maryam 19:66-72 (the Taraweeh recording, 0-110.2 s): a new angle every 1.5-3 s; never the same shot type twice in a row; at most 3 foot close-ups, each under 2 s. Shared by the picture (engine/src/scenes/sirat/), the sound (engine/tools/mix_sirat.py) and QA. Times in seconds. type: the shot type; tpl: the template's frame (s) this beat follows (null: a new shot type). transitions: whip, smoke, flash (red lightning cut), flashHot (white-yellow fire flash), burn (fire-burn wipe), heart (heartbeat cut), smash (to black, <= 0.3 s), impact. occlude: moments the fire's light dips as if something passed in front of it (nothing is ever shown). heartRate: [from, to, bpm at from, bpm at to].",
+ "about": "Video 003 The Sirat: the shot list for Maryam 19:66-72 (the Taraweeh recording, 0-110.2 s): a new angle every 1.5-3 s; never the same shot type twice in a row; at most 3 foot close-ups, each under 2 s. No hooks, nothing curved or alive-looking: only iron, rock, fire, smoke and chains. Shared by the picture (engine/src/scenes/sirat/), the sound (engine/tools/mix_sirat.py) and QA. Times in seconds. type: the shot type; tpl: the template's frame (s) this beat follows (null: a new shot type). transitions: whip, smoke, flash (red lightning cut), flashHot (white-yellow fire flash), burn (fire-burn wipe), heart (heartbeat cut), smash (to black, <= 0.3 s), impact. occlude: moments the fire's light dips as if something passed in front of it (nothing is ever shown). heartRate: [from, to, bpm at from, bpm at to].",
  "shots": [
   {
    "at": 0.0,
@@ -147,11 +147,11 @@
   },
   {
    "at": 46.3,
-   "kind": "hooksRise",
-   "type": "HOOKS",
+   "kind": "pillarsRise",
+   "type": "RUIN",
    "set": "abyss",
    "tpl": null,
-   "why": "19:69 'extract from every sect': giant thorned hooks rise out of the fire along the bridge; chains"
+   "why": "19:69 'extract from every sect': as the smoke parts, straight rusted iron spikes, broken girders and jagged rock pillars rise out of the lava; one pillar cracks and collapses into the fire"
   },
   {
    "at": 49.0,
@@ -163,11 +163,11 @@
   },
   {
    "at": 51.4,
-   "kind": "snatch",
-   "type": "HOOKS",
+   "kind": "crumbleSnatch",
+   "type": "CRUMBLE",
    "set": "abyss",
    "tpl": 86,
-   "why": "a hook rises through the line and drags a faceless figure off the bridge"
+   "why": "the burning line cracks and crumbles under a faceless figure; he drops into the fire"
   },
   {
    "at": 54.0,
@@ -183,15 +183,15 @@
    "type": "CROSSERS",
    "set": "abyss",
    "tpl": 61,
-   "why": "the crossing begins: someone stumbles on the line; a hook's thorns scrape past him in sparks"
+   "why": "the crossing begins: someone stumbles on the line; a geyser of fire bursts up beside him in a spray of sparks"
   },
   {
    "at": 58.4,
-   "kind": "hooksPass",
-   "type": "HOOKS",
+   "kind": "debrisPass",
+   "type": "DEBRIS",
    "set": "abyss",
    "tpl": null,
-   "why": "'worst against the Most Merciful': a hook rises and passes right by the camera"
+   "why": "'worst against the Most Merciful': a burning boulder and debris fall right past the camera"
   },
   {
    "at": 60.6,
@@ -343,7 +343,7 @@
    "type": "FEAR",
    "set": "abyss",
    "tpl": 75,
-   "why": "BREAKING: a tight push-in, the heartbeat pounding, a hook rising behind him"
+   "why": "BREAKING: a tight push-in, the heartbeat pounding; behind him, out of focus, a rock pillar cracks and starts to fall"
   },
   {
    "at": 98.6,
@@ -355,11 +355,11 @@
   },
   {
    "at": 98.85,
-   "kind": "snatchStrike",
-   "type": "HOOKS",
+   "kind": "engulf",
+   "type": "ENGULF",
    "set": "abyss",
    "tpl": 80,
-   "why": "'and leave the wrongdoers': a giant hook snaps across and snatches a faceless figure off the line (impact)"
+   "why": "'and leave the wrongdoers': a burst of fire engulfs a figure on the line; when it clears he is gone (impact)"
   },
   {
    "at": 101.0,
@@ -383,15 +383,15 @@
    "type": "END",
    "set": "abyss",
    "tpl": 93,
-   "why": "the ending on the last phrase: a near-black ember frame, a fire glow pulsing: PART 1 / How fast will you cross?"
+   "why": "the ending on the last phrase: a near-black ember frame, a fire glow pulsing: How fast will you cross?"
   },
   {
-   "at": 108.2,
+   "at": 110.2,
    "kind": "endCard",
    "type": "END",
    "set": "abyss",
    "tpl": null,
-   "why": "the end card (2 s, inside the length): the logo and the credits on dark red"
+   "why": "the end card (5 s): the logo and the credits on dark red, embers drifting; the recitation's echo fades under it, then rumble and fire fade to silence"
   }
  ],
  "events": {
@@ -581,7 +581,7 @@
     "burn"
    ],
    [
-    108.2,
+    110.2,
     "smoke"
    ]
   ],
@@ -640,10 +640,6 @@
     150
    ]
   ],
-  "hookRise": [
-   45.6,
-   49.0
-  ],
   "pass": 59.4,
   "snatch": 52.2,
   "strike": 99.6,
@@ -662,6 +658,14 @@
    -1.5,
    0.02,
    4.2
+  ],
+  "pillarRise": [
+   45.6,
+   49.0
+  ],
+  "collapse": [
+   47.6,
+   97.4
   ]
  }
 }

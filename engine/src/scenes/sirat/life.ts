@@ -1,8 +1,8 @@
 // Video 003 "The Sirat": the things in the abyss that move with the story (built once into the abyss set's root,
 // updated every frame from the frame number alone):
-//  - the hooks (Sahih al-Bukhari 6573: hooks like the thorns of al-Sa'dan, their size known only to Allah, snatching
-//    people according to their deeds): giant curved iron hooks bristling with bent thorns, rising out of the pit along
-//    both sides of the bridge, swaying; one sweeps across the frame (the strike), one snatches a figure off the bridge
+//  - the ruins (no hooks: nothing curved, coiled or alive-looking): straight rusted iron spikes, broken girders and
+//    jagged rock pillars rising out of the lava along the bridge; pillars cracking and collapsing; a burning boulder
+//    falling past the lens; the line crumbling under a figure; a burst of fire engulfing one
 //  - the people crossing at different speeds (Sahih al-Bukhari 7439): streaks of light along the bridge, like the wink
 //    of an eye, like lightning, like the wind, like fast horses
 //  - gold coins, a watch and a phone slipping out of a hand, glowing and melting as they fall
@@ -15,48 +15,53 @@ import { mat, box } from "../../sets/common";
 import { flameTex, ABYSS } from "../../sets/abyss";
 import { ctex } from "../../draw/paint";
 import type { Frame, SetId } from "../../story/story";
-import { FPS, shotOf, SHOTS, EV, HOOKS, hookState, STREAKS, streakX, ITEMS_AT, MAT_X, CRUMBLE, HOURGLASS, bridgeX } from "./timeline";
+import { FPS, shotOf, SHOTS, EV, EVT, RUINS, ruinState, STREAKS, streakX, ITEMS_AT, MAT_X, CRUMBLE, HOURGLASS, bridgeX, SNATCH_X, PASS_X } from "./timeline";
 
 
 const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
 const sm = (x: number) => { const t = Math.max(0, Math.min(1, x)); return t * t * (3 - 2 * t); };
 const span = (k: string) => SHOTS.find((s) => s.kind === k) ?? { from: -1e9, to: -1e9 };
 
-/** one hook, tip at the local origin's top: a shaft rising from far below, then a J-curve over to a barbed point, with
- *  bent thorns all along it (iron, nearly black; the fire lights it from below). Height = h metres. */
-const buildHook = (h: number, seed: number) => {
+/** the ruins that rise out of the lava (nothing curved, coiled or alive-looking: only iron and rock). The top sits near
+ *  the local origin, the base h metres below. kind: "spikes" (straight square iron spikes, rusted), "girder" (a broken
+ *  steel I-beam), "pillar" (a jagged rock pillar with glowing cracks; its top part, userData.top, can crack and fall). */
+const buildRuin = (kind: "spikes" | "girder" | "pillar", h: number, seed: number) => {
   let s = seed; const r = () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
-  const g = new THREE.Group(), iron = mat("#2a1b18"), ironD = mat("#170e0c");
-  const R = h * 0.042, pts: THREE.Vector3[] = [];
-  for (let i = 0; i <= 10; i++) pts.push(new THREE.Vector3(0.02 * h * Math.sin(i * 0.7), -h + (h - 0.35 * h * 0.0) * (i / 10) * 0.8, 0));   // the shaft
-  const top = -0.2 * h;
-  const curve = [[0.0, top], [0.05, 0.02 * h], [0.17, 0.09 * h], [0.3, 0.07 * h], [0.37, -0.02 * h], [0.36, -0.12 * h], [0.3, -0.2 * h], [0.25, -0.15 * h], [0.24, -0.08 * h]];
-  for (const [x, y] of curve) pts.push(new THREE.Vector3(x * h * (x === 0 ? 0 : 1), y, 0));
-  const path = new THREE.CatmullRomCurve3(pts);
-  const N = 60;
-  for (let i = 0; i < N; i++) {                                  // the body: tapering segments along the path
-    const a = path.getPoint(i / N), b = path.getPoint((i + 1) / N), u = i / N, rad = R * (1.1 - 0.95 * Math.max(0, (u - 0.55) / 0.45));
-    const seg = new THREE.Mesh(new THREE.CylinderGeometry(rad * 0.92, rad, a.distanceTo(b) + 0.02, 8), u > 0.6 ? iron : ironD);
-    seg.position.copy(a).add(b).multiplyScalar(0.5); seg.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize()); g.add(seg);
-  }
-  const tip = path.getPoint(1), tipDir = path.getTangent(1);
-  const point = new THREE.Mesh(new THREE.ConeGeometry(R * 0.4, R * 3.2, 8), iron); point.position.copy(tip).addScaledVector(tipDir, R * 1.4); point.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tipDir); g.add(point);
-  const barb = new THREE.Mesh(new THREE.ConeGeometry(R * 0.35, R * 2.2, 6), iron); barb.position.copy(tip).add(new THREE.Vector3(-R * 0.9, -R * 0.6, 0)); barb.rotation.z = 2.4; g.add(barb);
-  for (let i = 0; i < 30; i++) {                                 // the bent thorns (al-Sa'dan): a cone and a hooked tip
-    const u = 0.25 + 0.72 * r(), a = path.getPoint(u), tg = path.getTangent(u), out = new THREE.Vector3(r() - 0.5, r() - 0.5, r() - 0.5).cross(tg).normalize();
-    const len = R * (1.2 + 2.0 * r()), th = new THREE.Group(); th.position.copy(a); th.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), out);
-    const c1 = new THREE.Mesh(new THREE.ConeGeometry(R * 0.28, len, 5), ironD); c1.position.y = len / 2; th.add(c1);
-    const c2 = new THREE.Mesh(new THREE.ConeGeometry(R * 0.12, len * 0.6, 5), ironD); c2.position.set(len * 0.18, len * 0.95, 0); c2.rotation.z = -1.1; th.add(c2);
-    g.add(th);
+  const g = new THREE.Group(), rust = mat("#3a2016"), rustD = mat("#24140e"), rock = mat("#2a120e"), crack = new THREE.MeshBasicMaterial({ color: new THREE.Color(2.4, 0.6, 0.08) });
+  if (kind === "spikes") {
+    for (let i = 0; i < 4; i++) { const len = h * (0.75 + 0.3 * r()), rad = h * (0.02 + 0.012 * r());
+      const sp = new THREE.Mesh(new THREE.ConeGeometry(rad, len, 4), i % 2 ? rust : rustD); sp.position.set((r() - 0.5) * h * 0.12, -len / 2 + (r() - 0.5) * h * 0.08, (r() - 0.5) * h * 0.12);
+      sp.rotation.set((r() - 0.5) * 0.35, r() * 1.6, (r() - 0.5) * 0.35); g.add(sp); }
+  } else if (kind === "girder") {
+    const w = h * 0.05, tilt = new THREE.Group(); tilt.rotation.z = 0.28 * (r() < 0.5 ? 1 : -1); g.add(tilt);
+    box(tilt, [-w * 0.12, -h, -w], [w * 0.12, 0, w], rust); box(tilt, [-w, -h, -w], [w, 0, -w * 0.8], rustD); box(tilt, [-w, -h, w * 0.8], [w, 0, w], rustD);
+    for (let i = 0; i < 4; i++) { const shard = box(tilt, [-w * 0.6, 0, -w * 0.9], [w * 0.6, h * (0.03 + 0.05 * r()), w * 0.9], rust); shard.rotation.set((r() - 0.5) * 0.8, 0, (r() - 0.5) * 0.8); }   // the torn end
+  } else {
+    let y = -h, wv = h * 0.09; const top = new THREE.Group();
+    while (y < 0) { const sh = h * (0.08 + 0.06 * r()), part = y + sh > -h * 0.3 ? top : g;
+      const b = box(part, [-wv, y, -wv * 0.8], [wv, y + sh, wv * 0.8], rock); b.rotation.set((r() - 0.5) * 0.15, r() * 3, (r() - 0.5) * 0.15);
+      if (r() < 0.6) { const c = new THREE.Mesh(new THREE.BoxGeometry(wv * 1.9, sh * 0.06, 0.15), crack); c.position.set(0, y + sh * (0.3 + 0.4 * r()), wv * 0.82); c.rotation.z = (r() - 0.5) * 0.8; c.layers.set(NOINK); part.add(c); }
+      y += sh; wv *= 0.93; }
+    top.userData.base = -h * 0.3; g.add(top); g.userData.top = top;
   }
   g.traverse((o) => { const m = o as THREE.Mesh; if (m.isMesh) { m.castShadow = false; m.receiveShadow = false; m.userData.noCollide = true; } });
   return g;
 };
+const RUIN_KIND = (i: number): "spikes" | "girder" | "pillar" => (i === 14 ? "pillar" : (["spikes", "girder", "pillar"] as const)[i % 3]);
 
 export const buildLife = (roots: Partial<Record<SetId, THREE.Object3D>>) => {
   const root = roots.abyss!;
-  // ---- the hooks ----
-  const hooks = HOOKS.map((hk, i) => { const g = buildHook(hk.h, 31 + i * 7); g.userData.moving = true; root.add(g); return g; });
+  // ---- the ruins (spikes, girders, pillars), the boulder, the crumbling line, the fire burst ----
+  const ruins = RUINS.map((rn, i) => { const g = buildRuin(RUIN_KIND(i), rn.h, 31 + i * 7); g.userData.moving = true; root.add(g); return g; });
+  // the burning boulder that falls past the lens (debrisPass): rock, fire around it, smoke trailing
+  const boulder = new THREE.Group(); root.add(boulder); boulder.userData.moving = true;
+  const bRock = new THREE.Mesh(new THREE.IcosahedronGeometry(1.6, 0), mat("#2a120e")); bRock.userData.noCollide = true; boulder.add(bRock);
+  const bFire = Array.from({ length: 10 }, (_, j) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameTex(), color: new THREE.Color(j % 3 ? "#ff5a10" : "#ffc060").multiplyScalar(1.3), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); sp.layers.set(NOINK); boulder.add(sp); return sp; });
+  // the line crumbling under a figure (crumbleSnatch): glowing pieces fall, a dark gap is left
+  const crumbs = Array.from({ length: 16 }, (_, j) => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.06 + 0.04 * (j % 3), 0.04, 0.12), new THREE.MeshBasicMaterial({ color: new THREE.Color(3, 1.4, 0.35) })); m.layers.set(NOINK); root.add(m); return m; });
+  const gap = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.1, ABYSS.BRIDGE_W + 0.06), new THREE.MeshBasicMaterial({ color: "#0a0202" })); gap.layers.set(NOINK); root.add(gap);
+  // the burst of fire that engulfs a figure (engulf)
+  const burst = Array.from({ length: 30 }, (_, j) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameTex(), color: new THREE.Color(j % 4 ? "#ff4a08" : "#ffd070").multiplyScalar(1.4), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); sp.layers.set(NOINK); root.add(sp); return sp; });
   // ---- the crossers: streaks of light along the bridge ----
   const streakT = ctex("siratStreak", 256, 32, (g) => { const gr = g.createLinearGradient(0, 0, 256, 0); gr.addColorStop(0, "rgba(255,255,255,0)"); gr.addColorStop(0.85, "rgba(255,255,255,0.8)"); gr.addColorStop(1, "rgba(255,255,255,1)");
     g.fillStyle = gr; g.fillRect(0, 4, 256, 24); });
@@ -101,7 +106,18 @@ export const buildLife = (roots: Partial<Record<SetId, THREE.Object3D>>) => {
   return {
     update: (_fr: Frame, f: number) => {
       const t = f / FPS, kind = shotOf(f).kind;
-      hooks.forEach((g, i) => { const st = hookState(i, f); g.visible = st.visible; if (st.visible) g.position.set(...st.pos); else g.position.set(0, -3000, 0); /* hidden things still block the camera-collision rays: park them far below */ g.rotation.set(st.rot[0], st.rot[1], st.rot[2]); });
+      ruins.forEach((g, i) => { const st = ruinState(i, f); g.visible = st.visible; if (st.visible) g.position.set(...st.pos); else g.position.set(0, -3000, 0); /* hidden things still block the camera-collision rays: park them far below */ g.rotation.set(st.rot[0], st.rot[1], st.rot[2]);
+        const top = g.userData.top as THREE.Group | undefined; if (top) { const c = st.collapse; top.rotation.z = 1.1 * c * c; top.position.set(4 * c, -40 * Math.max(0, c - 0.45) ** 2, 0); } });
+      { const s = t - EVT.pass, on = kind === "debrisPass" && s > -1.2 && s < 1.0;
+        boulder.visible = on; if (!on) boulder.position.set(0, -3000, 0); else { boulder.position.set(PASS_X + 0.9 + 1.5 * s, 1.0 - 22 * s - 8 * s * s, 1.7); bRock.rotation.set(s * 4, s * 3, s * 2);
+          bFire.forEach((sp, j) => { const a = j * 0.63 + t * 6; sp.position.set(1.2 * Math.cos(a), 1.4 + 0.6 * Math.sin(a * 1.3) + 0.4 * j * 0.2, 1.2 * Math.sin(a)); sp.scale.setScalar(2.2 + 0.8 * Math.sin(a)); sp.material.opacity = 0.8; }); } }
+      { const s = t - EVT.snatch, on = kind === "crumbleSnatch" && s > -0.1;
+        gap.visible = on; gap.position.set(on ? SNATCH_X : 0, on ? ABYSS.Y(SNATCH_X) - 0.03 : -3000, 0);
+        crumbs.forEach((m, j) => { const ss = s - 0.03 * j; m.visible = on && ss > 0; if (!m.visible) { m.position.set(0, -3000, 0); return; }
+          m.position.set(SNATCH_X - 0.5 + 1.0 * (j / 16) + 0.2 * ss, ABYSS.Y(SNATCH_X) - 0.5 * 9.8 * ss * ss, 0.08 * Math.sin(j * 2.1) * (1 + 2 * ss)); m.rotation.set(ss * (3 + j % 4), ss * 2, ss * 5); }); }
+      { const s = t - EVT.strike, on = kind === "engulf" && s > -0.15 && s < 1.6, k = on ? Math.sin(Math.PI * Math.min(1, (s + 0.15) / 1.6)) : 0;
+        burst.forEach((sp, j) => { sp.visible = on; if (!on) return; const u = ((s * 0.9 + j / burst.length) % 1 + 1) % 1, a = j * 2.4;
+          sp.position.set(SNATCH_X + 0.8 * Math.cos(a) * u, ABYSS.Y(SNATCH_X) - 2 + 6 * u * k, 0.8 * Math.sin(a) * u); sp.scale.setScalar((1.2 + 2.6 * u) * (0.4 + k)); sp.material.opacity = k * (1 - 0.6 * u); }); }
       streaks.forEach((pair, i) => { const st = STREAKS[i], x = streakX(st, t), on = x !== null;
         for (const m of pair) { m.visible = on; if (on) { m.scale.set(st.len, st.w, 1); m.position.set(x! - st.len / 2, 0.55 + st.y, 0); } } });
       // the falling things (the itemsFall shot): out of the hand, tumbling, heating from gold to white and melting away

@@ -2,14 +2,16 @@
   always      a deep 30-60 Hz rumble from the abyss (swelling on the reveals and the eruption), roaring fire, crackling
               embers, gusts of hot wind howling over the pit with distant moans blended INTO it (filtered noise with slowly
               gliding vowel formants: no pitch, never screams)
-  the story   chains dragging; the hooks scraping, whooshing and snapping; the shared heartbeat (shots.json heartRate:
+  the story   chains dragging; iron and rock grinding up out of the lava, pillars cracking and falling, a burning boulder, the
+              line crumbling, a fire burst; the shared heartbeat (shots.json heartRate:
               slow, then faster through the feet and the breaking); heavy breathing on the close-ups; stones crumbling
               into the pit; the bridge creaking under each step; thunder on the red lightning; the eruption's roar; a huge
-              impact on the hook strike; a falling whoosh into a fire roar on the fall; whooshes on the whip-pans
+              impact as the fire bursts; a falling whoosh into a fire roar on the fall; whooshes on the whip-pans
   levels      the effects at about -26 LUFS, dipping under the reciter's phrases and rising in his pauses; peaks < -1 dBFS
-Writes public/audio/sirat_mix.wav (the UPLOAD sound: effects only) and public/audio/sirat_preview_mix.wav (+ Sheikh Yasser
-Al-Dossari's Maryam 19:66-72, public/audio/guide/sirat_recitation.mp4, a TikTok sound the channel owner adds in TikTok from
-0:00: for checking only, never in the upload file, never committed).
+Writes public/audio/sirat_mix.wav (the UPLOAD sound) and public/audio/sirat_preview_mix.wav (the same): Sheikh Yasser
+Al-Dossari's Maryam 19:66-72 (public/audio/guide/sirat_recitation.mp4, never committed) at -14 LUFS, cut in the breath after
+19:72 (no 19:73), its echo fading over ~1.5 s under the 5 s end card; the effects at about -26 LUFS under it; only rumble
+and fire under the end card, fading to silence at the very end.
 Run from engine/:  .venv-tts/Scripts/python tools/mix_sirat.py
 """
 import json, sys
@@ -89,7 +91,7 @@ def whoosh(d=0.6, k=1.0, lo=200, hi=2400):
 def snap(k=1.0):
     t = tt(0.4); return verb(stereo(bp(noise(t.size), 1500, 9000) * np.exp(-t / 0.012) * 2.2 * k + lp(noise(t.size), 200) * np.exp(-t / 0.05) * 1.5 * k), ROOM)
 def impact(k=1.0):
-    """the hook strike: a sub boom, a metal crash, a long ringing tail of noise"""
+    """a heavy impact: a sub boom, a crash, a long ringing tail of noise"""
     t = tt(3.0); boom = (lp(noise(t.size), 70) * 4 + np.sin(2 * np.pi * 34 * t) * 1.2) * np.exp(-t / 0.5) * np.minimum(1, t / 0.004)
     crash = bp(noise(t.size), 600, 7000) * np.exp(-t / 0.18) * 1.8 + bp(noise(t.size), 2500, 5000) * np.exp(-t / 0.9) * 0.4
     return verb(stereo((boom + crash) * k), HALL)
@@ -171,15 +173,16 @@ def main():
         st = a + 0.2
         while st < b: put(fx, bridge_creak(), st, -6); st += P + r.uniform(-0.05, 0.05)
     put(fx, rumble(2.0, 1.2), sh("feetVertigo"), -4); put(fx, whoosh(1.8, 0.9, 80, 600), sh("feetVertigo") + 0.1, -6)  # the vertigo
-    # the hooks: rising out of the fire with scraping and chains, whooshing past, snapping
-    for i in range(6): put(fx, scrape(1.6, 0.8), E["hookRise"][0] + 0.6 * i, -10)
-    put(fx, scrape(1.2), sh("stumbleAhead") + 0.6, -4); put(fx, snap(0.8), sh("stumbleAhead") + 1.2, -6)
-    put(fx, whoosh(1.4, 1.8, 120, 2800), E["pass"] - 0.7, 0); put(fx, scrape(0.9, 1.2), E["pass"] - 0.2, -2)      # the close pass
-    put(fx, scrape(0.8, 1.4), E["snatch"] - 0.7, -2); put(fx, snap(1.6), E["snatch"], 0); put(fx, whoosh(0.9, 1.4, 150, 2200), E["snatch"] + 0.1, -2)   # the first snatch
+    # the ruins (no hooks): iron and rock grinding up out of the lava, pillars cracking and falling, a boulder, the line breaking
+    for i in range(6): put(fx, scrape(1.6, 0.5), E["pillarRise"][0] + 0.6 * i, -14); put(fx, rumble(1.6, 0.8), E["pillarRise"][0] + 0.6 * i, -10)
+    for at in E["collapse"]: put(fx, rock_crack(1.3), at, -2); put(fx, rumble(2.6, 1.4), at + 0.3, -2); put(fx, stones(2.0), at + 0.8, -4)
+    put(fx, fire_roar(int(1.6 * SR), 1.4), sh("stumbleAhead") + 0.6, -4); put(fx, snap(0.6), sh("stumbleAhead") + 1.2, -8)   # a geyser bursts beside him
+    put(fx, whoosh(1.4, 1.8, 120, 2800), E["pass"] - 0.7, 0); put(fx, impact(0.8), E["pass"] + 0.6, -6)            # the burning boulder
+    put(fx, rock_crack(1.2), E["snatch"] - 0.05, 0); put(fx, stones(1.6), E["snatch"] + 0.1, -2); put(fx, whoosh(0.9, 1.2, 150, 1500), E["snatch"] + 0.2, -4)   # the line crumbles
     for i in range(14): put(fx, bp(noise(int(0.08 * SR)), 2000, 8000)[None, :].repeat(2, 0) * np.exp(-np.arange(int(0.08 * SR)) / (0.01 * SR)) * 1.2, E["items"] + 0.08 * i + 0.1, -10)   # coins
     put(fx, fire_roar(int(2.0 * SR), 1.2), sh("matFire") + 0.3, -6)
     put(fx, scrape(2.0, 0.9), sh("breaking") + 0.3, -6); put(fx, rumble(2.2, 1.4), sh("breaking"), -4)
-    put(fx, whoosh(0.5, 2.0, 200, 3500), E["strike"] - 0.45, 0); put(fx, impact(1.4), E["strike"] - 0.02, 0); put(fx, snap(1.5), E["strike"], 0)   # the strike that snatches
+    put(fx, whoosh(0.5, 2.0, 200, 3500), E["strike"] - 0.45, 0); put(fx, impact(1.4), E["strike"] - 0.02, 0); put(fx, fire_roar(int(1.8 * SR), 1.8), E["strike"], 0)   # the fire burst that engulfs
     put(fx, fall_whoosh(3.4), sh("fallWith"), 0); put(fx, rumble(3.6, 1.6), sh("fallWith"), -2)          # the fall
     put(fx, rumble(3.0, 0.9), sh("continue"), -8)
     # nature, no beings: volcanoes, lava, fire tornadoes, rock, chains in the dark, cinders
@@ -192,33 +195,44 @@ def main():
     put(amb, hiss(TOTAL - 1), 0.2, -14)
     put(fx, bp(noise(int(1.6 * SR)), 2500, 7000)[None, :].repeat(2, 0) * 0.08, sh("hourglass"), -14)   # the last grains of sand
     put(fx, howl(3.2) * 1.8, sh("smokeDevils"), 0); put(fx, hot_wind(int(3.0 * SR)) * 1.6, sh("smokeDevils"), -2)   # "the devils": only the wind louder
-    # ---------------- under the recitation: the beds (rumble, fire) duck hard under the phrases, the rest dips a little ----------------
-    gd = load(GUIDE); g2 = np.zeros((2, N)); m = min(gd.shape[1], N); g2[:, :m] = gd[:, :m]
-    env = np.clip(smooth_avg(envelope(g2, 0.15), int(0.4 * SR)), 0, 1)
+    # ---------------- the recitation, IN our file: cut in the breath after 19:72, its echo fading under the end card ----------------
+    meter = pyln.Meter(SR)
+    RE = timing["recEnd"]; ce = int(RE * SR)
+    gd = load(GUIDE); rec = np.zeros((2, N)); m = min(gd.shape[1], ce); rec[:, :m] = gd[:, :m]
+    fo = int(0.03 * SR); rec[:, ce - fo:ce] *= np.linspace(1, 0, fo)                                   # nothing of 19:73 (it starts at 110.3 s)
+    # the echo tail: the last 1.2 s of his voice through a 1.6 s decaying room (made here, NOT taken from the recording)
+    src = rec[:, ce - int(1.2 * SR):ce]; tl_ = np.arange(int(1.6 * SR)) / SR
+    ir = noise(tl_.size) * np.exp(-tl_ / 0.45); ir /= np.sqrt(np.sum(ir ** 2)) + 1e-9
+    wet = np.stack([np.convolve(src[0], ir)[:src.shape[1] + ir.size], np.convolve(src[1], np.roll(ir, 37))[:src.shape[1] + ir.size]]) * 0.5
+    tail = wet[:, src.shape[1]:]; tail *= np.clip(1 - np.arange(tail.shape[1]) / int(1.5 * SR), 0, 1) ** 1.5
+    put(rec, tail, RE, 0)
+    rec *= db(-14.0 - meter.integrated_loudness(rec[:, :ce].T))
+    # ---------------- the effects under it: the beds (rumble, fire) duck hard under the phrases, the rest dips a little ----------------
+    env = np.clip(smooth_avg(envelope(rec, 0.15), int(0.4 * SR)), 0, 1)
     sfx = bed * (1 - 0.6 * env) + (amb + fx) * (1 - 0.3 * env)
     for a in [sh("smash1"), sh("smash2")]:                                   # a sudden silence (the smash to black), then the roar
         i0, i1 = int((a - 0.05) * SR), int((a + 0.22) * SR); fade = np.ones(N); fade[i0:i1] = db(-34); sfx *= smooth_avg(fade, int(0.02 * SR))
-    meter = pyln.Meter(SR)
-    sfx *= db(-26.0 - meter.integrated_loudness(sfx.T))
-    sfx *= np.clip((TOTAL - 0.05 - t) / 1.5, 0, 1) * np.clip(t / 0.05, 0, 1)
+    sfx *= db(-26.0 - meter.integrated_loudness(sfx[:, :ce].T))
+    # the end card: only the low rumble and the fire, fading to silence at the very end
+    card = timing["cardFrom"]; endk = np.clip((t - card) / (TOTAL - card), 0, 1)
+    low = bed * (1 - 0.6 * env); low *= db(-27.0 - meter.integrated_loudness(low[:, :ce].T))
+    blend = np.clip((t - card) / 0.8, 0, 1)                                    # the effects give way to the low bed over 0.8 s
+    sfx = (sfx * (1 - blend) + low * blend) * (1 - endk) ** 0.55 * np.clip(t / 0.05, 0, 1)
     def limit(x, ceil):
         up = resample_poly(x, 4, 1, axis=1).astype(np.float32)
         up = Pedalboard([Limiter(threshold_db=ceil - 0.6, release_ms=120)])(up, SR * 4)
         return resample_poly(up, 1, 4, axis=1).astype(np.float32)
-    # limit, then set the level; push the limiter harder until the peaks sit under -1 dBFS at -26 LUFS
-    drive = 0.0
-    for _ in range(10):
-        y = limit(sfx * db(drive), -3.0); y = y * db(-26.0 - meter.integrated_loudness(y.T))
-        pk = 20 * np.log10(np.abs(y).max())
-        if pk < -1.2: break
-        drive += pk + 1.6
+    mix = rec + sfx
+    g = 0.0
+    for _ in range(10):                                                       # the recitation at -14 LUFS, peaks under -1 dBFS
+        y = limit(mix * db(g), -2.2) * db(-1.8); L = meter.integrated_loudness(y[:, :ce].T)   # the limiter normalises its ceiling to 0 dBFS: bring it to -1.8 (AAC adds ~0.3 dB)
+        if abs(L + 14.0) < 0.1: break
+        g += -14.0 - L
+    y = y * min(1.0, db(-1.8) / np.abs(y).max())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    sf.write(OUT, y.T, SR, subtype="PCM_24")
-    print(f"{OUT.name}: {y.shape[1] / SR:.2f} s; effects {meter.integrated_loudness(y.T):.1f} LUFS; peak {20 * np.log10(np.abs(y).max()):.1f} dBFS")
-    rec = g2 * db(-14.0 - meter.integrated_loudness(g2.T)); fo = int(0.06 * SR); rec[:, -fo:] *= np.linspace(1, 0, fo)   # the TikTok sound, cut in the breath
-    pv = y + rec; pv = limit(pv, -3.0); pv = pv * min(db(-1.2) / np.abs(pv).max(), db(-14.0 - meter.integrated_loudness(pv.T)))
-    sf.write(OUT_PREVIEW, pv.T, SR, subtype="PCM_24")
-    print(f"{OUT_PREVIEW.name}: + the recitation (TikTok sound) at -14 LUFS (NOT for upload); peak {20 * np.log10(np.abs(pv).max()):.1f} dBFS")
+    sf.write(OUT, y.T, SR, subtype="PCM_24"); sf.write(OUT_PREVIEW, y.T, SR, subtype="PCM_24")
+    sv = limit(sfx * db(g), -1.5)
+    print(f"{OUT.name} (= {OUT_PREVIEW.name}): {y.shape[1] / SR:.2f} s; recitation span {meter.integrated_loudness(y[:, :ce].T):.1f} LUFS; effects alone {meter.integrated_loudness(sv[:, :ce].T):.1f} LUFS; peak {20 * np.log10(np.abs(y).max()):.1f} dBFS")
 
 
 if __name__ == "__main__":

@@ -3,8 +3,8 @@
      transitions, lightning and impacts excepted)
   2. both files: the same frame count (timing.json length) and the same picture
   3. black: no stretch darker than 4 % mean brightness longer than 0.3 s anywhere (the smash cuts are 0.2-0.25 s)
-  4. the audio: the upload file is effects only (about -26 LUFS, peak under -1 dBFS, NO recitation: its envelope does
-     not follow the recitation's; the preview's does), and no silence (< -55 dBFS) longer than 0.5 s
+  4. the audio: both files carry the recitation (-14 LUFS, cut before 19:73: nothing of it after 110.3 s) and the
+     effects; peak under -1 dBFS; no silence (< -55 dBFS) longer than 0.5 s
   5. the text: every caption is an exact slice of the saved quran.com responses (19:66-72)
   6. the 45-degree rule on character shots (the camera's steepest downward look, from a still render's pitch report)
 Run from engine/:  .venv-tts/Scripts/python tools/qa_sirat.py out/The_Sirat.mp4 out/The_Sirat_PREVIEW.mp4 out/qa_sirat
@@ -25,7 +25,7 @@ starts = [F(s["at"]) for s in story["shots"]]
 shots = [{"id": i, "a": a, "b": starts[i + 1] if i + 1 < len(starts) else FRAMES} for i, a in enumerate(starts)]
 ev = story["events"]
 planned = [[F(t) - 12, F(t) + 14] for t, _ in ev["transitions"]] + [[F(t) - 2, F(t) + 18] for t in ev["lightning"]]
-planned += [[F(ev[k]) - 15, F(ev[k]) + 20] for k in ("strike", "snatch", "pass")] + [[F(timing["continueFrom"]) - 12, FRAMES]]
+planned += [[F(ev[k]) - 15, F(ev[k]) + 20] for k in ("strike", "snatch", "pass")] + [[F(c) - 10, F(c) + 70] for c in ev["collapse"]] + [[F(timing["continueFrom"]) - 12, FRAMES]]
 smash = [[s["a"], s["b"]] for s, raw in zip(shots, story["shots"]) if raw["kind"].startswith("smash")]
 meta = {"shots": shots, "planned": planned, "intended_dark": smash}
 (OUT / "shots.json").write_text(json.dumps(meta), encoding="utf-8")
@@ -50,11 +50,14 @@ lines.append(f"## black\nblack stretches over 0.3 s: {long_black or 'none'}; all
 # audio
 def pcm(src, sr=48000):
     return np.frombuffer(subprocess.run(["ffmpeg", "-v", "error", "-i", str(src), "-map", "0:a", "-ac", "2", "-ar", str(sr), "-f", "f32le", "-"], capture_output=True).stdout, dtype=np.float32).reshape(-1, 2)
-u, pv = pcm(UP), pcm(PV); g = pcm(HERE.parent / "public/audio/guide/sirat_recitation.mp4")[: int(timing["length"] * 48000)]
-m = pyln.Meter(48000)
+u, pv = pcm(UP), pcm(PV); RE = timing["recEnd"]; g = pcm(HERE.parent / "public/audio/guide/sirat_recitation.mp4")[: int(RE * 48000)]
+m = pyln.Meter(48000); ce = int(RE * 48000)
 env = lambda x: np.convolve(np.abs(x.mean(axis=1)), np.ones(4800) / 4800, mode="valid")[::480]
-n = min(len(env(u)), len(env(g)), len(env(pv)))
-cu, cp = float(np.corrcoef(env(u)[:n], env(g)[:n])[0, 1]), float(np.corrcoef(env(pv)[:n], env(g)[:n])[0, 1])
+n = min(len(env(u[:ce])), len(env(g)), len(env(pv[:ce])))
+cu, cp = float(np.corrcoef(env(u[:ce])[:n], env(g)[:n])[0, 1]), float(np.corrcoef(env(pv[:ce])[:n], env(g)[:n])[0, 1])
+# nothing of 19:73: the guide after the cut must not be in our file (its envelope over 110.3-112.5 s vs ours)
+g73 = pcm(HERE.parent / "public/audio/guide/sirat_recitation.mp4")[int(110.3 * 48000):int(112.5 * 48000)]; o73 = u[int(110.3 * 48000):int(112.5 * 48000)]
+k = min(len(g73), len(o73)); c73 = float(np.corrcoef(np.abs(g73[:k].mean(1))[::480], np.abs(o73[:k].mean(1))[::480])[0, 1])
 w = int(0.05 * 48000); mono = u.mean(axis=1); rms = 20 * np.log10(np.sqrt(np.array([np.mean(mono[i:i + w] ** 2) for i in range(0, len(mono) - w, w)])) + 1e-9)
 sil, cur = [], None
 for i, x in enumerate(rms < -55):
@@ -62,9 +65,10 @@ for i, x in enumerate(rms < -55):
     elif cur: sil.append(cur); cur = None
 if cur: sil.append(cur)
 long_sil = [(round(a0 * 0.05, 2), round((b0 - a0 + 1) * 0.05, 2)) for a0, b0 in sil if (b0 - a0 + 1) * 0.05 > 0.5]
-lines.append(f"## audio\nupload (effects only): {m.integrated_loudness(u):.1f} LUFS (target ~-26), peak {20 * np.log10(np.abs(u).max()):.1f} dBFS (must be < -1); preview peak {20 * np.log10(np.abs(pv).max()):.1f} dBFS\n"
-             f"envelope correlation with the recitation (TikTok sound): upload {cu:+.3f} (should be low), preview {cp:+.3f} (should be high): recitation in the upload file: {'NO' if cu < 0.3 and cp > 0.6 else 'CHECK'}\n"
-             f"quietest 50 ms window {rms.min():.1f} dBFS; silences over 0.5 s (< -55 dBFS): {long_sil or 'none'}")
+lines.append(f"## audio\nupload: recitation span (0-{RE} s) {m.integrated_loudness(u[:ce]):.1f} LUFS (target -14); whole file peak {20 * np.log10(np.abs(u).max()):.1f} dBFS (must be < -1); preview peak {20 * np.log10(np.abs(pv).max()):.1f} dBFS\n"
+             f"envelope correlation with the recitation: upload {cu:+.3f}, preview {cp:+.3f} (both should be high: the recitation is in both files): {'OK' if cu > 0.6 and cp > 0.6 else 'CHECK'}\n"
+             f"19:73 leaking in after the cut (110.3-112.5 s): correlation {c73:+.3f} (should be near 0): {'NO' if c73 < 0.3 else 'CHECK'}\n"
+             f"quietest 50 ms window {rms.min():.1f} dBFS; silences over 0.5 s (< -55 dBFS): {long_sil or 'none'} (the very end fades out)")
 # text
 bad = []
 for p in timing["phrases"]:

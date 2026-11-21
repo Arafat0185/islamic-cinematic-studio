@@ -1,6 +1,7 @@
 // Video 003 "The Sirat" (the bridge over Hell): a remake of the template's beats (sirat_guide.mp4) in our style. The
 // Traveller among a faceless crowd on a cliff at the edge of the abyss; the eruption; the stare; the crowd pushing him
-// to the bridge; his bare feet on the burning line; the hooks; the strike; a figure snatched and falling; CONTINUE.
+// to the bridge; his bare feet on the burning line; iron and rock rising from the lava; the line crumbling; the fall; the
+// question "How fast will you cross?"; the end card. Nothing from the unseen is shown: no beings, no hooks, nothing alive-looking.
 // Timing: videos/003-the-sirat/timing.json (the recitation captions), shots.json (shots, transitions, events).
 // Camera: a new angle every 1.5-3 s, never still; shots framing a character up close never look down more than 45
 // degrees (pure environment shots may look straight down into the pit).
@@ -72,30 +73,26 @@ const CROWD_POS: [number, number, string, number][] = (() => {
   return out;
 })();
 
-// ---------------- the hooks ----------------
-export type Hook = { x: number; z: number; h: number; tipY: number; ph: number; rise: number };
-export const HOOKS: Hook[] = [
-  ...[15, 21, 28, 36, 45, 56, 69, 84, 102, 125, 153, 186].map((x, i) => ({ x, z: (i % 2 ? -1 : 1) * (17 + 5 * hash(i)), h: 26 + 16 * hash(i + 9), tipY: 1.5 + 2.5 * hash(i + 3), ph: 6.28 * hash(i + 5), rise: (E.hookRise as number[])[0] + 0.25 * i })),
-  { x: 0, z: 0, h: 34, tipY: 0, ph: 0, rise: 0 },      // 12: the strike
-  { x: 0, z: 0, h: 30, tipY: 0, ph: 0, rise: 0 },      // 13: the snatch
-  { x: 0, z: -14, h: 44, tipY: 3, ph: 1, rise: 0 },    // 14: the one rising behind him as he breaks
+// ---------------- the ruins (no hooks: only iron and rock rising out of the lava) ----------------
+export type Ruin = { x: number; z: number; h: number; tipY: number; ph: number; rise: number; collapse?: number };
+export const EVT = E as unknown as { pass: number; snatch: number; strike: number; collapse: number[] };
+export const RUINS: Ruin[] = [
+  ...[15, 21, 28, 36, 45, 56, 69, 84, 102, 125, 153, 186].map((x, i) => ({ x, z: (i % 2 ? -1 : 1) * (17 + 5 * hash(i)), h: 26 + 16 * hash(i + 9), tipY: 1.5 + 2.5 * hash(i + 3), ph: 6.28 * hash(i + 5), rise: (E.pillarRise as number[])[0] + 0.25 * i,
+    ...(i === 2 ? { collapse: (E.collapse as number[])[0] } : {}) })),
+  { x: 0, z: 0, h: 1, tipY: 0, ph: 0, rise: 0 },      // 12: (unused: the boulder is its own object)
+  { x: 0, z: 0, h: 1, tipY: 0, ph: 0, rise: 0 },      // 13: (unused)
+  { x: 0, z: -9, h: 40, tipY: 4, ph: 1, rise: 0, collapse: (E.collapse as number[])[1] },   // 14: the pillar behind him as he breaks
 ];
-export const hookState = (i: number, f: number): { visible: boolean; pos: V3; rot: V3 } => {
-  const t = f / FPS, hk = HOOKS[i], k = shotOf(f).kind, side = hk.z > 0 ? 1 : -1;
+/** where a ruin is: rising out of the lava (19:69), swaying a little; collapse 0..1 = its top part cracking and falling */
+export const ruinState = (i: number, f: number): { visible: boolean; pos: V3; rot: V3; collapse: number } => {
+  const t = f / FPS, rn = RUINS[i], k = shotOf(f).kind;
+  const col = rn.collapse !== undefined ? smooth((t - rn.collapse) / 2.2) : 0;
   if (i < 12) {
-    const up = smooth((t - hk.rise) / 1.6), sway = 0.05 * Math.sin(t * 0.7 + hk.ph);
-    return { visible: up > 0.001, pos: [hk.x, hk.tipY + 0.08 * hk.h - 110 * (1 - up), hk.z], rot: [0.04 * Math.sin(t * 0.5 + hk.ph), side * Math.PI / 2, sway] };
+    const up = smooth((t - rn.rise) / 1.6);
+    return { visible: up > 0.001, pos: [rn.x, rn.tipY + 0.08 * rn.h - 110 * (1 - up), rn.z], rot: [0.03 * Math.sin(t * 0.5 + rn.ph), rn.ph, 0.02 * Math.sin(t * 0.7 + rn.ph)], collapse: col };
   }
-  if (i === 12) {   // the close pass: rises out of the fire beside the line and sweeps right past the camera
-    const s = t - E.pass, sweep = smooth((s + 0.6) / 1.3), bx = PASS_X;
-    return { visible: k === "hooksPass", pos: [bx + lerp(-14, 12, sweep), 1.8 - 0.09 * hk.h - 6 * (1 - smooth((s + 1.0) / 0.8)), 1.3], rot: [0, 0, lerp(0.45, -0.35, sweep)] };
-  }
-  if (i === 13) {   // the snatch: rises up through the line under the figure, then lifts and tears away to the side
-    const s = t - (k === "snatchStrike" ? E.strike : E.snatch), up = smooth((s + 0.7) / 0.7), away = smooth(s / 0.9);
-    return { visible: k === "snatch" || k === "snatchStrike", pos: [SNATCH_X + 0.2 - 4 * away, -12 + 16 * up + 7 * away, 0.24 * hk.h + 3.4 * away], rot: [0, Math.PI / 2 - 0.3 * away, -0.4 * away] };
-  }
-  const up = smooth((t - shotFrom("breaking") - 0.1) / 2.0);   // 14: behind him, rising out of the pit as he breaks
-  return { visible: k === "breaking" || k === "breaking2", pos: [bridgeX(t) + 2.5, -30 + 33 * up, hk.z], rot: [0, -Math.PI / 2, 0.08 * Math.sin(t)] };
+  if (i === 14) return { visible: k === "breaking", pos: [bridgeX(t) + 3.5, rn.tipY, rn.z], rot: [0, 0.4, 0], collapse: col };
+  return { visible: false, pos: [0, -3000, 0], rot: [0, 0, 0], collapse: 0 };
 };
 export const SNATCH_X = 24, PASS_X = 20;
 const shotFrom = (k: string) => (SHOTS.find((x) => x.kind === k)?.from ?? 0) / FPS;
@@ -233,7 +230,7 @@ export const shotAt0 = (f: number): Shot => {
       return { cam: c, focus: [p[0] + 3, -4, 0], cInf: 4, trav: bust("back", c, p, t, 0.8), head: H }; }
     case "lookDown2": { const p = travPos(t), H = HEAD(p), c = mv(cam([p[0] + 0.85, H[1] - 0.25, 0.75], [p[0], H[1] - 0.1, 0], 42), cam([p[0] + 0.65, H[1] - 0.22, 0.6], [p[0], H[1] - 0.12, 0], 38), u);
       return { cam: c, focus: H, cInf: 7, trav: bust("side", c, p, t, 1.2, 0.4), head: H, glow: 1.4 }; }
-    // ======================= 57.6-73.6 s: faster, the hooks, the things left behind =======================
+    // ======================= the things left behind =======================
     case "feetFast": { const x = travPos(t)[0], c = rollC(mv(cam([x - 0.7, 0.42, 1.45], [x + 0.3, 0.1, -0.1], 42), cam([x - 0.4, 0.4, 1.3], [x + 0.6, 0.1, -0.1], 38), u), 0.05 * Math.sin(t * 3));
       return { cam: c, focus: [x, 0.05, 0], cInf: 6, trav: null, others: feet(c, tl, 0.8, x - 0.3, 1).cards, head: NOHEAD, shake: 0.7, glow: 1.3 }; }
     case "stumbleAhead": case "stumble": { const x = travPos(t)[0], m = x + 2.6 + 0.3 * tl, c = cam([x - 0.4, 0.35, 0.55], [m + 1, 0.9, 0], 44), mir = mirrorFor(c, 1, 0), L = lightOf(c, mir);
@@ -272,9 +269,9 @@ export const shotAt0 = (f: number): Shot => {
       return { cam: c, focus: S, cInf: 4, trav: travStand(c, CLIFF_T, 0.2), others: [...crowdCards(c, t, 2.5), ...passers(c.pos, S, tl, [["h2", 1.2, 1.4, -2.4], ["h6", 2.0, -1.1, 2.0]])], head: HEAD(CLIFF_T) }; }
     case "kneelWide": { const a = lerp(130, 155, ease(u)) * Math.PI / 180, C: V3 = [-5, 0.6, 0], c = cam([C[0] + 15 * Math.sin(a), 4.5, C[2] + 15 * Math.cos(a)], C, 40);
       return { cam: c, focus: C, cInf: 2, trav: travStand(c, CLIFF_T), others: crowdCards(c, t), head: HEAD(CLIFF_T) }; }
-    case "hooksRise": { const c = mv(cam([8, 1.6, 4.5], [30, -5, 12], 54), cam([9, 1.2, 3.5], [32, 0, 14], 50), u);
+    case "pillarsRise": { const c = mv(cam([8, 1.6, 4.5], [30, -5, 12], 54), cam([9, 1.2, 3.5], [32, 0, 14], 50), u);
       return { cam: c, focus: [21, 0, 17], cInf: 2, trav: null, head: NOHEAD, shake: 0.5 }; }
-    case "hooksPass": { const x = PASS_X, c = cam([x - 1.0, 1.5, 3.4], [x + 3, 0.6, 0], 48);
+    case "debrisPass": { const x = PASS_X, c = cam([x - 1.0, 1.5, 3.4], [x + 3, 0.6, 0], 48);
       return { cam: c, focus: [x + 1, 1, 1.3], cInf: 3, trav: null, head: NOHEAD, shake: Math.max(0.3, 2 * (1 - Math.abs(t - E.pass) / 0.6)) }; }
     case "wideLone": { const x = 30 + 1.2 * tl, c = mv(cam([x - 30, 14, 85], [x + 10, -6, 0], 36), cam([x - 26, 12, 80], [x + 12, -6, 0], 32), u), mir = mirrorFor(c, 1, 0);
       return { cam: c, focus: [x, 0, 0], cInf: 1, trav: null, others: [put(walkC("h1", 1.2 * tl, lightOf(c, mir), mir), [x, ABYSS.Y(x), 0], { mirror: mir })], head: NOHEAD }; }
@@ -296,15 +293,12 @@ export const shotAt0 = (f: number): Shot => {
       return { cam: c, focus: [H[0], H[1] + 0.2, H[2]], cInf: 8, trav: null, head: NOHEAD, glow: 1.3 }; }
     case "smash1": case "smash2": { const c = cam([0, 1, 2], [10, 0, 0], 40); return { cam: c, focus: [10, 0, 0], cInf: 2, trav: null, head: NOHEAD }; }
     // ======================= 79.6-89.4 s: the strike, the fall =======================
-    case "hookStrike": { const x = travPos(t)[0], s = t - E.strike, crash = smooth((s + 0.5) / 0.35);
-      const c = cam([x + 0.4 + 1.5 * (1 - crash), 1.5, 5.5 - 2.2 * crash], [x + 4.5, 1.0 - 4 * smooth(s / 0.6), 0], lerp(55, 32, crash));
-      return { cam: c, focus: [x + 4.5, 0, 0], cInf: 2, trav: null, head: NOHEAD, shake: s > 0 && s < 0.6 ? 3 * (1 - s / 0.6) : 0.3 }; }
-    case "emptyBridge": { const c = mv(cam([12, 2.0, 16], [12, -1, 0], 50), cam([15, 1.6, 15], [15, -1.2, 0], 46), u);
-      return { cam: c, focus: [14, 0, 0], cInf: 2, trav: null, head: NOHEAD }; }
-    case "snatch": case "snatchStrike": { const s = t - (sh.kind === "snatchStrike" ? E.strike : E.snatch), c = mv(cam([SNATCH_X - 2.5, 1.3, 7.5], [SNATCH_X, 0.8, 0], 46), cam([SNATCH_X - 2.0, 1.6, 6.5], [SNATCH_X, 1.5, 0], 44), u), mir = mirrorFor(c, 1, 0), L = lightOf(c, mir);
-      const away = smooth(s / 0.9), held: V3 = s < 0 ? [SNATCH_X, ABYSS.Y(SNATCH_X), 0] : [SNATCH_X - 3.6 * away, 1.6 + 6.5 * away - 9 * Math.max(0, s - 0.9) ** 2, 3.4 * away];
-      const lk = sh.kind === "snatchStrike" ? "h5" : "h3", fig = put(s < -0.05 ? walkC(lk, 0.6 * tl, L, mir) : walker(lk, { light: L, shawlNear: mir, armN: reachArm(0, 1), barefoot: true }), held, { mirror: mir, roll: s > 0 ? -2.2 * away - 3 * Math.max(0, s - 0.9) : 0 });
-      return { cam: c, focus: [SNATCH_X, 1, 0], cInf: 3, trav: null, others: [fig], head: [SNATCH_X, 1.6, 0], shake: s > 0 && s < 0.5 ? 1.5 : 0.3 }; }
+    case "crumbleSnatch": case "engulf": { const eng = sh.kind === "engulf", s = t - (eng ? E.strike : E.snatch), c = mv(cam([SNATCH_X - 2.5, 1.3, 7.5], [SNATCH_X, 0.8, 0], 46), cam([SNATCH_X - 2.0, 1.6, 6.5], [SNATCH_X, 1.5, 0], 44), u), mir = mirrorFor(c, 1, 0), L = lightOf(c, mir);
+      // crumble: the line breaks under him and he drops straight down; engulf: the fire burst covers him and he is gone
+      const drop = Math.max(0, s - 0.08), pos: V3 = [SNATCH_X + 0.05, ABYSS.Y(SNATCH_X) - 0.5 * 9.8 * drop * drop, 0];
+      const lk = eng ? "h5" : "h3", card = s < 0.05 ? walkC(lk, 0.6 * tl, L, mir) : walker(lk, { light: L, shawlNear: mir, armN: reachArm(0, 1), barefoot: true });
+      const fig = eng ? (s < 0.25 ? [put(card, [SNATCH_X, ABYSS.Y(SNATCH_X), 0], { mirror: mir })] : []) : [put(card, pos, { mirror: mir, roll: -2.4 * drop })];
+      return { cam: c, focus: [SNATCH_X, 1, 0], cInf: 3, trav: null, others: fig, head: [SNATCH_X, 1.6, 0], shake: s > 0 && s < 0.5 ? 1.5 : 0.3 }; }
     case "fallWith": { const s = tl, y = -2 - 0.5 * 9.0 * s * s * 1.6, fx0 = SNATCH_X - 6, c = rollC(cam([fx0 - 2.2, y + 2.0, 3.6], [fx0, y - 0.3, 1.0], 56), 0.9 * s + 0.3 * Math.sin(s * 5)), mir = mirrorFor(c, 1, 0);
       const fig = put(walker("h3", { light: lightOf(c, mir), shawlNear: mir, armN: reachArm(0, 1), barefoot: true }), [fx0, y, 1.0], { mirror: mir, roll: 2.6 * s + 0.7 });
       return { cam: c, focus: [fx0, y, 1], cInf: 3, trav: null, others: [fig], head: NOHEAD, shake: 1.2, glow: 1 + 2 * s }; }
@@ -347,6 +341,6 @@ export const fxAt = (f: number): FrameFx => {
 /** the steepest downward look of the camera (degrees) */
 export const pitchAt = (f: number) => { const c = shotAt(f).frame.plan.cam, dx = c.look[0] - c.pos[0], dy = c.look[1] - c.pos[1], dz = c.look[2] - c.pos[2]; return (-Math.atan2(dy, Math.hypot(dx, dz)) * 180) / Math.PI; };
 /** shots that frame a character up close (the 45-degree rule applies) */
-export const CHARACTER_SHOTS = new Set(["hands", "kneelEdge", "sideTrack", "otsBridge", "crossersPast", "crossersSafe", "snatchStrike", "crowdPush", "stumbleAhead", "fearUp", "fearTight", "ots", "otsErupt", "stareA", "stareB", "pushA", "pushB", "pushC", "lookDown", "lookDown2", "sideFace", "breaking", "breaking2",
+export const CHARACTER_SHOTS = new Set(["hands", "kneelEdge", "sideTrack", "otsBridge", "crossersPast", "crossersSafe", "engulf", "crumbleSnatch", "crowdPush", "stumbleAhead", "fearUp", "fearTight", "ots", "otsErupt", "stareA", "stareB", "pushA", "pushB", "pushC", "lookDown", "lookDown2", "sideFace", "breaking", "breaking2",
   "feetEdge", "feetSide", "feetVertigo", "feetToes", "feetFast", "feetFire", "stumble", "itemsFall", "snatch", "fallWith"]);
 void LOOKS;

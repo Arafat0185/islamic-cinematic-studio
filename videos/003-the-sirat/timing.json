@@ -1,10 +1,10 @@
 {
  "fps": 30,
- "length": 110.2,
+ "length": 115.2,
  "recStart": 0.0,
  "recEnd": 110.2,
  "continueFrom": 104.6,
- "cardFrom": 108.2,
+ "cardFrom": 110.2,
  "surah": "Maryam",
  "range": "19:66-72",
  "reciter": "Sheikh Yasser Al-Dossari",
@@ -225,9 +225,9 @@
    "end": 110.2
   }
  ],
- "notes": "the reciter stops after 'wa nadharu z-zalimin' (19:72) and restarts the phrase in full; the video ends in the breath after 19:72 (110.2 s), before 19:73",
+ "notes": "the reciter stops after 'wa nadharu z-zalimin' (19:72) and restarts the phrase in full; the recitation is cut in the breath after 19:72 (110.2 s), before 19:73; then the 5 s end card",
  "sources": {
-  "recitation": "public/audio/guide/sirat_recitation.mp4 (TikTok sound, Taraweeh; never committed, PREVIEW only)",
+  "recitation": "public/audio/guide/sirat_recitation.mp4 (Taraweeh; never committed; in our file, cut at 110.2 s)",
   "text": "https://api.quran.com/api/v4/verses/by_key/19:{66..72}?fields=text_uthmani&translations=20"
  }
 }

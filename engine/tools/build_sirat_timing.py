@@ -1,9 +1,9 @@
 """Timing sheet for video 003 "The Sirat" -> videos/003-the-sirat/timing.json
 
   the sound   Sheikh Yasser Al-Dossari, Surat Maryam 19:66-72, a Taraweeh recording (public/audio/guide/sirat_recitation.mp4,
-              a TikTok sound the channel owner adds in TikTok from 0:00; NEVER committed, only in the PREVIEW file). The video
-              starts at its 0:00 and ends at END, inside the breath after 19:72 ("... fiha jithiyya", the voice stops at
-              110.05 s) and before 19:73 ("wa idha", from 110.3 s), so TikTok cuts the sound cleanly.
+              NEVER committed). It is IN our file (tools/mix_sirat.py): from its 0:00, cut at END, inside the breath after
+              19:72 ("... fiha jithiyya", the voice stops at 110.05 s) and before 19:73 ("wa idha", from 110.3 s); its echo
+              fades out over ~1.5 s under the start of the 5 s end card.
   phrases     Arabic + English caption phrases: exact slices of the saved quran.com responses (quran/19_*.json,
               text_uthmani + translation 20 = Saheeh International). The starts follow the guide's burned-in captions (they
               change on each recited phrase; measured at 10 fps), cross-checked with local Whisper word timings
@@ -18,9 +18,9 @@ HERE = Path(__file__).resolve().parent
 VDIR = HERE.parent.parent / "videos" / "003-the-sirat"
 QDIR = VDIR / "quran"
 FPS = 30
-END = 110.2               # inside the breath after 19:72 (voice 110.05-110.30 s): the video's last moment
-CONTINUE_FROM = 104.6     # the ending: the near-black ember frame, PART 1 / How fast will you cross?
-CARD = 2.0                # the end card, inside the length
+END = 110.2               # inside the breath after 19:72 (voice 110.05-110.30 s): the recitation is cut here
+CONTINUE_FROM = 104.6     # the ending: the near-black ember frame, "How fast will you cross?"
+CARD = 5.0                # the end card, after the recitation
 
 # (verse, first word, last word, English slice, start s, partial). Word indices count the Uthmani text split on spaces
 # (the pause mark "ۚ" is a token). partial: the reciter stops and restarts (not part of the verse's join check).
@@ -67,13 +67,13 @@ def main():
         end = PHRASES[i + 1][4] if i + 1 < len(PHRASES) else END
         phrases.append({"i": i, "verse": f"19:{v}", "ar": " ".join(verses[v]["ar"][a:b + 1]), "arKeys": [k - a for k in range(a, b + 1) if (v, k) in AR_KEYS],
                         "en": en, "keys": EN_KEYS.get(i, []), "start": st, "end": round(end, 3), **({"partial": True} if part else {})})
-    out = {"fps": FPS, "length": END, "recStart": 0.0, "recEnd": END, "continueFrom": CONTINUE_FROM, "cardFrom": round(END - CARD, 3),
+    out = {"fps": FPS, "length": round(END + CARD, 3), "recStart": 0.0, "recEnd": END, "continueFrom": CONTINUE_FROM, "cardFrom": END,
            "surah": "Maryam", "range": "19:66-72", "reciter": "Sheikh Yasser Al-Dossari", "translation": "Saheeh International", "phrases": phrases,
-           "notes": "the reciter stops after 'wa nadharu z-zalimin' (19:72) and restarts the phrase in full; the video ends in the breath after 19:72 (110.2 s), before 19:73",
-           "sources": {"recitation": "public/audio/guide/sirat_recitation.mp4 (TikTok sound, Taraweeh; never committed, PREVIEW only)",
+           "notes": "the reciter stops after 'wa nadharu z-zalimin' (19:72) and restarts the phrase in full; the recitation is cut in the breath after 19:72 (110.2 s), before 19:73; then the 5 s end card",
+           "sources": {"recitation": "public/audio/guide/sirat_recitation.mp4 (Taraweeh; never committed; in our file, cut at 110.2 s)",
                        "text": "https://api.quran.com/api/v4/verses/by_key/19:{66..72}?fields=text_uthmani&translations=20"}}
     (VDIR / "timing.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(f"length {END} s ({round(END * FPS)} frames); continue {CONTINUE_FROM}; end card {out['cardFrom']}-{END}")
+    print(f"length {out['length']} s ({round(out['length'] * FPS)} frames); recitation 0-{END}; continue {CONTINUE_FROM}; end card {END}-{out['length']}")
     for p in phrases: print(f"  {p['start']:6.1f}-{p['end']:6.1f} {p['verse']}{' (restart)' if p.get('partial') else ''}  {p['ar']}  |  {p['en']}")
 
 

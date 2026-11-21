@@ -5,7 +5,8 @@
 //  - the recitation captions: Arabic (Amiri) over the Saheeh International English, white, key words blood red, a faint
 //    dark band behind them, centred in the TikTok safe zone (760 px wide, centre 40 px left of the middle), never over a
 //    head; the verse tag (top left); hadith tags (top right) only while those visuals are on screen
-//  - CONTINUE: a near-black frame, embers, a fire glow pulsing at the bottom: "PART 1" / "How fast will you cross?"
+//  - the ending: a near-black frame, embers, a fire glow pulsing at the bottom: "How fast will you cross?"
+//  - the end card (5 s, after the recitation): the logo and the credits on dark red, embers drifting slowly
 //  - the end card (dark red): the logo and the credits
 import React, { useMemo } from "react";
 import { AbsoluteFill, Img, getInputProps, staticFile, useCurrentFrame } from "remotion";
@@ -78,8 +79,7 @@ const VerseTag: React.FC<{ f: number }> = ({ f }) => {
 };
 /** hadith tags (top right), only while those visuals are on screen */
 const TAGS: { kinds: string[]; text: string }[] = [
-  { kinds: ["hooksRise", "snatch", "hooksPass", "stumbleAhead", "breaking", "snatchStrike", "fallWith"], text: "SAHIH AL-BUKHARI 6573" },
-  { kinds: ["crossers", "crossersPast", "crossersSafe", "stumbleAhead"], text: "SAHIH AL-BUKHARI 7439 · MUSLIM 183" },
+  { kinds: ["crossers", "crossersPast", "crossersSafe"], text: "SAHIH AL-BUKHARI 7439 · MUSLIM 183" },
   { kinds: ["crawlDrag"], text: "SAHIH AL-BUKHARI 7439 · MUSLIM 183 · MUSLIM 195" },
 ];
 const HadithTags: React.FC<{ f: number }> = ({ f }) => {
@@ -164,13 +164,12 @@ const Transitions: React.FC<{ f: number }> = ({ f }) => {
 const Continue: React.FC<{ f: number }> = ({ f }) => {
   if (f < CONTINUE_FROM - 12 || f >= CARD_FROM + 12) return null;
   const t = f / FPS, k = smooth((f - CONTINUE_FROM + 12) / 12) * (1 - smooth((f - CARD_FROM) / 12)), glow = 0.75 + 0.25 * Math.sin(t * 5.5) * Math.sin(t * 2.1 + 1);
-  const ti = smooth((f - CONTINUE_FROM - 10) / 20), pt = smooth((f - CONTINUE_FROM) / 14);
+  const ti = smooth((f - CONTINUE_FROM - 10) / 20);
   return <AbsoluteFill style={{ opacity: k }}>
     <AbsoluteFill style={{ background: "#0a0101" }} />
     <AbsoluteFill style={{ background: `radial-gradient(ellipse 95% 46% at 50% 104%, rgba(255,110,20,${glow}) 0%, rgba(200,24,0,${0.9 * glow}) 34%, rgba(110,8,0,${0.7 * glow}) 66%, rgba(10,1,1,0) 100%)` }} />
     <Embers f={f} n={46} speed={0.45} />
     <div style={{ position: "absolute", left: CAP_CX - 400, width: 800, top: 760, display: "flex", flexDirection: "column", alignItems: "center", gap: 26 }}>
-      <div style={{ fontFamily: FONT.caption, fontWeight: 800, fontSize: 24, letterSpacing: "0.5em", color: RED, opacity: pt, textShadow: "0 0 12px rgba(196,22,28,0.5)" }}>PART 1</div>
       <div style={{ fontFamily: FONT.title, fontWeight: 700, fontStyle: "italic", fontSize: 76, color: "#fff4ec", textAlign: "center", lineHeight: 1.1, opacity: ti, filter: `blur(${(1 - ti) * 8}px)`, textShadow: "0 0 24px rgba(255,80,20,0.45), 0 2px 10px rgba(0,0,0,0.9)" }}>How fast will you cross?</div>
     </div>
   </AbsoluteFill>;
@@ -180,12 +179,12 @@ const EndCard: React.FC<{ f: number }> = ({ f }) => {
   const k = smooth((f - CARD_FROM) / 14), lk = smooth((f - CARD_FROM - 6) / 16), t = f / FPS;
   const line = (s: string, i: number) => <div key={s} style={{ fontFamily: FONT.caption, fontWeight: 600, fontSize: 30, lineHeight: 1.55, color: "#efe2dc", opacity: smooth((f - CARD_FROM - 8 - 4 * i) / 10) }}>{s.split(" · ").map((x, j) => <React.Fragment key={j}>{j ? " · " : ""}<span style={{ whiteSpace: "nowrap" }}>{x}</span></React.Fragment>)}</div>;
   return <AbsoluteFill style={{ opacity: k, background: `radial-gradient(ellipse at 50% 45%, #6a0c0a 0%, #3e0606 55%, #220303 100%)`, alignItems: "center", justifyContent: "center" }}>
-    <Embers f={f} n={24} speed={0.35} />
+    <Embers f={f} n={30} speed={0.22} />
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", transform: `translateX(-40px) scale(${1 + 0.01 * Math.sin(t * 2)})` }}>
       <Img src={staticFile(LOGO)} style={{ width: 360, height: 360, objectFit: "contain", opacity: 0.9 * lk }} />
       <div style={{ height: 48 }} />
       <div style={{ width: 110, height: 2, background: "rgba(255,140,60,0.75)", margin: "0 auto 28px", opacity: lk }} />
-      <div style={{ textAlign: "center" }}><div style={{ maxWidth: 760, margin: "0 auto" }}>{line(`Quran ${TIMING.range} · Recitation: ${TIMING.reciter} · Translation: ${TIMING.translation}`, 0)}</div></div>
+      <div style={{ textAlign: "center" }}><div style={{ maxWidth: 760, margin: "0 auto" }}>{line(`Quran · Surat ${TIMING.surah} ${TIMING.range} · Recitation: ${TIMING.reciter} · Translation: ${TIMING.translation}`, 0)}</div></div>
     </div>
   </AbsoluteFill>;
 };
