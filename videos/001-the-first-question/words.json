@@ -1,0 +1,882 @@
+{
+ "source": "voice/voice.wav",
+ "whisper": "small.en",
+ "words": [
+  {
+   "section": 2,
+   "word": "Before",
+   "start": 0.0,
+   "end": 0.76
+  },
+  {
+   "section": 2,
+   "word": "your",
+   "start": 0.76,
+   "end": 1.04
+  },
+  {
+   "section": 2,
+   "word": "money.",
+   "start": 1.04,
+   "end": 1.34
+  },
+  {
+   "section": 2,
+   "word": "Before",
+   "start": 1.86,
+   "end": 2.16
+  },
+  {
+   "section": 2,
+   "word": "your",
+   "start": 2.16,
+   "end": 2.42
+  },
+  {
+   "section": 2,
+   "word": "job.",
+   "start": 2.42,
+   "end": 2.76
+  },
+  {
+   "section": 2,
+   "word": "Before",
+   "start": 3.2,
+   "end": 3.46
+  },
+  {
+   "section": 2,
+   "word": "your",
+   "start": 3.46,
+   "end": 3.72
+  },
+  {
+   "section": 2,
+   "word": "followers.",
+   "start": 3.72,
+   "end": 4.24
+  },
+  {
+   "section": 2,
+   "word": "There",
+   "start": 4.8,
+   "end": 4.94
+  },
+  {
+   "section": 2,
+   "word": "is",
+   "start": 4.94,
+   "end": 5.06
+  },
+  {
+   "section": 2,
+   "word": "one",
+   "start": 5.06,
+   "end": 5.34
+  },
+  {
+   "section": 2,
+   "word": "thing",
+   "start": 5.34,
+   "end": 5.62
+  },
+  {
+   "section": 2,
+   "word": "you",
+   "start": 5.62,
+   "end": 5.78
+  },
+  {
+   "section": 2,
+   "word": "will",
+   "start": 5.78,
+   "end": 5.9
+  },
+  {
+   "section": 2,
+   "word": "be",
+   "start": 5.9,
+   "end": 6.04
+  },
+  {
+   "section": 2,
+   "word": "asked",
+   "start": 6.04,
+   "end": 6.4
+  },
+  {
+   "section": 2,
+   "word": "about",
+   "start": 6.4,
+   "end": 6.68
+  },
+  {
+   "section": 2,
+   "word": "first.",
+   "start": 6.68,
+   "end": 7.2
+  },
+  {
+   "section": 3,
+   "word": "We",
+   "start": 8.72,
+   "end": 9.36
+  },
+  {
+   "section": 3,
+   "word": "spend",
+   "start": 9.36,
+   "end": 9.6
+  },
+  {
+   "section": 3,
+   "word": "our",
+   "start": 9.6,
+   "end": 9.8
+  },
+  {
+   "section": 3,
+   "word": "days",
+   "start": 9.8,
+   "end": 10.1
+  },
+  {
+   "section": 3,
+   "word": "chasing",
+   "start": 10.1,
+   "end": 10.46
+  },
+  {
+   "section": 3,
+   "word": "things",
+   "start": 10.46,
+   "end": 11.08
+  },
+  {
+   "section": 3,
+   "word": "that",
+   "start": 11.08,
+   "end": 11.3
+  },
+  {
+   "section": 3,
+   "word": "will",
+   "start": 11.3,
+   "end": 11.42
+  },
+  {
+   "section": 3,
+   "word": "never",
+   "start": 11.42,
+   "end": 11.62
+  },
+  {
+   "section": 3,
+   "word": "be",
+   "start": 11.62,
+   "end": 11.84
+  },
+  {
+   "section": 3,
+   "word": "mentioned",
+   "start": 11.84,
+   "end": 12.22
+  },
+  {
+   "section": 3,
+   "word": "on",
+   "start": 12.22,
+   "end": 12.44
+  },
+  {
+   "section": 3,
+   "word": "that",
+   "start": 12.44,
+   "end": 12.68
+  },
+  {
+   "section": 3,
+   "word": "Day.",
+   "start": 12.68,
+   "end": 13.06
+  },
+  {
+   "section": 3,
+   "word": "Deadlines.",
+   "start": 13.8,
+   "end": 14.32
+  },
+  {
+   "section": 3,
+   "word": "Notifications.",
+   "start": 14.9,
+   "end": 15.5
+  },
+  {
+   "section": 3,
+   "word": "Plans",
+   "start": 16.52,
+   "end": 16.58
+  },
+  {
+   "section": 3,
+   "word": "for",
+   "start": 16.58,
+   "end": 17.0
+  },
+  {
+   "section": 3,
+   "word": "next",
+   "start": 17.0,
+   "end": 17.22
+  },
+  {
+   "section": 3,
+   "word": "year.",
+   "start": 17.22,
+   "end": 17.62
+  },
+  {
+   "section": 4,
+   "word": "But",
+   "start": 19.38,
+   "end": 19.72
+  },
+  {
+   "section": 4,
+   "word": "the",
+   "start": 19.72,
+   "end": 19.86
+  },
+  {
+   "section": 4,
+   "word": "Prophet",
+   "start": 19.86,
+   "end": 20.2
+  },
+  {
+   "section": 4,
+   "word": "ﷺ",
+   "start": 20.2,
+   "end": 22.42
+  },
+  {
+   "section": 4,
+   "word": "told",
+   "start": 22.42,
+   "end": 22.94
+  },
+  {
+   "section": 4,
+   "word": "us",
+   "start": 22.94,
+   "end": 23.26
+  },
+  {
+   "section": 4,
+   "word": "what",
+   "start": 23.26,
+   "end": 23.46
+  },
+  {
+   "section": 4,
+   "word": "comes",
+   "start": 23.46,
+   "end": 23.74
+  },
+  {
+   "section": 4,
+   "word": "first:",
+   "start": 23.74,
+   "end": 24.26
+  },
+  {
+   "section": 4,
+   "word": "\"Indeed",
+   "start": 24.92,
+   "end": 25.28
+  },
+  {
+   "section": 4,
+   "word": "the",
+   "start": 25.28,
+   "end": 25.54
+  },
+  {
+   "section": 4,
+   "word": "first",
+   "start": 25.54,
+   "end": 25.86
+  },
+  {
+   "section": 4,
+   "word": "deed",
+   "start": 25.86,
+   "end": 26.26
+  },
+  {
+   "section": 4,
+   "word": "by",
+   "start": 26.26,
+   "end": 26.62
+  },
+  {
+   "section": 4,
+   "word": "which",
+   "start": 26.62,
+   "end": 26.8
+  },
+  {
+   "section": 4,
+   "word": "a",
+   "start": 26.8,
+   "end": 26.98
+  },
+  {
+   "section": 4,
+   "word": "servant",
+   "start": 26.98,
+   "end": 27.32
+  },
+  {
+   "section": 4,
+   "word": "will",
+   "start": 27.32,
+   "end": 27.52
+  },
+  {
+   "section": 4,
+   "word": "be",
+   "start": 27.52,
+   "end": 27.66
+  },
+  {
+   "section": 4,
+   "word": "called",
+   "start": 27.66,
+   "end": 27.92
+  },
+  {
+   "section": 4,
+   "word": "to",
+   "start": 27.92,
+   "end": 28.18
+  },
+  {
+   "section": 4,
+   "word": "account",
+   "start": 28.18,
+   "end": 28.6
+  },
+  {
+   "section": 4,
+   "word": "on",
+   "start": 28.6,
+   "end": 28.9
+  },
+  {
+   "section": 4,
+   "word": "the",
+   "start": 28.9,
+   "end": 29.0
+  },
+  {
+   "section": 4,
+   "word": "Day",
+   "start": 29.0,
+   "end": 29.18
+  },
+  {
+   "section": 4,
+   "word": "of",
+   "start": 29.18,
+   "end": 29.34
+  },
+  {
+   "section": 4,
+   "word": "Resurrection",
+   "start": 29.34,
+   "end": 29.9
+  },
+  {
+   "section": 4,
+   "word": "is",
+   "start": 29.9,
+   "end": 30.46
+  },
+  {
+   "section": 4,
+   "word": "his",
+   "start": 30.46,
+   "end": 30.68
+  },
+  {
+   "section": 4,
+   "word": "Salat.\"",
+   "start": 30.68,
+   "end": 31.22
+  },
+  {
+   "section": 5,
+   "word": "He",
+   "start": 33.22,
+   "end": 33.44
+  },
+  {
+   "section": 5,
+   "word": "ﷺ",
+   "start": 33.44,
+   "end": 35.2
+  },
+  {
+   "section": 5,
+   "word": "said",
+   "start": 35.2,
+   "end": 35.6
+  },
+  {
+   "section": 5,
+   "word": "that",
+   "start": 35.6,
+   "end": 35.84
+  },
+  {
+   "section": 5,
+   "word": "if",
+   "start": 35.84,
+   "end": 35.96
+  },
+  {
+   "section": 5,
+   "word": "it",
+   "start": 35.96,
+   "end": 36.06
+  },
+  {
+   "section": 5,
+   "word": "is",
+   "start": 36.06,
+   "end": 36.24
+  },
+  {
+   "section": 5,
+   "word": "sound,",
+   "start": 36.24,
+   "end": 36.72
+  },
+  {
+   "section": 5,
+   "word": "the",
+   "start": 36.72,
+   "end": 37.24
+  },
+  {
+   "section": 5,
+   "word": "servant",
+   "start": 37.24,
+   "end": 37.58
+  },
+  {
+   "section": 5,
+   "word": "has",
+   "start": 37.58,
+   "end": 37.8
+  },
+  {
+   "section": 5,
+   "word": "succeeded,",
+   "start": 37.8,
+   "end": 38.32
+  },
+  {
+   "section": 5,
+   "word": "and",
+   "start": 38.82,
+   "end": 39.0
+  },
+  {
+   "section": 5,
+   "word": "if",
+   "start": 39.0,
+   "end": 39.12
+  },
+  {
+   "section": 5,
+   "word": "it",
+   "start": 39.12,
+   "end": 39.22
+  },
+  {
+   "section": 5,
+   "word": "is",
+   "start": 39.22,
+   "end": 39.36
+  },
+  {
+   "section": 5,
+   "word": "lacking,",
+   "start": 39.36,
+   "end": 39.72
+  },
+  {
+   "section": 5,
+   "word": "he",
+   "start": 39.72,
+   "end": 40.28
+  },
+  {
+   "section": 5,
+   "word": "has",
+   "start": 40.28,
+   "end": 40.4
+  },
+  {
+   "section": 5,
+   "word": "failed",
+   "start": 40.4,
+   "end": 40.9
+  },
+  {
+   "section": 5,
+   "word": "and",
+   "start": 40.9,
+   "end": 41.2
+  },
+  {
+   "section": 5,
+   "word": "lost.",
+   "start": 41.2,
+   "end": 41.52
+  },
+  {
+   "section": 6,
+   "word": "But",
+   "start": 43.42,
+   "end": 43.7
+  },
+  {
+   "section": 6,
+   "word": "then",
+   "start": 43.7,
+   "end": 43.92
+  },
+  {
+   "section": 6,
+   "word": "comes",
+   "start": 43.92,
+   "end": 44.3
+  },
+  {
+   "section": 6,
+   "word": "the",
+   "start": 44.3,
+   "end": 44.56
+  },
+  {
+   "section": 6,
+   "word": "mercy.",
+   "start": 44.56,
+   "end": 44.9
+  },
+  {
+   "section": 6,
+   "word": "If",
+   "start": 45.48,
+   "end": 45.72
+  },
+  {
+   "section": 6,
+   "word": "something",
+   "start": 45.72,
+   "end": 46.0
+  },
+  {
+   "section": 6,
+   "word": "is",
+   "start": 46.0,
+   "end": 46.26
+  },
+  {
+   "section": 6,
+   "word": "missing",
+   "start": 46.26,
+   "end": 46.64
+  },
+  {
+   "section": 6,
+   "word": "from",
+   "start": 46.64,
+   "end": 46.9
+  },
+  {
+   "section": 6,
+   "word": "the",
+   "start": 46.9,
+   "end": 47.06
+  },
+  {
+   "section": 6,
+   "word": "obligatory",
+   "start": 47.06,
+   "end": 47.46
+  },
+  {
+   "section": 6,
+   "word": "prayers,",
+   "start": 47.46,
+   "end": 48.14
+  },
+  {
+   "section": 6,
+   "word": "Allah",
+   "start": 48.62,
+   "end": 48.66
+  },
+  {
+   "section": 6,
+   "word": "will",
+   "start": 48.66,
+   "end": 48.94
+  },
+  {
+   "section": 6,
+   "word": "say:",
+   "start": 48.94,
+   "end": 49.26
+  },
+  {
+   "section": 6,
+   "word": "look,",
+   "start": 49.9,
+   "end": 50.0
+  },
+  {
+   "section": 6,
+   "word": "does",
+   "start": 50.3,
+   "end": 50.48
+  },
+  {
+   "section": 6,
+   "word": "My",
+   "start": 50.48,
+   "end": 50.7
+  },
+  {
+   "section": 6,
+   "word": "servant",
+   "start": 50.7,
+   "end": 51.16
+  },
+  {
+   "section": 6,
+   "word": "have",
+   "start": 51.16,
+   "end": 51.46
+  },
+  {
+   "section": 6,
+   "word": "voluntary",
+   "start": 51.46,
+   "end": 51.94
+  },
+  {
+   "section": 6,
+   "word": "prayers?",
+   "start": 51.94,
+   "end": 52.54
+  },
+  {
+   "section": 6,
+   "word": "And",
+   "start": 52.54,
+   "end": 53.0
+  },
+  {
+   "section": 6,
+   "word": "with",
+   "start": 53.0,
+   "end": 53.48
+  },
+  {
+   "section": 6,
+   "word": "them,",
+   "start": 53.48,
+   "end": 53.82
+  },
+  {
+   "section": 6,
+   "word": "what",
+   "start": 53.82,
+   "end": 54.28
+  },
+  {
+   "section": 6,
+   "word": "was",
+   "start": 54.28,
+   "end": 54.44
+  },
+  {
+   "section": 6,
+   "word": "lacking",
+   "start": 54.44,
+   "end": 54.84
+  },
+  {
+   "section": 6,
+   "word": "is",
+   "start": 54.84,
+   "end": 55.14
+  },
+  {
+   "section": 6,
+   "word": "completed.",
+   "start": 55.14,
+   "end": 55.68
+  },
+  {
+   "section": 7,
+   "word": "So",
+   "start": 57.56,
+   "end": 58.02
+  },
+  {
+   "section": 7,
+   "word": "the",
+   "start": 58.02,
+   "end": 58.2
+  },
+  {
+   "section": 7,
+   "word": "question",
+   "start": 58.2,
+   "end": 58.5
+  },
+  {
+   "section": 7,
+   "word": "isn't",
+   "start": 58.5,
+   "end": 59.04
+  },
+  {
+   "section": 7,
+   "word": "whether",
+   "start": 59.04,
+   "end": 59.26
+  },
+  {
+   "section": 7,
+   "word": "you're",
+   "start": 59.26,
+   "end": 59.6
+  },
+  {
+   "section": 7,
+   "word": "perfect.",
+   "start": 59.6,
+   "end": 60.0
+  },
+  {
+   "section": 7,
+   "word": "It's",
+   "start": 60.44,
+   "end": 60.78
+  },
+  {
+   "section": 7,
+   "word": "whether",
+   "start": 60.78,
+   "end": 60.96
+  },
+  {
+   "section": 7,
+   "word": "you'll",
+   "start": 60.96,
+   "end": 61.28
+  },
+  {
+   "section": 7,
+   "word": "stand",
+   "start": 61.28,
+   "end": 61.48
+  },
+  {
+   "section": 7,
+   "word": "up",
+   "start": 61.48,
+   "end": 61.72
+  },
+  {
+   "section": 7,
+   "word": "for",
+   "start": 61.72,
+   "end": 61.88
+  },
+  {
+   "section": 7,
+   "word": "the",
+   "start": 61.88,
+   "end": 62.0
+  },
+  {
+   "section": 7,
+   "word": "next",
+   "start": 62.0,
+   "end": 62.2
+  },
+  {
+   "section": 7,
+   "word": "one.",
+   "start": 62.2,
+   "end": 62.46
+  },
+  {
+   "section": 7,
+   "word": "Your",
+   "start": 63.02,
+   "end": 63.14
+  },
+  {
+   "section": 7,
+   "word": "next",
+   "start": 63.14,
+   "end": 63.42
+  },
+  {
+   "section": 7,
+   "word": "prayer",
+   "start": 63.42,
+   "end": 63.8
+  },
+  {
+   "section": 7,
+   "word": "is",
+   "start": 63.8,
+   "end": 64.12
+  },
+  {
+   "section": 7,
+   "word": "closer",
+   "start": 64.12,
+   "end": 64.4
+  },
+  {
+   "section": 7,
+   "word": "than",
+   "start": 64.4,
+   "end": 64.72
+  },
+  {
+   "section": 7,
+   "word": "you",
+   "start": 64.72,
+   "end": 64.86
+  },
+  {
+   "section": 7,
+   "word": "think.",
+   "start": 64.86,
+   "end": 65.2
+  }
+ ]
+}

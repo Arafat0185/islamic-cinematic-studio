@@ -1,0 +1,8 @@
+{
+  "fps": 30,
+  "openSec": 2.4,
+  "tailSec": 0.6,
+  "endingSec": 4.8,
+  "cardAfterSec": 1.6,
+  "dropAtSec": 0.3
+}
