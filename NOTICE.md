@@ -61,3 +61,10 @@ otherwise): from its 0:00, cut in the breath after 19:72 (110.2 s) so nothing of
 under the end card is made by our mix from the last second of the recitation, not taken from the recording. `engine/public/audio/guide/sirat_guide.mp4` (a TikTok video) was used only as a template for the order, pacing
 and shot types; none of its pictures, text or sound are used. Neither file is ever committed (engine/public/audio/ is
 git-ignored).
+
+## Narration (video 004, "The Man Who Never Rested")
+
+`engine/public/audio/guide/rest_guide.mp4` (a TikTok video supplied by the channel owner, 2026-11-21) is used only as a
+timing guide: its narration is a TikTok sound the channel owner adds in TikTok, and it is mixed only into the local check
+file `The_Man_Who_Never_Rested_PREVIEW.mp4`. Its pictures are never used. Our own file carries only our sound design.
+The guide is never committed (engine/public/audio/ is git-ignored). No background vocals file is used.

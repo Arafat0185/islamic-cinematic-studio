@@ -1,0 +1,93 @@
+# References for video 004 · The Man Who Never Rested
+# Rule: nothing ships until every source is checked and reviewer.approved is true.
+
+video: 004-never-rested
+sources:
+  - id: quran-35-34
+    type: quran
+    used_in: caption 29.5-33.3 s (Arabic + English, tag "QURAN 35:34"); the narrator says the English
+    reference: Surat Fatir 35:34 (the phrase "Praise to Allah, who has removed from us [all] sorrow")
+    grade: n/a (Quran)
+    arabic_text: quran.com API v4 text_uthmani, saved in quran/35_34.json (words 2-7 of the verse)
+    translation_used: Saheeh International (quran.com translation id 20; name confirmed in quran/translations_list.json)
+    link: https://quran.com/35/34
+    quoted_exactly: the caption is an exact slice of the saved API text (checked by tools/build_rest_timing.py)
+    checked_on: 2026-11-21
+
+  - id: quran-13-24
+    type: quran
+    used_in: caption 50.9-58.6 s (Arabic + English, tag "QURAN 13:24"); the narrator recites the Arabic
+    reference: Surat ar-Ra'd 13:24 (the whole verse)
+    grade: n/a (Quran)
+    arabic_text: quran.com API v4 text_uthmani, saved in quran/13_24.json
+    translation_used: Saheeh International (id 20), including its bracket "[i.e., security]"
+    link: https://quran.com/13/24
+    checked_on: 2026-11-21
+
+  - id: quran-39-10
+    type: quran (referenced only)
+    used_in: small tag "cf. QURAN 39:10" on "a reward that has no limit" (47.1-50.4 s); the narration paraphrases it
+    reference: Surat az-Zumar 39:10 ("Indeed, the patient will be given their reward without account [i.e., limit]")
+    arabic_text: saved in quran/39_10.json; not shown on screen
+    link: https://quran.com/39/10
+    checked_on: 2026-11-21
+
+  - id: imam-ahmad-true-rest
+    type: saying of a scholar
+    used_in: "When does one feel true rest? ... At the first step he takes into Jannah" (10.6-17.4 s); label "IMAM AHMAD"
+      (+ his Arabic name) above the caption; source tag "TABAQAT AL-HANABILA 2/290"; the original Arabic shown above the
+      English as two exact slices of the text below ("متى يجد العبد طعم الراحة؟" / "قال: عند أول قدم يضعها في الجنة")
+    arabic: "متى يجد العبد طعم الراحة؟ قال: عند أول قدم يضعها في الجنة"
+    arabic_copied_from: https://shamela.ws/book/20870/187 (al-Jami' li-'Ulum al-Imam Ahmad 2/191, footnote: Tabaqat al-Hanabila 2/290)
+    source: Ibn Abi Ya'la, Tabaqat al-Hanabila 2/290 (as cited in al-Jami' li-'Ulum al-Imam Ahmad 2/191, entry 447,
+      Muhammad ibn Hasnawayh: a man from Khurasan asked Imam Ahmad); also quoted by Ibn Muflih, al-Maqsad al-Arshad
+    link: https://shamela.ws/book/20870/187
+    status: traced (a secondary compilation and its footnote; the printed Tabaqat was not opened)
+    checked_on: 2026-11-21
+
+  - id: ibn-al-qayyim-bliss
+    type: saying of a scholar
+    used_in: "True bliss is not attained through bliss ... do joy and delight come" (33.5-42.6 s); label "IBN AL-QAYYIM"
+      (+ his Arabic name) above the caption; source tag "MIFTAH DAR AL-SA'ADA"; the original Arabic shown above the English
+      as exact slices of the text below ("النعيم لا يدرك بالنعيم" / "وإن من آثر الراحة فاتته الراحة" /
+      "وإن بحسب ركوب الأهوال وإحتمال المشاق" / "تكون الفرحة واللذة")
+    arabic: "وقد أجمع عقلاء كل أمة على أن النعيم لا يدرك بالنعيم وإن من آثر الراحة فاتته الراحة وإن بحسب ركوب الأهوال وإحتمال المشاق تكون الفرحة واللذة"
+    arabic_copied_from: https://www.islamicbook.ws/amma/mftah-dar-alsaadt-003.html (web transcription; spelling as there)
+    source: Ibn al-Qayyim, Miftah Dar al-Sa'ada, volume 2, chapter "وتحقيق هذا المقام بالكلام في مقامين" (commonly cited
+      as 2/15; page numbers differ between editions)
+    link: https://www.islamicbook.ws/amma/mftah-dar-alsaadt-003.html
+    status: traced (the passage was read in a web transcription of the book; no printed page checked)
+    checked_on: 2026-11-21
+
+  - id: ibn-al-jawzi-comfort
+    type: saying of a scholar
+    used_in: "Whoever seeks absolute comfort is seeking something that was never created" (0-5.1 s); label "IBN AL-JAWZI"
+      (+ his Arabic name) with "attributed" under it; English only; no book named on screen
+    status: attributed - source not verified (not found in Sayd al-Khatir or elsewhere in the searches made, 2026-11-21;
+      no reliable Arabic wording of this exact saying was found, so no Arabic is shown)
+    checked_on: 2026-11-21
+
+  - id: sufyan-al-thawri-dunya
+    type: saying of a scholar
+    used_in: "this dunya is created for hardship and anxiety, not for rest and tranquility" (5.2-10.5 s); label
+      "SUFYAN AL-THAWRI" (+ his Arabic name) with "attributed" under it; English only; no book named on screen
+    status: attributed - source not verified (close sayings exist, e.g. in Bahjat al-Majalis, but not this wording; no
+      reliable Arabic wording of this exact saying was found, so no Arabic is shown)
+    checked_on: 2026-11-21
+
+  - id: sorrows-of-my-heart
+    type: unattributed lines in the narration
+    used_in: 17.4-27.0 s, captioned with no name
+    status: no attribution given in the narration; none shown
+
+  - id: narration
+    type: voice (a TikTok sound the channel owner adds in TikTok)
+    used_in: 0-55.3 s; only in The_Man_Who_Never_Rested_PREVIEW.mp4 for checking; never in the upload file, never committed
+    transcript: narration/whisper_words.json (local Whisper small.en) + the guide's burned-in captions for 15-24 s
+    differences_from_the_guide_captions: see timing.json "notes"
+
+reviewer:
+  name: Arafat Rouf
+  role: channel owner
+  approved: pending
+  notes: "2026-11-21: the owner approved the plan (step 1) and asked for the source tags and the 'attributed' marks."

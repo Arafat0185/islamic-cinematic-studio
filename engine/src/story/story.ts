@@ -6,12 +6,12 @@ import type { Cam, V3 } from "../camera/ease";
 import type { Pen } from "../draw/toon";
 import type { Accent } from "../film/film";
 
-export type SetId = "courtyard" | "bedroom" | "street" | "office" | "gym" | "feed" | "void" | "deadlines" | "airport" | "car" | "sofa" | "hospital" | "cemetery" | "abyss";
+export type SetId = "courtyard" | "bedroom" | "street" | "office" | "gym" | "feed" | "void" | "deadlines" | "airport" | "car" | "sofa" | "hospital" | "cemetery" | "abyss" | "library" | "bookworlds";
 /** world offset of each set (local coordinates + offset = world) */
 export const SET_OFFSET: Record<SetId, V3> = {
   courtyard: [0, 0, 0], bedroom: [200, 0, 0], street: [400, 0, 0], office: [600, 0, 0], gym: [800, 0, 0],
   feed: [1000, 0, 0], void: [1200, 0, 0], deadlines: [1400, 0, 0], airport: [1600, 0, 0], car: [1800, 0, 0], sofa: [2000, 0, 0],
-  hospital: [2200, 0, 0], cemetery: [2400, 0, 0], abyss: [0, 0, 6000],
+  hospital: [2200, 0, 0], cemetery: [2400, 0, 0], abyss: [0, 0, 6000], library: [0, 0, -6000], bookworlds: [0, 0, 12000],
 };
 
 /** the Traveller this frame (world position of his soles / the card's pivot), or null when he is off screen */
@@ -66,4 +66,6 @@ export type FrameFx = {
   css?: string;
   /** heat haze: the picture shimmers (turbulence displacement, px) */
   haze?: number;
+  /** a CSS clip-path for the 3D picture (e.g. the page of a book the camera is pushing into); the overlay frames it */
+  clip?: string;
 };

@@ -1,0 +1,958 @@
+{
+ "fps": 30,
+ "length": 62.0,
+ "narrEnd": 55.3,
+ "sit": 52.6,
+ "cardFrom": 59.0,
+ "phrases": [
+  {
+   "i": 0,
+   "text": "Ibn al-Jawzi, he says:",
+   "start": 0.0,
+   "end": 0.95,
+   "words": [
+    {
+     "w": "Ibn",
+     "at": 0.0
+    },
+    {
+     "w": "al-Jawzi,",
+     "at": 0.06
+    },
+    {
+     "w": "he",
+     "at": 0.26
+    },
+    {
+     "w": "says:",
+     "at": 0.32
+    }
+   ],
+   "speaker": "jawzi",
+   "quote": "jawzi",
+   "keys": [
+    "Ibn al-Jawzi"
+   ]
+  },
+  {
+   "i": 1,
+   "text": "Whoever seeks absolute comfort",
+   "start": 1.0,
+   "end": 2.55,
+   "words": [
+    {
+     "w": "Whoever",
+     "at": 1.02
+    },
+    {
+     "w": "seeks",
+     "at": 1.26
+    },
+    {
+     "w": "absolute",
+     "at": 1.84
+    },
+    {
+     "w": "comfort",
+     "at": 2.14
+    }
+   ],
+   "quote": "jawzi",
+   "keys": [
+    "absolute comfort"
+   ]
+  },
+  {
+   "i": 2,
+   "text": "is seeking something that was never created.",
+   "start": 2.6,
+   "end": 5.1,
+   "words": [
+    {
+     "w": "is",
+     "at": 2.62
+    },
+    {
+     "w": "seeking",
+     "at": 3.26
+    },
+    {
+     "w": "something",
+     "at": 3.58
+    },
+    {
+     "w": "that",
+     "at": 3.9
+    },
+    {
+     "w": "was",
+     "at": 4.14
+    },
+    {
+     "w": "never",
+     "at": 4.28
+    },
+    {
+     "w": "created.",
+     "at": 4.58
+    }
+   ],
+   "quote": "jawzi",
+   "keys": [
+    "never created"
+   ]
+  },
+  {
+   "i": 3,
+   "text": "Sufyan al-Thawri, he says that",
+   "start": 5.2,
+   "end": 6.9,
+   "words": [
+    {
+     "w": "Sufyan",
+     "at": 5.22
+    },
+    {
+     "w": "al-Thawri,",
+     "at": 5.84
+    },
+    {
+     "w": "he",
+     "at": 5.9
+    },
+    {
+     "w": "says",
+     "at": 6.16
+    },
+    {
+     "w": "that",
+     "at": 6.62
+    }
+   ],
+   "speaker": "thawri",
+   "quote": "thawri",
+   "keys": [
+    "Sufyan al-Thawri"
+   ]
+  },
+  {
+   "i": 4,
+   "text": "this dunya is created for hardship and anxiety, not for rest and tranquility.",
+   "start": 7.0,
+   "end": 10.5,
+   "words": [
+    {
+     "w": "this",
+     "at": 7.0
+    },
+    {
+     "w": "dunya",
+     "at": 7.26
+    },
+    {
+     "w": "is",
+     "at": 7.56
+    },
+    {
+     "w": "created",
+     "at": 7.7
+    },
+    {
+     "w": "for",
+     "at": 7.96
+    },
+    {
+     "w": "hardship",
+     "at": 8.22
+    },
+    {
+     "w": "and",
+     "at": 8.52
+    },
+    {
+     "w": "anxiety,",
+     "at": 8.58
+    },
+    {
+     "w": "not",
+     "at": 8.74
+    },
+    {
+     "w": "for",
+     "at": 9.18
+    },
+    {
+     "w": "rest",
+     "at": 9.44
+    },
+    {
+     "w": "and",
+     "at": 9.68
+    },
+    {
+     "w": "tranquility.",
+     "at": 9.88
+    }
+   ],
+   "quote": "thawri",
+   "keys": [
+    "hardship",
+    "anxiety"
+   ]
+  },
+  {
+   "i": 5,
+   "text": "And Imam Ahmad was asked:",
+   "start": 10.6,
+   "end": 12.1,
+   "words": [
+    {
+     "w": "And",
+     "at": 10.62
+    },
+    {
+     "w": "Imam",
+     "at": 10.96
+    },
+    {
+     "w": "Ahmad",
+     "at": 11.14
+    },
+    {
+     "w": "was",
+     "at": 11.48
+    },
+    {
+     "w": "asked:",
+     "at": 11.66
+    }
+   ],
+   "speaker": "ahmad",
+   "quote": "ahmad",
+   "keys": [
+    "Imam Ahmad"
+   ]
+  },
+  {
+   "i": 6,
+   "text": "When does one feel true rest? He says:",
+   "start": 12.2,
+   "end": 15.0,
+   "words": [
+    {
+     "w": "When",
+     "at": 12.22
+    },
+    {
+     "w": "does",
+     "at": 12.8
+    },
+    {
+     "w": "one",
+     "at": 12.98
+    },
+    {
+     "w": "feel",
+     "at": 13.16
+    },
+    {
+     "w": "true",
+     "at": 13.54
+    },
+    {
+     "w": "rest?",
+     "at": 14.16
+    },
+    {
+     "w": "He",
+     "at": 14.62
+    },
+    {
+     "w": "says:",
+     "at": 14.82
+    }
+   ],
+   "quote": "ahmad",
+   "ar": "متى يجد العبد طعم الراحة؟",
+   "keys": [
+    "true rest"
+   ]
+  },
+  {
+   "i": 7,
+   "text": "At the first step he takes into Jannah.",
+   "start": 15.05,
+   "end": 17.35,
+   "words": [
+    {
+     "w": "At",
+     "at": 15.05
+    },
+    {
+     "w": "the",
+     "at": 15.294
+    },
+    {
+     "w": "first",
+     "at": 15.539
+    },
+    {
+     "w": "step",
+     "at": 15.783
+    },
+    {
+     "w": "he",
+     "at": 16.027
+    },
+    {
+     "w": "takes",
+     "at": 16.272
+    },
+    {
+     "w": "into",
+     "at": 16.516
+    },
+    {
+     "w": "Jannah.",
+     "at": 16.761
+    }
+   ],
+   "quote": "ahmad",
+   "ar": "قال: عند أول قدم يضعها في الجنة",
+   "keys": [
+    "first step",
+    "Jannah"
+   ]
+  },
+  {
+   "i": 8,
+   "text": "The sorrows of my heart will never vanish",
+   "start": 17.4,
+   "end": 19.95,
+   "words": [
+    {
+     "w": "The",
+     "at": 17.4
+    },
+    {
+     "w": "sorrows",
+     "at": 17.671
+    },
+    {
+     "w": "of",
+     "at": 17.942
+    },
+    {
+     "w": "my",
+     "at": 18.213
+    },
+    {
+     "w": "heart",
+     "at": 18.484
+    },
+    {
+     "w": "will",
+     "at": 18.755
+    },
+    {
+     "w": "never",
+     "at": 19.026
+    },
+    {
+     "w": "vanish",
+     "at": 19.297
+    }
+   ],
+   "keys": [
+    "sorrows"
+   ]
+  },
+  {
+   "i": 9,
+   "text": "until I am given the glad tidings of acceptance,",
+   "start": 20.0,
+   "end": 22.45,
+   "words": [
+    {
+     "w": "until",
+     "at": 20.0
+    },
+    {
+     "w": "I",
+     "at": 20.231
+    },
+    {
+     "w": "am",
+     "at": 20.463
+    },
+    {
+     "w": "given",
+     "at": 20.694
+    },
+    {
+     "w": "the",
+     "at": 20.926
+    },
+    {
+     "w": "glad",
+     "at": 21.157
+    },
+    {
+     "w": "tidings",
+     "at": 21.388
+    },
+    {
+     "w": "of",
+     "at": 21.62
+    },
+    {
+     "w": "acceptance,",
+     "at": 21.851
+    }
+   ],
+   "keys": [
+    "acceptance"
+   ]
+  },
+  {
+   "i": 10,
+   "text": "and until I see my Record delivered into my right hand,",
+   "start": 22.5,
+   "end": 24.85,
+   "words": [
+    {
+     "w": "and",
+     "at": 22.5
+    },
+    {
+     "w": "until",
+     "at": 22.682
+    },
+    {
+     "w": "I",
+     "at": 22.863
+    },
+    {
+     "w": "see",
+     "at": 23.045
+    },
+    {
+     "w": "my",
+     "at": 23.226
+    },
+    {
+     "w": "Record",
+     "at": 23.408
+    },
+    {
+     "w": "delivered",
+     "at": 23.59
+    },
+    {
+     "w": "into",
+     "at": 23.771
+    },
+    {
+     "w": "my",
+     "at": 23.953
+    },
+    {
+     "w": "right",
+     "at": 24.134
+    },
+    {
+     "w": "hand,",
+     "at": 24.316
+    }
+   ],
+   "keys": [
+    "right hand"
+   ]
+  },
+  {
+   "i": 11,
+   "text": "and my eyes are cooled by the sight of the Messenger ﷺ.",
+   "start": 24.9,
+   "end": 26.95,
+   "words": [
+    {
+     "w": "and",
+     "at": 24.9
+    },
+    {
+     "w": "my",
+     "at": 25.045
+    },
+    {
+     "w": "eyes",
+     "at": 25.19
+    },
+    {
+     "w": "are",
+     "at": 25.336
+    },
+    {
+     "w": "cooled",
+     "at": 25.481
+    },
+    {
+     "w": "by",
+     "at": 25.626
+    },
+    {
+     "w": "the",
+     "at": 25.771
+    },
+    {
+     "w": "sight",
+     "at": 25.916
+    },
+    {
+     "w": "of",
+     "at": 26.062
+    },
+    {
+     "w": "the",
+     "at": 26.207
+    },
+    {
+     "w": "Messenger",
+     "at": 26.352
+    },
+    {
+     "w": "ﷺ.",
+     "at": 26.497
+    }
+   ],
+   "keys": []
+  },
+  {
+   "i": 12,
+   "text": "The people of Paradise, when they first enter, they will say:",
+   "start": 27.0,
+   "end": 29.45,
+   "words": [
+    {
+     "w": "The",
+     "at": 27.8
+    },
+    {
+     "w": "people",
+     "at": 28.12
+    },
+    {
+     "w": "of",
+     "at": 28.18
+    },
+    {
+     "w": "Paradise,",
+     "at": 28.34
+    },
+    {
+     "w": "when",
+     "at": 28.48
+    },
+    {
+     "w": "they",
+     "at": 28.66
+    },
+    {
+     "w": "first",
+     "at": 28.72
+    },
+    {
+     "w": "enter,",
+     "at": 29.04
+    },
+    {
+     "w": "they",
+     "at": 29.2
+    },
+    {
+     "w": "will",
+     "at": 29.26
+    },
+    {
+     "w": "say:",
+     "at": 29.34
+    }
+   ],
+   "keys": [
+    "Paradise"
+   ]
+  },
+  {
+   "i": 13,
+   "text": "True bliss is not attained through bliss,",
+   "start": 33.5,
+   "end": 35.15,
+   "words": [
+    {
+     "w": "True",
+     "at": 33.58
+    },
+    {
+     "w": "bliss",
+     "at": 33.74
+    },
+    {
+     "w": "is",
+     "at": 33.96
+    },
+    {
+     "w": "not",
+     "at": 34.16
+    },
+    {
+     "w": "attained",
+     "at": 34.34
+    },
+    {
+     "w": "through",
+     "at": 34.58
+    },
+    {
+     "w": "bliss,",
+     "at": 34.82
+    }
+   ],
+   "speaker": "qayyim",
+   "quote": "qayyim",
+   "ar": "النعيم لا يدرك بالنعيم",
+   "keys": [
+    "True bliss"
+   ]
+  },
+  {
+   "i": 14,
+   "text": "and whoever chooses comfort misses out on comfort,",
+   "start": 35.2,
+   "end": 37.75,
+   "words": [
+    {
+     "w": "and",
+     "at": 35.2
+    },
+    {
+     "w": "whoever",
+     "at": 35.7
+    },
+    {
+     "w": "chooses",
+     "at": 35.9
+    },
+    {
+     "w": "comfort",
+     "at": 36.26
+    },
+    {
+     "w": "misses",
+     "at": 36.76
+    },
+    {
+     "w": "out",
+     "at": 37.02
+    },
+    {
+     "w": "on",
+     "at": 37.3
+    },
+    {
+     "w": "comfort,",
+     "at": 37.46
+    }
+   ],
+   "quote": "qayyim",
+   "ar": "وإن من آثر الراحة فاتته الراحة",
+   "keys": [
+    "misses out"
+   ]
+  },
+  {
+   "i": 15,
+   "text": "and that in proportion to facing hardships and enduring struggles",
+   "start": 37.8,
+   "end": 40.55,
+   "words": [
+    {
+     "w": "and",
+     "at": 37.8
+    },
+    {
+     "w": "that",
+     "at": 38.0
+    },
+    {
+     "w": "in",
+     "at": 38.08
+    },
+    {
+     "w": "proportion",
+     "at": 38.18
+    },
+    {
+     "w": "to",
+     "at": 38.5
+    },
+    {
+     "w": "facing",
+     "at": 38.8
+    },
+    {
+     "w": "hardships",
+     "at": 39.12
+    },
+    {
+     "w": "and",
+     "at": 39.56
+    },
+    {
+     "w": "enduring",
+     "at": 39.84
+    },
+    {
+     "w": "struggles",
+     "at": 40.12
+    }
+   ],
+   "quote": "qayyim",
+   "ar": "وإن بحسب ركوب الأهوال وإحتمال المشاق",
+   "keys": [
+    "hardships",
+    "struggles"
+   ]
+  },
+  {
+   "i": 16,
+   "text": "do joy and delight come.",
+   "start": 40.6,
+   "end": 42.6,
+   "words": [
+    {
+     "w": "do",
+     "at": 40.64
+    },
+    {
+     "w": "joy",
+     "at": 41.34
+    },
+    {
+     "w": "and",
+     "at": 41.62
+    },
+    {
+     "w": "delight",
+     "at": 41.84
+    },
+    {
+     "w": "come.",
+     "at": 42.16
+    }
+   ],
+   "quote": "qayyim",
+   "ar": "تكون الفرحة واللذة",
+   "keys": [
+    "joy",
+    "delight"
+   ]
+  },
+  {
+   "i": 17,
+   "text": "If you're going through hardships and struggles,",
+   "start": 43.05,
+   "end": 45.35,
+   "words": [
+    {
+     "w": "If",
+     "at": 43.06
+    },
+    {
+     "w": "you're",
+     "at": 43.12
+    },
+    {
+     "w": "going",
+     "at": 43.22
+    },
+    {
+     "w": "through",
+     "at": 43.36
+    },
+    {
+     "w": "hardships",
+     "at": 43.58
+    },
+    {
+     "w": "and",
+     "at": 43.98
+    },
+    {
+     "w": "struggles,",
+     "at": 44.34
+    }
+   ],
+   "keys": [
+    "hardships"
+   ]
+  },
+  {
+   "i": 18,
+   "text": "know that this patience that you're upon",
+   "start": 45.4,
+   "end": 47.05,
+   "words": [
+    {
+     "w": "know",
+     "at": 45.4
+    },
+    {
+     "w": "that",
+     "at": 45.58
+    },
+    {
+     "w": "this",
+     "at": 45.76
+    },
+    {
+     "w": "patience",
+     "at": 45.96
+    },
+    {
+     "w": "that",
+     "at": 46.36
+    },
+    {
+     "w": "you're",
+     "at": 46.6
+    },
+    {
+     "w": "upon",
+     "at": 46.8
+    }
+   ],
+   "keys": [
+    "patience"
+   ]
+  },
+  {
+   "i": 19,
+   "text": "is your ticket to a reward that has no limit.",
+   "start": 47.1,
+   "end": 50.4,
+   "words": [
+    {
+     "w": "is",
+     "at": 47.1
+    },
+    {
+     "w": "your",
+     "at": 47.46
+    },
+    {
+     "w": "ticket",
+     "at": 47.78
+    },
+    {
+     "w": "to",
+     "at": 48.08
+    },
+    {
+     "w": "a",
+     "at": 48.88
+    },
+    {
+     "w": "reward",
+     "at": 49.0
+    },
+    {
+     "w": "that",
+     "at": 49.3
+    },
+    {
+     "w": "has",
+     "at": 49.52
+    },
+    {
+     "w": "no",
+     "at": 49.72
+    },
+    {
+     "w": "limit.",
+     "at": 49.94
+    }
+   ],
+   "keys": [
+    "no limit"
+   ]
+  }
+ ],
+ "quran": [
+  {
+   "key": "35:34",
+   "ar": "ٱلْحَمْدُ لِلَّهِ ٱلَّذِىٓ أَذْهَبَ عَنَّا ٱلْحَزَنَ",
+   "en": "Praise to Allāh, who has removed from us [all] sorrow.",
+   "start": 29.5,
+   "end": 33.3,
+   "tag": "QURAN 35:34"
+  },
+  {
+   "key": "13:24",
+   "ar": "سَلَـٰمٌ عَلَيْكُم بِمَا صَبَرْتُمْ ۚ فَنِعْمَ عُقْبَى ٱلدَّارِ",
+   "en": "\"Peace [i.e., security] be upon you for what you patiently endured. And excellent is the final home.\"",
+   "start": 50.9,
+   "end": 58.6,
+   "tag": "QURAN 13:24"
+  }
+ ],
+ "speakers": {
+  "jawzi": {
+   "ar": "ابن الجوزي",
+   "en": "Ibn al-Jawzi",
+   "died": "d. 597 AH",
+   "label": "IBN AL-JAWZI",
+   "attributed": true
+  },
+  "thawri": {
+   "ar": "سفيان الثوري",
+   "en": "Sufyan al-Thawri",
+   "died": "d. 161 AH",
+   "label": "SUFYAN AL-THAWRI",
+   "attributed": true
+  },
+  "ahmad": {
+   "ar": "الإمام أحمد بن حنبل",
+   "en": "Imam Ahmad ibn Hanbal",
+   "died": "d. 241 AH",
+   "label": "IMAM AHMAD",
+   "attributed": false
+  },
+  "qayyim": {
+   "ar": "ابن القيم",
+   "en": "Ibn al-Qayyim",
+   "died": "d. 751 AH",
+   "label": "IBN AL-QAYYIM",
+   "attributed": false
+  }
+ },
+ "sourceAr": {
+  "ahmad": "متى يجد العبد طعم الراحة؟ قال: عند أول قدم يضعها في الجنة",
+  "qayyim": "وقد أجمع عقلاء كل أمة على أن النعيم لا يدرك بالنعيم وإن من آثر الراحة فاتته الراحة وإن بحسب ركوب الأهوال وإحتمال المشاق تكون الفرحة واللذة"
+ },
+ "cf": {
+  "tag": "cf. QURAN 39:10",
+  "start": 47.1,
+  "end": 50.4
+ },
+ "notes": [
+  "0-1 s: the guide's caption reads 'Ibn al-Jawzi, he says:'; Whisper hears only 'He says' (the name is said very softly at 0 s).",
+  "1-2.6 s: the guide's caption adds 'in this world'; it is not spoken, so it is not in our caption.",
+  "7-10.5 s: spoken 'this dunya'; the guide's caption says 'This world'. Our caption follows the speech.",
+  "15-24 s: Whisper cannot hear the words (humming); the caption windows come from the guide's captions.",
+  "35-37.7 s: spoken 'misses out on comfort'; the guide's caption adds '(true)'. Our caption follows the speech.",
+  "50.9-55.3 s: the narrator recites 13:24 in Arabic; our caption shows the verse (Arabic + Saheeh International)."
+ ],
+ "sources": {
+  "narration": "public/audio/guide/rest_guide.mp4 (TikTok sound; never committed; PREVIEW only)",
+  "quran": "https://api.quran.com/api/v4/verses/by_key/{35:34,13:24,39:10}?fields=text_uthmani&translations=20"
+ }
+}
