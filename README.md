@@ -1,12 +1,18 @@
 <div align="center">
 
-<img src="brand/logo/traveller_logo_orange_ring.png" alt="The Traveller" width="160" />
+<img src="brand/logo/traveller_logo_transparent.svg" alt="The Traveller" width="160" />
 
 # Islamic Cinematic Studio
 
 **An AI-directed, code-native animation pipeline for faceless Islamic short-form cinema.**
 
 *Procedural 3D worlds · hand-drawn 2D characters · scripture-verified captions · deterministic frame-accurate rendering*
+
+<br />
+
+<img src="docs/showcase/hero.gif" alt="Moments from The Man Who Never Rested, The Sirat and The Last Request" width="300" />
+
+<sub>Moments from <i>The Man Who Never Rested</i>, <i>The Sirat</i> and <i>The Last Request</i>, every frame rendered from code</sub>
 
 <br />
 
@@ -70,8 +76,11 @@ engine/
 │   ├── characters/    # the Traveller + supporting cast, poses & turnarounds
 │   ├── render/        # shaders: ink, card lighting, lens blur, grade
 │   ├── camera/        # easing curves, rigs, collision & pitch guards
-│   ├── scenes/        # procedural 3D worlds
-│   └── toolkit/       # kinetic captions, transitions, tracker UI
+│   ├── sets/          # procedural 3D worlds (library, bridge, cemetery, city…)
+│   ├── story/         # story player: shots, sets and per-frame effects
+│   ├── scenes/        # one folder per film: timeline, overlay, life
+│   └── text/          # kinetic captions, Arabic lines, source tags
+├── tools/             # chunked render, QA, audio mix, Whisper alignment
 ├── public/audio/      # local-only audio (git-ignored)
 └── remotion.config.ts # Windows/ANGLE-safe render config
 ```
@@ -81,16 +90,29 @@ engine/
 - **2D-in-3D compositing.** The characters keep the warmth of hand-drawn art while the camera moves freely through real 3D space with parallax, depth of field and lighting.
 - **Camera guardrails.** A collision solver and a 45° downward-pitch limit stop the flat-card look from showing.
 - **Anti-aliasing discipline.** Power-of-two mipmapped textures, anisotropic filtering, z-fighting removal and motion blur give stable, flicker-free frames on phone screens.
-- **Memory-bounded rendering.** Renders run in chunks of about 600 frames, one process per chunk, so long films finish reliably on integrated GPUs.
+- **Memory-bounded rendering.** Renders run in chunks of 300–600 frames, one process per chunk, resumable and auto-retried with smaller chunks, so long films finish reliably on integrated GPUs.
+
+The hardest problems and how they were solved are written up in **[docs/ENGINEERING.md](docs/ENGINEERING.md)**.
 
 <br />
 
 ## ✦ Filmography
 
-| # | Title | Scripture | Length | Status |
-|:-:|---|---|:-:|:-:|
-| 001 | **The First Question** | Jami' at-Tirmidhi 413 · Surat Maryam 19:59–63 | 1:06 | ✅ Released |
-| 002 | **The Last Request** | Surat Al-Munafiqun 63:10–11 | 1:12 | 🎬 Final cut |
+| # | Title | Scripture | Length | Showcase | Status |
+|:-:|---|---|:-:|:-:|:-:|
+| 001 | **The First Question**: a day of chasing, and the first question on the Day of Judgement | Jami' at-Tirmidhi 413 · Surat Maryam 19:59–63 | 1:06 | [▶ clip](docs/showcase/001-the-first-question.mp4) | ✅ Released |
+| 002 | **The Last Request**: a man who kept delaying, a funeral in the rain | Surat Al-Munafiqun 63:10–11 | 1:13 | [▶ clip](docs/showcase/002-the-last-request.mp4) | 🎬 Final cut |
+| 003 | **The Sirat**: the bridge over Hell, set to a Taraweeh recitation | Surat Maryam 19:66–72 | 1:55 | [▶ clip](docs/showcase/003-the-sirat.mp4) | 🎬 Final cut |
+| 004 | **The Man Who Never Rested**: a library whose books carry him into other worlds | Quran 35:34 · 13:24 · scholars' sayings | 1:02 | [▶ clip](docs/showcase/004-the-man-who-never-rested.mp4) | 🎬 Final cut |
+
+<table>
+<tr><td align="center"><b>001 · The First Question</b><br/><img src="docs/showcase/001-the-first-question_sheet.jpg" alt="Contact sheet: The First Question" /></td></tr>
+<tr><td align="center"><b>002 · The Last Request</b><br/><img src="docs/showcase/002-the-last-request_sheet.jpg" alt="Contact sheet: The Last Request" /></td></tr>
+<tr><td align="center"><b>003 · The Sirat</b><br/><img src="docs/showcase/003-the-sirat_sheet.jpg" alt="Contact sheet: The Sirat" /></td></tr>
+<tr><td align="center"><b>004 · The Man Who Never Rested</b><br/><img src="docs/showcase/004-the-man-who-never-rested_sheet.jpg" alt="Contact sheet: The Man Who Never Rested" /></td></tr>
+</table>
+
+<sub>Showcase clips are silent: recitations and narration are third-party audio and are never committed.</sub>
 
 <br />
 
@@ -103,7 +125,8 @@ npm install
 npm run studio      # open Remotion Studio (live preview)
 npm run typecheck   # strict TypeScript check
 npm run stills      # render QA stills / contact sheets
-npm run final       # full chunked render of the current film
+npm run rest        # full chunked render of video 004 (also: lastrequest, sirat)
+npm run rest-qa     # automated QA of the finished render
 ```
 
 > **Requirements:** Node 18+, Python 3.10+ (audio & QA), Google Chrome. Tested on Windows 11 with integrated Radeon graphics.
