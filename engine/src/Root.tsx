@@ -4,6 +4,7 @@ import { Composition } from "remotion";
 import { CourtyardTest, COURTYARD_FRAMES, COURTYARD_FPS } from "./scenes/courtyard-test/CourtyardTest";
 import { PoseSheet, POSE_SHEET_W, POSE_SHEET_H } from "./scenes/pose-sheet/PoseSheet";
 import { CastSheet, CAST_SHEET_W, CAST_SHEET_H } from "./scenes/pose-sheet/CastSheet";
+import { LastRequest, LastRequestSamples, LASTREQUEST_FRAMES, LASTREQUEST_FPS } from "./scenes/lastrequest/LastRequest";
 import { TravellerMotionTest, MOTION_FRAMES, MOTION_FPS } from "./scenes/motion-test/TravellerMotionTest";
 import { CourtyardBeauty } from "./scenes/courtyard-beauty/CourtyardBeauty";
 import { TextSample } from "./scenes/toolkit/TextSample";
@@ -38,6 +39,9 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="Video001D3" component={Video001D3} durationInFrames={VIDEO001D3_FRAMES} fps={VIDEO001D3_FPS} width={1080} height={1920} />
     <Composition id="TheFirstQuestionFinal" component={Final001} durationInFrames={FINAL001_FRAMES} fps={FINAL001_FPS} width={1080} height={1920} />
     {/* Video 001, Quran version: captions of the recitation of Maryam 19:59-63 over the Traveller's story (the recitation is added in TikTok) */}
+    {/* Video 002 "The Last Request": the voice clip (added in TikTok) + Al-Mu'minun 23:99-101 recited (in our file) */}
+    <Composition id="TheLastRequest" component={LastRequest} durationInFrames={LASTREQUEST_FRAMES} fps={LASTREQUEST_FPS} width={1080} height={1920} />
+    <Composition id="TheLastRequestSamples" component={LastRequestSamples} durationInFrames={LASTREQUEST_FRAMES} fps={LASTREQUEST_FPS} width={1080} height={1920} />
     <Composition id="TheFirstQuestionQuran" component={Quran001} durationInFrames={QURAN001_FRAMES} fps={QURAN001_FPS} width={1080} height={1920} />
     {/* preview only: chosen frames of the Quran version, one per output frame (props {"samples": [frame, ...]}); as long as
         the video (Remotion clamps the frame to the composition's length), render it with --frames=0-<n-1> */}

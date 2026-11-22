@@ -1,0 +1,288 @@
+{
+ "about": "Video 002 The Last Request: the shot list (1-3 s each, a new action every 2-3 s), shared by the picture (engine/src/scenes/lastrequest/) and the sound (engine/tools/mix_lastrequest.py). Times in seconds. transitions: the eerie cut at that time (blink = eyelids closing to black and opening, smear = smearing into darkness, heart = a cut on a heartbeat, glass = a dissolve through rain on glass, glassSlow = the same, slower (0.8 s), flash = a lightning-flash cut).",
+ "shots": [
+  {
+   "at": 0.0,
+   "kind": "runRain",
+   "set": "street",
+   "why": "You think you're not being punished...: he runs through the night rain, late, splashing through puddles"
+  },
+  {
+   "at": 1.5,
+   "kind": "missBus",
+   "set": "street",
+   "why": "...for your sins?: the bus pulls away as he reaches the stop"
+  },
+  {
+   "at": 3.1,
+   "kind": "lookClosely",
+   "set": "street",
+   "why": "Look closely: a slow push into his soaked, faceless silhouette, standing still as the crowd rushes past"
+  },
+  {
+   "at": 4.4,
+   "kind": "toss3am",
+   "set": "bedroom",
+   "why": "deprived of your Qiyam al-Layl: 3 a.m., he tosses and turns in bed"
+  },
+  {
+   "at": 5.5,
+   "kind": "grabPhone",
+   "set": "bedroom",
+   "why": "he sits up and grabs his phone; the prayer mat in the corner goes darker"
+  },
+  {
+   "at": 6.7,
+   "kind": "pastShelf",
+   "set": "bedroom",
+   "why": "your daily Qur'an recitation: he walks past the shelf, the mushaf's dust thickening; he doesn't look"
+  },
+  {
+   "at": 8.9,
+   "kind": "pastMasjid",
+   "set": "street",
+   "why": "your sunnah prayers: he walks past the masjid door in the rain as men go in; warm light spills out; he keeps walking into the dark"
+  },
+  {
+   "at": 10.7,
+   "kind": "beadsFall",
+   "set": "bedroom",
+   "why": "your tongue no longer remembers Allah: his prayer beads slip off the nightstand and scatter across the floor"
+  },
+  {
+   "at": 13.4,
+   "kind": "drainWave",
+   "set": "bedroom",
+   "why": "your heart is slowly closing off: the colour drains from his room in a wave; the clock races; warm light leaks out of the window like smoke; the money ticks down"
+  },
+  {
+   "at": 15.4,
+   "kind": "drainClose",
+   "set": "bedroom",
+   "why": "the plant on the windowsill wilts in time-lapse; his food goes cold"
+  },
+  {
+   "at": 17.5,
+   "kind": "collapseBed",
+   "set": "bedroom",
+   "why": "So when are you gonna wake up?: he collapses onto the bed"
+  },
+  {
+   "at": 19.74,
+   "kind": "wakePause",
+   "set": "bedroom",
+   "why": "after 'wake up?': no text for ~1.3 s, never dark: a slow push-in on him lying on the bed in the dark room, rain on the window behind him, his phone's light fading; then a slow dissolve through rain on glass"
+  },
+  {
+   "at": 21.28,
+   "kind": "bankPanic",
+   "set": "bedroom",
+   "why": "63:10 And spend...: the bank screen, work notifications piling up; his hands on his head"
+  },
+  {
+   "at": 24.45,
+   "kind": "walkHome",
+   "set": "street",
+   "why": "before death approaches one of you: he walks home alone in the heavy rain"
+  },
+  {
+   "at": 27.25,
+   "kind": "phoneDrop",
+   "set": "street",
+   "why": "his phone drops into a puddle and cracks"
+  },
+  {
+   "at": 29.5,
+   "kind": "collapseStreet",
+   "set": "street",
+   "why": "and he says...: he stumbles and collapses on the wet street (from a distance, side view)"
+  },
+  {
+   "at": 32.25,
+   "kind": "bedRail",
+   "set": "hospital",
+   "why": "the hospital: the camera moves along the bed rail; the heartbeat on the monitor slowing; heavier rain"
+  },
+  {
+   "at": 34.05,
+   "kind": "flatline",
+   "set": "hospital",
+   "why": "...if only You would delay me: the line goes flat"
+  },
+  {
+   "at": 36.05,
+   "kind": "emptyCurtain",
+   "set": "hospital",
+   "why": "for a brief term: the empty bed; the curtain moves in the draft (no being is shown)"
+  },
+  {
+   "at": 38.85,
+   "kind": "fatherBed",
+   "set": "bedroom",
+   "why": "his father sits on his bed in the dark, holding his prayer beads, shoulders shaking"
+  },
+  {
+   "at": 41.0,
+   "kind": "phoneMat",
+   "set": "bedroom",
+   "why": "his phone buzzes on the mat ('12 missed calls'); his little brother picks it up and looks at it"
+  },
+  {
+   "at": 42.3,
+   "kind": "mushafBlow",
+   "set": "bedroom",
+   "why": "his little brother takes the dusty mushaf off the shelf and blows the dust off"
+  },
+  {
+   "at": 43.65,
+   "kind": "laptopClose",
+   "set": "bedroom",
+   "why": "so I would give charity: his father opens his laptop, the big balance still on screen, and slowly closes it"
+  },
+  {
+   "at": 45.9,
+   "kind": "walletBox",
+   "set": "bedroom",
+   "why": "...his wallet is put into a box with his things"
+  },
+  {
+   "at": 47.7,
+   "kind": "kufiDoor",
+   "set": "bedroom",
+   "why": "...and be of the righteous: his kufi is hung on the door as the light goes out"
+  },
+  {
+   "at": 49.4,
+   "kind": "lightning2",
+   "set": "bedroom",
+   "why": "63:11 But never will Allah delay a soul: two lightning flashes reveal the empty room"
+  },
+  {
+   "at": 51.85,
+   "kind": "janazahTrack",
+   "set": "cemetery",
+   "why": "when its time has come: alongside the carriers walking through the rain"
+  },
+  {
+   "at": 54.65,
+   "kind": "mudFeet",
+   "set": "cemetery",
+   "why": "feet splashing in the mud"
+  },
+  {
+   "at": 57.05,
+   "kind": "umbrellaLine",
+   "set": "cemetery",
+   "why": "umbrellas, men walking in a line"
+  },
+  {
+   "at": 59.65,
+   "kind": "graveSoil",
+   "set": "cemetery",
+   "why": "at the grave: soil falling; a man holds a lantern"
+  },
+  {
+   "at": 61.5,
+   "kind": "duaGrave",
+   "set": "cemetery",
+   "why": "And Allah is Aware of what you do: men round the grave raise their hands in du'a in the rain"
+  },
+  {
+   "at": 63.3,
+   "kind": "waterGrave",
+   "set": "cemetery",
+   "why": "a man sprinkles water on the grave; hands smooth the soil"
+  },
+  {
+   "at": 65.0,
+   "kind": "gravesTrack",
+   "set": "cemetery",
+   "why": "the camera tracks slowly past rows of graves; wind blows the rain sideways; crows on a wall fly off"
+  },
+  {
+   "at": 66.6,
+   "kind": "walkAway",
+   "set": "cemetery",
+   "why": "the men turn and leave one by one, footsteps in the mud"
+  },
+  {
+   "at": 68.2,
+   "kind": "fogPullback",
+   "set": "cemetery",
+   "why": "fog rolls in over the grave as the camera pulls far back"
+  }
+ ],
+ "events": {
+  "lightOut": 19.74,
+  "phoneOff": 19.74,
+  "hospitalDark": 35.85,
+  "lightning": [
+   49.55,
+   50.45
+  ],
+  "soil": [
+   59.8,
+   61.5
+  ],
+  "flicker": [
+   13.4,
+   17.5
+  ],
+  "janazah": 51.85,
+  "busPass": [
+   1.2,
+   3.5
+  ],
+  "phoneDrop": 27.9,
+  "stumble": 30.15,
+  "fall": 30.65,
+  "collapseBed": 18.4,
+  "beads": 11.2,
+  "flat": 34.05,
+  "bump": 4.4,
+  "transitions": [
+   [
+    4.4,
+    "blink"
+   ],
+   [
+    21.28,
+    "glassSlow"
+   ],
+   [
+    32.25,
+    "smear"
+   ],
+   [
+    34.05,
+    "heart"
+   ],
+   [
+    36.05,
+    "blink"
+   ],
+   [
+    49.4,
+    "flash"
+   ],
+   [
+    51.85,
+    "glass"
+   ],
+   [
+    66.6,
+    "smear"
+   ]
+  ],
+  "familyLightOut": 49.2,
+  "laptopClose": [
+   43.9,
+   45.6
+  ],
+  "phonePick": 41.35,
+  "blow": 43.2,
+  "wallet": 46.4,
+  "kufi": 48.2,
+  "crows": 65.7
+ }
+}

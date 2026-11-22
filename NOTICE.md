@@ -45,3 +45,10 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 Also copied from Claude Animated Shorts (MIT): `engine/tools/short_qa.py` (from `templates/scripts/short_qa.py`, adapted
 to use Remotion's bundled ffmpeg and to skip intended dark spans).
+
+## Recitation audio (video 002, "The Last Request")
+
+`engine/public/audio/recitation/recitation_63_10-11.m4a`: Surat Al-Munafiqun 63:10-11 (47.7 s, with its own echo),
+taken from a TikTok upload by @islamthetruth100 (supplied by the channel owner, 2026-11-20). The reciter is not
+confirmed, so the end card does not name one. Used unchanged (level only) inside the video's own sound track. The audio
+file is never committed (engine/public/audio/ is git-ignored).
