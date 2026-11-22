@@ -5,6 +5,7 @@ import { CourtyardTest, COURTYARD_FRAMES, COURTYARD_FPS } from "./scenes/courtya
 import { PoseSheet, POSE_SHEET_W, POSE_SHEET_H } from "./scenes/pose-sheet/PoseSheet";
 import { CastSheet, CAST_SHEET_W, CAST_SHEET_H } from "./scenes/pose-sheet/CastSheet";
 import { LastRequest, LastRequestSamples, LASTREQUEST_FRAMES, LASTREQUEST_FPS } from "./scenes/lastrequest/LastRequest";
+import { Sirat, SiratSamples, SIRAT_FRAMES, SIRAT_FPS } from "./scenes/sirat/Sirat";
 import { TravellerMotionTest, MOTION_FRAMES, MOTION_FPS } from "./scenes/motion-test/TravellerMotionTest";
 import { CourtyardBeauty } from "./scenes/courtyard-beauty/CourtyardBeauty";
 import { TextSample } from "./scenes/toolkit/TextSample";
@@ -41,6 +42,8 @@ export const RemotionRoot: React.FC = () => (
     {/* Video 001, Quran version: captions of the recitation of Maryam 19:59-63 over the Traveller's story (the recitation is added in TikTok) */}
     {/* Video 002 "The Last Request": the voice clip (added in TikTok) + Al-Mu'minun 23:99-101 recited (in our file) */}
     <Composition id="TheLastRequest" component={LastRequest} durationInFrames={LASTREQUEST_FRAMES} fps={LASTREQUEST_FPS} width={1080} height={1920} />
+    <Composition id="TheSirat" component={Sirat} durationInFrames={SIRAT_FRAMES} fps={SIRAT_FPS} width={1080} height={1920} />
+    <Composition id="TheSiratSamples" component={SiratSamples} durationInFrames={SIRAT_FRAMES} fps={SIRAT_FPS} width={1080} height={1920} />
     <Composition id="TheLastRequestSamples" component={LastRequestSamples} durationInFrames={LASTREQUEST_FRAMES} fps={LASTREQUEST_FPS} width={1080} height={1920} />
     <Composition id="TheFirstQuestionQuran" component={Quran001} durationInFrames={QURAN001_FRAMES} fps={QURAN001_FPS} width={1080} height={1920} />
     {/* preview only: chosen frames of the Quran version, one per output frame (props {"samples": [frame, ...]}); as long as

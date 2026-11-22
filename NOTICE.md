@@ -52,3 +52,12 @@ to use Remotion's bundled ffmpeg and to skip intended dark spans).
 taken from a TikTok upload by @islamthetruth100 (supplied by the channel owner, 2026-11-20). The reciter is not
 confirmed, so the end card does not name one. Used unchanged (level only) inside the video's own sound track. The audio
 file is never committed (engine/public/audio/ is git-ignored).
+
+## Recitation and template (video 003, "The Sirat")
+
+`engine/public/audio/guide/sirat_recitation.mp4`: Sheikh Yasser Al-Dossari, Surat Maryam 19:66-72 (a Taraweeh recording),
+a TikTok sound supplied by the channel owner (2026-11-21). It IS in our video's sound track (level only, unchanged
+otherwise): from its 0:00, cut in the breath after 19:72 (110.2 s) so nothing of 19:73 is heard; the echo that fades out
+under the end card is made by our mix from the last second of the recitation, not taken from the recording. `engine/public/audio/guide/sirat_guide.mp4` (a TikTok video) was used only as a template for the order, pacing
+and shot types; none of its pictures, text or sound are used. Neither file is ever committed (engine/public/audio/ is
+git-ignored).

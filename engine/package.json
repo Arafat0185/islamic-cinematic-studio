@@ -39,7 +39,11 @@
     "lastrequest-timing": ".venv-tts\\Scripts\\python tools/build_lastrequest_timing.py",
     "lastrequest-mix": ".venv-tts\\Scripts\\python tools/mix_lastrequest.py",
     "lastrequest": "node tools/render-chunks.mjs TheLastRequest out/The_Last_Request.mp4 --chunk 600 --audio public/audio/lastrequest_mix.wav --keep && npx remotion ffmpeg -v error -y -i out/The_Last_Request.mp4 -i public/audio/lastrequest_preview_mix.wav -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 192k -shortest out/The_Last_Request_PREVIEW.mp4",
-    "lastrequest-qa": ".venv-tts\\Scripts\\python tools/qa_lastrequest.py out/The_Last_Request.mp4 out/The_Last_Request_PREVIEW.mp4 out/qa_lastrequest"
+    "lastrequest-qa": ".venv-tts\\Scripts\\python tools/qa_lastrequest.py out/The_Last_Request.mp4 out/The_Last_Request_PREVIEW.mp4 out/qa_lastrequest",
+    "sirat-timing": ".venv-tts\\Scripts\\python tools/build_sirat_timing.py",
+    "sirat-mix": ".venv-tts\\Scripts\\python tools/mix_sirat.py",
+    "sirat": "bash tools/render_sirat.sh",
+    "sirat-qa": ".venv-tts\\Scripts\\python tools/qa_sirat.py out/The_Sirat.mp4 out/The_Sirat_PREVIEW.mp4 out/qa_sirat"
   },
   "dependencies": {
     "@fontsource/amiri": "5.3.0",

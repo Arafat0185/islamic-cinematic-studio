@@ -33,6 +33,7 @@ import { buildCar } from "../sets/car";
 import { buildSofa } from "../sets/sofa";
 import { buildHospital } from "../sets/hospital";
 import { buildCemetery } from "../sets/cemetery";
+import { buildAbyss } from "../sets/abyss";
 import type { SetLook, StorySet } from "../sets/common";
 import { SET_OFFSET, SetId, StoryFilm, FrameFx, Shatter } from "./story";
 import { buildCourtyardFx } from "../brand/courtyardFx";
@@ -71,7 +72,7 @@ const buildWorld = (traffic: Vehicle[], ids: SetId[] = DEFAULT_SETS) => {
   if (has("office")) { office = buildOffice(SET_OFFSET.office); sets.office = office.set; }
   const simple: [SetId, (o: [number, number, number]) => StorySet][] = [
     ["bedroom", buildBedroom], ["gym", buildGym], ["feed", buildFeed], ["void", buildVoid], ["deadlines", buildDeadlines],
-    ["airport", buildAirport], ["car", buildCar], ["sofa", buildSofa], ["hospital", buildHospital],
+    ["airport", buildAirport], ["car", buildCar], ["sofa", buildSofa], ["hospital", buildHospital], ["abyss", buildAbyss],
   ];
   for (const [id, b] of simple) if (has(id)) sets[id] = b(SET_OFFSET[id]);
   let cemetery: ReturnType<typeof buildCemetery> | null = null;
@@ -327,12 +328,16 @@ const ShatterLayer: React.FC = () => (
 /** one SVG filter for the frame's picture effects: directional motion blur, then chromatic aberration (the red and blue
  *  channels pushed apart) and, in the day only, a glitch (horizontal slices displaced) */
 const FxDefs: React.FC<{ fx: FrameFx; whipBlur: number; f: number }> = ({ fx, whipBlur, f }) => {
-  const bx = Math.max(fx.blurX, whipBlur), by = fx.blurY, ca = fx.ca + fx.glitch * 14, gl = fx.glitch;
+  const bx = Math.max(fx.blurX, whipBlur), by = fx.blurY, ca = fx.ca + fx.glitch * 14, gl = fx.glitch, hz = fx.haze ?? 0;
   return (
     <svg width={0} height={0} style={{ position: "absolute" }}>
       <defs>
         <filter id="storyFx" x="-5%" y="-5%" width="110%" height="110%" colorInterpolationFilters="sRGB">
-          <feGaussianBlur in="SourceGraphic" stdDeviation={`${bx.toFixed(2)} ${by.toFixed(2)}`} result="b" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation={`${bx.toFixed(2)} ${by.toFixed(2)}`} result={hz > 0 ? "b0" : "b"} />
+          {hz > 0 ? <>
+            <feTurbulence type="turbulence" baseFrequency={`${(0.006 + 0.0006 * Math.sin(f * 0.21)).toFixed(5)} ${(0.022 + 0.002 * Math.sin(f * 0.17)).toFixed(5)}`} numOctaves={2} seed={Math.floor(f / 2) % 89} result="hn" />
+            <feDisplacementMap in="b0" in2="hn" scale={hz.toFixed(1)} xChannelSelector="R" yChannelSelector="G" result="b" />
+          </> : null}
           {gl > 0 ? <>
             <feTurbulence type="fractalNoise" baseFrequency={`0.0005 ${(0.02 + 0.03 * ((f * 7) % 5) / 5).toFixed(4)}`} numOctaves={1} seed={f % 97} result="n" />
             <feComponentTransfer in="n" result="steps"><feFuncR type="discrete" tableValues="0 0.2 0.5 0.8 1 0.4" /><feFuncG type="discrete" tableValues="0.5" /></feComponentTransfer>
