@@ -89,7 +89,7 @@ engine/
 
 - **2D-in-3D compositing.** The characters keep the warmth of hand-drawn art while the camera moves freely through real 3D space with parallax, depth of field and lighting.
 - **Camera guardrails.** A collision solver and a 45° downward-pitch limit stop the flat-card look from showing.
-- **Anti-aliasing discipline.** Power-of-two mipmapped textures, anisotropic filtering, z-fighting removal and motion blur give stable, flicker-free frames on phone screens.
+- **Anti-aliasing discipline.** Mipmapped, anisotropically filtered textures (power-of-two sizes for the tiled environment textures), polygon-offset decals instead of z-fighting, a fixed-pattern lens blur and camera-driven motion blur give stable, flicker-free frames on phone screens.
 - **Memory-bounded rendering.** Renders run in chunks of 300–600 frames, one process per chunk, resumable and auto-retried with smaller chunks, so long films finish reliably on integrated GPUs.
 
 The hardest problems and how they were solved are written up in **[docs/ENGINEERING.md](docs/ENGINEERING.md)**.
