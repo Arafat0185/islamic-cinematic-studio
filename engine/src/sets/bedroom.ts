@@ -106,6 +106,8 @@ export const buildBedroom = (offset: V3): StorySet => {
   const rimC = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.02, 8, 32), woodDark); rimC.position.z = 0.04; clock.add(rimC);
   const handC = (l: number, w: number) => { const g2 = new THREE.Group(); g2.position.z = 0.05; clock.add(g2); box(g2, [-w / 2, -0.02, 0], [w / 2, l, 0.01], mat("#221a18"), false); return g2; };
   const hourC = handC(0.11, 0.026), minC = handC(0.16, 0.018);
+  clock.name = "wallClock"; hourC.name = "clockHour"; minC.name = "clockMin"; // names let a film's extra life find them
+  pane.name = "windowPane"; phoneScreen.name = "phoneScreen"; phoneLight.name = "phoneLight";
 
   const apply = (state: string, t: number): SetLook => {
     const pm = pane.material as THREE.MeshBasicMaterial;

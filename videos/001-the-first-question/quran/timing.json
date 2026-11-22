@@ -1,0 +1,320 @@
+{
+ "source": {
+  "api": "https://api.quran.com/api/v4/verses/by_key/19:{n}?fields=text_uthmani&translations=20",
+  "translation": "Saheeh International (quran.com translation 20)",
+  "script": "text_uthmani",
+  "note": "footnote markers <sup>n</sup> removed from the English; nothing else changed"
+ },
+ "surah": "MARYAM",
+ "range": "19:59-63",
+ "reciter": "Sheikh Yasser Al-Dossari",
+ "guide": {
+  "file": "engine/public/audio/guide/recitation_guide.mp4",
+  "duration": 100.519,
+  "recitationEnd": 66.3,
+  "breath": {
+   "voice6303End": 66.14,
+   "voice6401Start": 66.49,
+   "floorDb": -22.2,
+   "videoEnd": 66.3,
+   "note": "the video ends here, inside the breath before 19:64"
+  },
+  "note": "timing only; never in the upload file"
+ },
+ "fps": 30,
+ "leadFrames": 2,
+ "phrases": [
+  {
+   "i": 0,
+   "verse": "19:59",
+   "ar": "۞ فَخَلَفَ مِنۢ بَعْدِهِمْ خَلْفٌ أَضَاعُوا۟",
+   "arKeys": [
+    5
+   ],
+   "en": "But there came after them successors [i.e., later generations] who neglected",
+   "keys": [
+    "neglected"
+   ],
+   "repeat": false,
+   "voice": 0.0,
+   "approx": 0.3,
+   "dip": 0.0,
+   "dipDb": 0.0,
+   "tiktokFade": null,
+   "how": "first voice",
+   "start": 0.0,
+   "end": 4.903
+  },
+  {
+   "i": 1,
+   "verse": "19:59",
+   "ar": "ٱلصَّلَوٰةَ وَٱتَّبَعُوا۟ ٱلشَّهَوَٰتِ ۖ",
+   "arKeys": [
+    0,
+    2
+   ],
+   "en": "prayer and pursued desires;",
+   "keys": [
+    "prayer",
+    "desires"
+   ],
+   "repeat": false,
+   "voice": 4.97,
+   "approx": 4.8,
+   "dip": 4.89,
+   "dipDb": -23.9,
+   "tiktokFade": 4.6,
+   "how": "audio",
+   "start": 4.903,
+   "end": 7.913
+  },
+  {
+   "i": 2,
+   "verse": "19:59",
+   "ar": "فَسَوْفَ يَلْقَوْنَ غَيًّا",
+   "arKeys": [
+    2
+   ],
+   "en": "so they are going to meet evil -",
+   "keys": [
+    "evil"
+   ],
+   "repeat": false,
+   "voice": 7.98,
+   "approx": 7.6,
+   "dip": 7.92,
+   "dipDb": -24.0,
+   "tiktokFade": 7.7,
+   "how": "audio",
+   "start": 7.913,
+   "end": 11.293
+  },
+  {
+   "i": 3,
+   "verse": "19:60",
+   "ar": "إِلَّا مَن تَابَ وَءَامَنَ وَعَمِلَ صَـٰلِحًا",
+   "arKeys": [
+    2
+   ],
+   "en": "Except those who repent, believe and do righteousness;",
+   "keys": [
+    "repent"
+   ],
+   "repeat": false,
+   "voice": 11.36,
+   "approx": 11.4,
+   "dip": 11.3,
+   "dipDb": -27.3,
+   "tiktokFade": null,
+   "how": "audio",
+   "start": 11.293,
+   "end": 17.193
+  },
+  {
+   "i": 4,
+   "verse": "19:60",
+   "ar": "فَأُو۟لَـٰٓئِكَ يَدْخُلُونَ ٱلْجَنَّةَ",
+   "arKeys": [
+    2
+   ],
+   "en": "for those will enter Paradise",
+   "keys": [
+    "Paradise"
+   ],
+   "repeat": false,
+   "voice": 17.26,
+   "approx": 17.3,
+   "dip": 17.19,
+   "dipDb": -21.9,
+   "tiktokFade": 17.0,
+   "how": "audio",
+   "start": 17.193,
+   "end": 22.823
+  },
+  {
+   "i": 5,
+   "verse": "19:60",
+   "ar": "فَأُو۟لَـٰٓئِكَ يَدْخُلُونَ ٱلْجَنَّةَ",
+   "arKeys": [
+    2
+   ],
+   "en": "for those will enter Paradise",
+   "keys": [
+    "Paradise"
+   ],
+   "repeat": true,
+   "voice": 22.89,
+   "approx": 22.5,
+   "dip": 22.66,
+   "dipDb": -26.9,
+   "tiktokFade": 22.4,
+   "how": "audio",
+   "start": 22.823,
+   "end": 27.203
+  },
+  {
+   "i": 6,
+   "verse": "19:60",
+   "ar": "وَلَا يُظْلَمُونَ شَيْـًٔا",
+   "arKeys": [],
+   "en": "and will not be wronged at all.",
+   "keys": [],
+   "repeat": false,
+   "voice": 27.27,
+   "approx": 27.5,
+   "dip": 27.22,
+   "dipDb": -20.2,
+   "tiktokFade": null,
+   "how": "audio",
+   "start": 27.203,
+   "end": 30.413
+  },
+  {
+   "i": 7,
+   "verse": "19:61",
+   "ar": "جَنَّـٰتِ عَدْنٍ ٱلَّتِى وَعَدَ ٱلرَّحْمَـٰنُ",
+   "arKeys": [
+    4
+   ],
+   "en": "[Therein are] gardens of perpetual residence which the Most Merciful has promised",
+   "keys": [
+    "Most Merciful"
+   ],
+   "repeat": false,
+   "voice": 30.48,
+   "approx": 30.4,
+   "dip": 30.28,
+   "dipDb": -26.0,
+   "tiktokFade": 30.0,
+   "how": "audio",
+   "start": 30.413,
+   "end": 35.573
+  },
+  {
+   "i": 8,
+   "verse": "19:61",
+   "ar": "عِبَادَهُۥ بِٱلْغَيْبِ ۚ",
+   "arKeys": [
+    1
+   ],
+   "en": "His servants in the unseen.",
+   "keys": [
+    "unseen"
+   ],
+   "repeat": false,
+   "voice": 35.64,
+   "approx": 34.9,
+   "dip": 35.6,
+   "dipDb": -20.9,
+   "tiktokFade": 35.1,
+   "how": "audio after tiktok fade",
+   "start": 35.573,
+   "end": 39.693
+  },
+  {
+   "i": 9,
+   "verse": "19:61",
+   "ar": "إِنَّهُۥ كَانَ وَعْدُهُۥ مَأْتِيًّا",
+   "arKeys": [
+    2
+   ],
+   "en": "Indeed, His promise has ever been eminent.",
+   "keys": [
+    "promise"
+   ],
+   "repeat": false,
+   "voice": 39.76,
+   "approx": 39.8,
+   "dip": 39.69,
+   "dipDb": -26.1,
+   "tiktokFade": 39.4,
+   "how": "audio",
+   "start": 39.693,
+   "end": 44.573
+  },
+  {
+   "i": 10,
+   "verse": "19:62",
+   "ar": "لَّا يَسْمَعُونَ فِيهَا لَغْوًا إِلَّا سَلَـٰمًا ۖ",
+   "arKeys": [
+    5
+   ],
+   "en": "They will not hear therein any ill speech - only [greetings of] peace -",
+   "keys": [
+    "peace"
+   ],
+   "repeat": false,
+   "voice": 44.64,
+   "approx": 44.8,
+   "dip": 44.58,
+   "dipDb": -25.3,
+   "tiktokFade": 44.3,
+   "how": "audio",
+   "start": 44.573,
+   "end": 50.263
+  },
+  {
+   "i": 11,
+   "verse": "19:62",
+   "ar": "وَلَهُمْ رِزْقُهُمْ فِيهَا بُكْرَةً وَعَشِيًّا",
+   "arKeys": [
+    1
+   ],
+   "en": "and they will have their provision therein, morning and afternoon.",
+   "keys": [
+    "provision"
+   ],
+   "repeat": false,
+   "voice": 50.33,
+   "approx": 50.3,
+   "dip": 50.27,
+   "dipDb": -22.1,
+   "tiktokFade": 49.9,
+   "how": "audio",
+   "start": 50.263,
+   "end": 56.833
+  },
+  {
+   "i": 12,
+   "verse": "19:63",
+   "ar": "تِلْكَ ٱلْجَنَّةُ ٱلَّتِى نُورِثُ مِنْ",
+   "arKeys": [
+    1
+   ],
+   "en": "That is Paradise, which We give as inheritance to those of",
+   "keys": [
+    "Paradise"
+   ],
+   "repeat": false,
+   "voice": 56.9,
+   "approx": 56.8,
+   "dip": 56.81,
+   "dipDb": -24.7,
+   "tiktokFade": 56.4,
+   "how": "audio",
+   "start": 56.833,
+   "end": 61.523
+  },
+  {
+   "i": 13,
+   "verse": "19:63",
+   "ar": "عِبَادِنَا مَن كَانَ تَقِيًّا",
+   "arKeys": [
+    3
+   ],
+   "en": "Our servants who were fearing of Allāh.",
+   "keys": [
+    "fearing of Allāh"
+   ],
+   "repeat": false,
+   "voice": 61.59,
+   "approx": 61.2,
+   "dip": 61.54,
+   "dipDb": -21.2,
+   "tiktokFade": 61.0,
+   "how": "audio after tiktok fade",
+   "start": 61.523,
+   "end": 66.3
+  }
+ ]
+}

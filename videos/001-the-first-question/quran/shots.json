@@ -1,0 +1,214 @@
+{
+ "about": "The First Question - QURAN: the shot list and story events, shared by the picture (engine/src/scenes/quran001/timeline.ts) and the sound (engine/tools/mix_quran001.py). A shot starts at its phrase's caption ('phrase': index into timing.json) or at a time in seconds ('at'); the video ends in the breath after 19:63 (timing.json guide.recitationEnd); the end card is an overlay that crossfades in over its last cardFadeSeconds. Shots are 1-4 s each (11-61 s: a little life story). Events: seconds, or {phrase, plus} = that phrase's voice start + plus.",
+ "shots": [
+  {
+   "kind": "street",
+   "set": "street",
+   "phrase": 0,
+   "why": "neglected: city at night, walking with his phone glowing"
+  },
+  {
+   "kind": "office",
+   "set": "office",
+   "phrase": 1,
+   "why": "prayer and pursued desires: busy at the desk"
+  },
+  {
+   "kind": "void",
+   "set": "void",
+   "phrase": 2,
+   "why": "the warning: dark, cold light, slow push-in"
+  },
+  {
+   "kind": "alarm",
+   "set": "bedroom",
+   "phrase": 3,
+   "why": "05:12: the alarm glows on the nightstand; he stirs in bed"
+  },
+  {
+   "kind": "phoneDown",
+   "set": "bedroom",
+   "at": 12.47,
+   "why": "he turns the phone face-down"
+  },
+  {
+   "kind": "rise",
+   "set": "bedroom",
+   "at": 13.67,
+   "why": "he sits up on the edge of the bed and gets up"
+  },
+  {
+   "kind": "wudu",
+   "set": "bedroom",
+   "at": 15.0,
+   "why": "wudu at the basin, water splashing (the wash corner)"
+  },
+  {
+   "kind": "door",
+   "set": "street",
+   "at": 16.27,
+   "why": "out of the front door into the blue pre-dawn street"
+  },
+  {
+   "kind": "friend",
+   "set": "street",
+   "at": 18.67,
+   "why": "a friend waiting under the lamp joins him; they walk to the masjid together"
+  },
+  {
+   "kind": "shoes",
+   "set": "courtyard",
+   "at": 20.83,
+   "why": "at the masjid door they step out of their sandals"
+  },
+  {
+   "kind": "rowStand",
+   "set": "courtyard",
+   "phrase": 5,
+   "why": "standing in a row of worshippers, shoulder to shoulder (takbir)"
+  },
+  {
+   "kind": "rowRuku",
+   "set": "courtyard",
+   "at": 24.5,
+   "why": "the row in ruku, side view"
+  },
+  {
+   "kind": "rowSujood",
+   "set": "courtyard",
+   "at": 25.83,
+   "why": "the row in sujood, low side view"
+  },
+  {
+   "kind": "bags",
+   "set": "courtyard",
+   "phrase": 6,
+   "why": "after the prayer an old man drops his bags"
+  },
+  {
+   "kind": "help",
+   "set": "courtyard",
+   "at": 28.67,
+   "why": "he picks them up and carries them with him"
+  },
+  {
+   "kind": "garden",
+   "set": "courtyard",
+   "phrase": 7,
+   "why": "the garden courtyard: kids running round the fountain, a cat drinking"
+  },
+  {
+   "kind": "ball",
+   "set": "courtyard",
+   "at": 33.0,
+   "why": "their ball rolls to him; he picks it up and tosses it back"
+  },
+  {
+   "kind": "nightPray",
+   "set": "bedroom",
+   "phrase": 8,
+   "why": "night: he prays alone in his room by lamp-light (the unseen)"
+  },
+  {
+   "kind": "nightSujood",
+   "set": "bedroom",
+   "at": 37.67,
+   "why": "sujood, then sitting, close and low"
+  },
+  {
+   "kind": "lapse",
+   "set": "street",
+   "phrase": 9,
+   "why": "sunrise time-lapse outside his house: the camera tilts up from his lit window past the rooftops to the sky turning gold, birds crossing"
+  },
+  {
+   "kind": "window",
+   "set": "bedroom",
+   "at": 42.0,
+   "why": "he opens the window and the morning light falls on him"
+  },
+  {
+   "kind": "wave",
+   "set": "street",
+   "phrase": 10,
+   "why": "morning street: he waves to the shopkeeper, who waves back"
+  },
+  {
+   "kind": "hug",
+   "set": "courtyard",
+   "at": 46.5,
+   "why": "a brother at the masjid door: they embrace"
+  },
+  {
+   "kind": "handshake",
+   "set": "street",
+   "at": 48.33,
+   "why": "a handshake with a friend; kids run past"
+  },
+  {
+   "kind": "breakfast",
+   "set": "bedroom",
+   "phrase": 11,
+   "why": "breakfast at sunrise with his father and little brother: bread, dates, tea"
+  },
+  {
+   "kind": "sunsetMeal",
+   "set": "courtyard",
+   "at": 53.33,
+   "why": "match cut to sunset: a shared meal on a floor mat with friends"
+  },
+  {
+   "kind": "reading",
+   "set": "courtyard",
+   "phrase": 12,
+   "why": "he reads the Quran under the masjid lamp; a boy sits by him"
+  },
+  {
+   "kind": "teaching",
+   "set": "courtyard",
+   "at": 59.17,
+   "why": "he points along the page, teaching the boy"
+  },
+  {
+   "kind": "ending",
+   "set": "courtyard",
+   "phrase": 13,
+   "why": "those who were fearing of Allah: the crane up to the star mark; the end card crossfades in over the last 1.5 s (inside the length)"
+  }
+ ],
+ "events": {
+  "dims": [
+   1.6,
+   3.0,
+   4.6,
+   6.1,
+   7.6
+  ],
+  "flip": 12.85,
+  "walk": [
+   16.3,
+   20.8
+  ],
+  "takbir": {
+   "phrase": 5,
+   "plus": 0.25
+  },
+  "fajrGlow": {
+   "phrase": 5,
+   "plus": 1.15
+  },
+  "craneUp": [
+   62.1,
+   64.7
+  ],
+  "cardFadeSeconds": 1.5,
+  "door": 16.3,
+  "bagDrop": 27.93,
+  "ball": [
+   33.0,
+   34.73
+  ],
+  "window": 43.0,
+  "turn": 21.55
+ }
+}

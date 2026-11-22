@@ -146,6 +146,7 @@ const Inner: React.FC<{ film: StoryFilm; outgoing?: boolean; traffic: Vehicle[] 
   const { camera, scene } = useThree();
   const on = useMemo(toggles, []);
   const w = useMemo(() => buildWorld(traffic, film.sets), [traffic, film]);
+  const life = useMemo(() => film.life?.(w.roots) ?? null, [w, film]);
   const post = useMemo(() => ({
     ink: new InkPass(scene, camera as THREE.PerspectiveCamera),
     lens: new LensBlur({ maxCoC: 24, nearScale: 1.6 }),
@@ -192,6 +193,7 @@ const Inner: React.FC<{ film: StoryFilm; outgoing?: boolean; traffic: Vehicle[] 
     if (!st) throw new Error(`set "${fr.set}" is not built for this film (add it to film.sets)`);
     look = st.apply(fr.state, fr.t);
   }
+  life?.update(fr, f);
   applyLook({
     ...(fr.set === "courtyard" ? LOOK : {}), lit: look.lit, shade: look.shade, lift: look.lift, sat: look.sat,
     charTint: look.charTint, cardGain: look.cardGain, cardPointK: look.cardPointK ?? 1, pointK: look.pointK ?? 1,
@@ -213,7 +215,9 @@ const Inner: React.FC<{ film: StoryFilm; outgoing?: boolean; traffic: Vehicle[] 
 
   // ---- the Traveller ----
   const tr = fr.traveller;
-  w.cast.pose(cam, tr ? [{ key: tr.key, x: tr.pos[0], y: tr.pos[1], z: tr.pos[2], draw: tr.draw, mirror: tr.mirror, roll: tr.roll, yaw: tr.yaw, wide: tr.wide, blob: tr.blob === undefined ? NIGHT.blob : tr.blob, castShadow: true }] : []);
+  const others = (fr.others ?? []).map((o) => ({ key: o.key, x: o.pos[0], y: o.pos[1], z: o.pos[2], draw: o.draw, mirror: o.mirror, roll: o.roll, yaw: o.yaw, wide: o.wide, scale: o.scale,
+    blob: o.blob === undefined ? NIGHT.blob : o.blob, castShadow: o.castShadow ?? false }));
+  w.cast.pose(cam, [...(tr ? [{ key: tr.key, x: tr.pos[0], y: tr.pos[1], z: tr.pos[2], draw: tr.draw, mirror: tr.mirror, roll: tr.roll, yaw: tr.yaw, wide: tr.wide, scale: tr.scale, blob: tr.blob === undefined ? NIGHT.blob : tr.blob, castShadow: true }] : []), ...others]);
   noInkFallback(w.root);
   cam.getWorldDirection(fwd);
   fpt.set(...pl.focus);
