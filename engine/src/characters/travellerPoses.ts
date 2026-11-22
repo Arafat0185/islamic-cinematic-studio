@@ -17,7 +17,7 @@
 // fills them all on top, so the parts merge into ONE silhouette with one outline, like the front-view thobe.
 import { Pen, INK, mul, mix, blobPts, Blob, thickAngle } from "../draw/toon";
 import {
-  P2, SKIN_T, THOBE, SHAWL, KUFI, SANDAL, BEARD, BEARD_STRAND, SH_SKIN, SH_CLOTH, SH_SHAWL,
+  P2, SKIN_T, THOBE, SHAWL, KUFI, SANDAL, BEARD, BEARD_STRAND, SH_SKIN, SH_CLOTH, SH_SHAWL, NO_BEARD, NO_SHAWL,
   SOLE, TALL, HH, OW, OW_HEAD, BEARD_LEN, SLEEVE, SLEEVE_W, qc, join, frontHeadShape, frontBeard, frontKufi, inkHand, skinHand,
 } from "./traveller";
 
@@ -32,9 +32,9 @@ const len = (a: P2) => Math.hypot(a[0], a[1]);
 const unit = (a: P2): P2 => { const l = len(a) || 1; return [a[0] / l, a[1] / l]; };
 const area = (pts: P2[]) => pts.reduce((s, q, i) => { const r = pts[(i + 1) % pts.length]; return s + q[0] * r[1] - r[0] * q[1]; }, 0);
 /** clockwise on screen (what Pen.inkRing expects for its outward normal) */
-const cw = (pts: P2[]) => (area(pts) < 0 ? pts.slice().reverse() : pts);
+export const cw = (pts: P2[]) => (area(pts) < 0 ? pts.slice().reverse() : pts);
 /** rounded, tapering limb from a (radius ra) to b (radius rb) */
-const cap = (a: P2, b: P2, ra: number, rb: number, n = 12): P2[] => {
+export const cap = (a: P2, b: P2, ra: number, rb: number, n = 12): P2[] => {
   const u = unit(sub(b, a)), nr: P2 = [-u[1], u[0]], pts: P2[] = [];
   for (let i = 0; i <= n; i++) { const t = Math.PI / 2 - (Math.PI * i) / n; pts.push(add(b, add([u[0] * Math.cos(t), u[1] * Math.cos(t)], nr, Math.sin(t)), rb)); }
   for (let i = 0; i <= n; i++) { const t = -Math.PI / 2 - (Math.PI * i) / n; pts.push(add(a, add([u[0] * Math.cos(t), u[1] * Math.cos(t)], nr, Math.sin(t)), ra)); }
@@ -43,7 +43,7 @@ const cap = (a: P2, b: P2, ra: number, rb: number, n = 12): P2[] => {
 
 /** several parts drawn as ONE shape: ink rings first (twice the width, so the half left outside = OW), then every
  *  part filled with one shared gradient along the light, covering the inner halves and the seams between parts */
-const unionFill = (p: Pen, parts: P2[][], base: string, shadow: string, light: number, w = OW, flat = 0.22) => {
+export const unionFill = (p: Pen, parts: P2[][], base: string, shadow: string, light: number, w = OW, flat = 0.22) => {
   const thick = thickAngle(light), g = p.g;
   const ps = parts.map(cw);
   for (const pts of ps) p.inkRing(pts, 2 * w, thick);
@@ -58,7 +58,7 @@ const unionFill = (p: Pen, parts: P2[][], base: string, shadow: string, light: n
 };
 
 /** a sandal seen from the side: heel point, direction heel -> toe (canvas radians), 104 units long */
-const sandal = (p: Pen, heel: P2, ang: number) => {
+export const sandal = (p: Pen, heel: P2, ang: number) => {
   const c = Math.cos(ang), s = Math.sin(ang), L = 104, T = 20;
   const loc: P2[] = [[0, 0], [L - 10, 0], [L, -6], [L - 6, -T + 4], [L - 40, -T], [8, -T], [-2, -T + 6]];
   p.poly(loc.map(([x, y]): P2 => [heel[0] + x * c - y * s, heel[1] + x * s + y * c]), SANDAL, 4.5);
@@ -67,7 +67,7 @@ const sandal = (p: Pen, heel: P2, ang: number) => {
 /** a sleeve (loose thobe cloth with an ink rim) along a curve */
 /** a sleeve as loose cloth: tapers from the shoulder to the wrist, sags softly on its underside (gravity), shaded,
  *  with one faint fold and a thin outline (not a uniform outlined tube) */
-const sleeve = (p: Pen, a: P2, k: P2, b: P2, w = SLEEVE_W) => {
+export const sleeve = (p: Pen, a: P2, k: P2, b: P2, w = SLEEVE_W) => {
   const c = qc(a, k, b, 16), n = c.length, L: P2[] = [], R: P2[] = [];
   let nEnd: P2 = [0, 0], nStart: P2 = [0, 0], hEnd = 0, hStart = 0;
   for (let i = 0; i < n; i++) {
@@ -91,7 +91,7 @@ const sleeve = (p: Pen, a: P2, k: P2, b: P2, w = SLEEVE_W) => {
   p.inkRing(poly, OW * 0.55, thickAngle(DEF_LIGHT));
 };
 /** a hand lying flat (seen from the side): a thin ink slab from the wrist along `ang` */
-const flatHand = (p: Pen, wrist: P2, ang: number, L = 64) => {
+export const flatHand = (p: Pen, wrist: P2, ang: number, L = 64) => {
   const c = Math.cos(ang), s = Math.sin(ang);
   const loc: P2[] = [[-4, -8], [L - 10, -7], [L, -2], [L - 2, 5], [-4, 7]];
   p.poly(loc.map(([x, y]): P2 => [wrist[0] + x * c - y * s, wrist[1] + x * s + y * c]), INK, 0);
@@ -123,12 +123,17 @@ export const profileHead = (p: Pen, cx: number, cy: number, rot: number, light: 
     [0.02 * u, 0.4 * v], [0.0 * u, 0.05 * v],                                               // sideburn, front edge
   ];
   const bc = cw(beard);
+  if (NO_BEARD) { // a boy: short hair at the back of the head instead of a beard
+    const hair = cw([[0.1 * u, -1.1 * v], [-0.6 * u, -0.95 * v], [-1.1 * u, -0.45 * v], [-1.05 * u, -0.05 * v], [-0.75 * u, -0.22 * v], [-0.4 * u, -0.5 * v], [0.05 * u, -0.62 * v]] as P2[]);
+    p.clip(hp, () => p.gradFill(hair, BEARD, mul(BEARD, [0.75, 0.75, 0.8]), L0, 0.35));
+  } else {
   p.gradFill(bc, BEARD, mul(BEARD, [0.72, 0.72, 0.76]), L0, 0.35);
   p.clip(bc, () => {
     p.stroke([[0.45 * u, v + 0.05 * L], [0.5 * u, v + 0.75 * L]], 2.5, BEARD_STRAND);
     p.stroke([[0.65 * u, v + 0.0 * L], [0.68 * u, v + 0.6 * L]], 2.5, BEARD_STRAND);
   });
   p.inkRing(bc, OW_HEAD * 0.55, thick);
+  }
 
   // kufi: base on the head outline ~0.13 head-heights below the crown (a touch lower at the back), dome ~7 above
   const kb = -v + 0.13 * HH;
@@ -157,7 +162,7 @@ export const profileHead = (p: Pen, cx: number, cy: number, rot: number, light: 
 const backHead = (p: Pen, hc: number, crown: number, light: number, seed = 1) => {
   const h = frontHeadShape(hc, seed), thick = thickAngle(light), v = h.headB;
   // beard slivers: drawn first, a little wider than the jaw, so the head covers all but ~5 units on each side
-  for (const side of [-1, 1]) {
+  for (const side of NO_BEARD ? [] : [-1, 1]) {
     const ys = [0.28, 0.45, 0.6, 0.75, 0.88].map((k) => hc + k * v);
     const sl: P2[] = [...ys.map((y): P2 => [300 + side * (h.edgeX(y) + 5), y]), ...ys.slice().reverse().map((y): P2 => [300 + side * (h.edgeX(y) - 8), y])];
     const sc = cw(sl);
@@ -189,7 +194,7 @@ const backHead = (p: Pen, hc: number, crown: number, light: number, seed = 1) =>
 };
 
 /** neck as a short skin column from the collar toward the head (drawn before the body and the head) */
-const neck = (p: Pen, a: P2, b: P2, light: number) => {
+export const neck = (p: Pen, a: P2, b: P2, light: number) => {
   const pts = cw(cap(a, b, 15, 14));
   p.gradFill(pts, mul(SKIN_T, SH_SKIN), mul(SKIN_T, [0.86, 0.76, 0.74]), light);
   p.inkRing(pts, OW_HEAD, thickAngle(light));
@@ -201,6 +206,7 @@ const neck = (p: Pen, a: P2, b: P2, light: number) => {
  *  back; the front end falls from the chest with gravity (frontLen units, or to the floor); a band joins them over the
  *  shoulder. All three are one shape. */
 const sideShawl = (p: Pen, S: P2, B: P2, F: P2, light: number, frontLen: number) => {
+  if (NO_SHAWL) return;
   const up: P2 = [-B[0], -B[1]];
   // seen from the side the shawl's two ends hang edge-on, so they are narrow strips (~20 units), not panels
   const backTop = add(S, F, -0.8), frontTop = add(S, F, 0.85), over = add(S, up, 12);
@@ -221,7 +227,8 @@ const sideShawl = (p: Pen, S: P2, B: P2, F: P2, light: number, frontLen: number)
  *  the shoulder line; the back end shows only as a short tail behind the shoulder. (sx, sy) = the body axis at the
  *  shoulder line. Two pieces so the near arm can sit between them: draw `panel` before the arm and `cap` (the part
  *  lying over the top of the shoulder and the upper arm) after it. */
-const drapeShawl = (sx: number, sy: number, frontLen: number, light: number, wind = 0) => {
+export const drapeShawl = (sx: number, sy: number, frontLen: number, light: number, wind = 0) => {
+  if (NO_SHAWL) return { panel: (_p: Pen) => {}, cap: (_p: Pen) => {} };
   const thick = thickAngle(light), dark = mul(SHAWL, SH_SHAWL), fold = mix(dark, INK, 0.35);
   const fy = sy + frontLen;
   const panel = (p: Pen) => {
@@ -260,14 +267,18 @@ const drapeShawl = (sx: number, sy: number, frontLen: number, light: number, win
 };
 
 // ---------------- standing and walking, side view ----------------
-type Foot = { heel: P2; ang: number };
+export type Foot = { heel: P2; ang: number };
+/** a posed arm (design units, standing figure: shoulder joint ~ (302, 320)): elbow, wrist, and the hand drawn there */
+export type ArmPose = { E: P2; W: P2; hand?: "dot" | "open" | "none"; ang?: number };
 /** raise: 0 = arms down, 1 = takbir (hands at ear level, open palms facing forward) */
 /** phone: 0..1 the near hand comes up holding a phone in front of his chest and his head bows to it */
 /** fold: 0..1 after takbir, the hands come down and rest folded on the chest (standing in prayer, qiyam) */
-type UprightCfg = { near: Foot; far: Foot; armNear: number; armFar: number; bob: number; light: number; seed: number; raise?: number; shawlNear?: boolean; wind?: number; phone?: number; fold?: number };
+export type UprightCfg = { near: Foot; far: Foot; armNear: number; armFar: number; bob: number; light: number; seed: number; raise?: number; shawlNear?: boolean; wind?: number; phone?: number; fold?: number;
+  /** posed arms (override the swing), head rotation (+ = bowed), a bag in each hand, props drawn in front at the end */
+  armN?: ArmPose; armF?: ArmPose; headRot?: number; bags?: string; front?: (p: Pen) => void };
 
 /** upright body from the side (standing and walking). Feet given as sandals; the thobe skirt spans the feet. */
-const uprightSide = (p: Pen, c: UprightCfg) => {
+export const uprightSide = (p: Pen, c: UprightCfg) => {
   const { light, bob } = c, thick = thickAngle(light);
   const crown = SOLE - TALL + bob, hc = crown + 0.5 * HH, chin = hc + 0.5 * HH;
   const neckY = chin + 12, shY = neckY + 38, hemY = SOLE - 24, waistY = crown + 2.75 * HH;
@@ -304,9 +315,14 @@ const uprightSide = (p: Pen, c: UprightCfg) => {
   };
 
   // far side first: far arm, far sandal (behind the skirt)
-  const fa = arm(c.armFar, -6);
+  const bag = (w: P2) => { if (!c.bags) return; const b = cw([[w[0] - 34, w[1] + 22], [w[0] + 34, w[1] + 22], [w[0] + 40, w[1] + 120], [w[0] - 40, w[1] + 120]] as P2[]);
+    p.stroke(qc([w[0] - 20, w[1] + 24], [w[0], w[1] - 14], [w[0] + 20, w[1] + 24]), 5); p.gradFill(b, c.bags, mul(c.bags, [0.78, 0.78, 0.84]), light, 0.3); p.inkRing(b, OW * 0.7, thick); };
+  const posed = (ap: ArmPose, S: P2) => { const bob = c.bob; return { S, E: [ap.E[0], ap.E[1] + bob] as P2, W: [ap.W[0], ap.W[1] + bob] as P2 }; };
+  const posedHand = (ap: ArmPose, W: P2) => { if (ap.hand === "none") return; if (ap.hand === "open") skinHand(p, W[0], W[1], ap.ang ?? 0, 1, light, 0.95, 0.75); else p.dot(W[0], W[1] + 4, 12.5); };
+  const fa0 = arm(c.armFar, -6), fa = c.armF ? posed(c.armF, fa0.S) : fa0;
   sleeve(p, fa.S, fa.E, fa.W);
-  hand(fa.W);
+  if (c.armF) posedHand(c.armF, fa.W); else hand(fa.W);
+  bag(fa.W);
   sandal(p, c.far.heel, c.far.ang);
   sandal(p, c.near.heel, c.near.ang);
   // shawl on the far shoulder: drawn behind the body (the front end shows along the chest)
@@ -339,6 +355,7 @@ const uprightSide = (p: Pen, c: UprightCfg) => {
   if (c.shawlNear) shawl.panel(p);
   const ph = Math.max(0, Math.min(1, c.phone ?? 0)), pe = ph * ph * (3 - 2 * ph);
   let na = arm(c.armNear, 0);
+  if (c.armN) na = posed(c.armN, na.S);
   if (pe > 0) { // the near forearm comes up: elbow by the waist, hand in front of the chest
     const E: P2 = [lerp(na.E, [318, shY + 0.95 * HH], pe)[0], lerp(na.E, [318, shY + 0.95 * HH], pe)[1]];
     const W = lerp(na.W, [392, shY + 0.62 * HH], pe);
@@ -346,9 +363,13 @@ const uprightSide = (p: Pen, c: UprightCfg) => {
   }
   sleeve(p, na.S, na.E, na.W);
   if (c.shawlNear) shawl.cap(p);
-  profileHead(p, 312 + 6 * pe, hc + 4 * pe, 0.34 * pe, light, c.seed);
+  const hr = c.headRot ?? 0;
+  profileHead(p, 312 + 6 * pe + 14 * hr, hc + 4 * pe + 8 * Math.abs(hr), 0.34 * pe + hr, light, c.seed);
   if (pe > 0.5) phoneInHand(p, na.W[0] + 8, na.W[1] - 22, -0.35, light);
+  else if (c.armN) posedHand(c.armN, na.W);
   else hand(na.W); // after the head: the near hand is in front of the ear
+  bag(na.W);
+  c.front?.(p);
 };
 
 /** standing, side view (facing screen right) */
@@ -616,7 +637,6 @@ export const travellerBack = (p: Pen, o: PoseOpts = {}) => {
 };
 
 // ---------------- prayer, side view ----------------
-const thobeDark = mul(THOBE, SH_CLOTH);
 
 /** ruku: hips over the heels, legs straight, back flat and level, head in line with the back (not raised or
  *  lowered), arms straight with the hands on the knees */
@@ -633,7 +653,7 @@ export const travellerRuku = (p: Pen, o: PoseOpts = {}) => {
   if (!o.shawlNear) shawl(); // far shoulder: behind the body
   const torso = cap(hip, sh, 60, 52);
   const skirt: P2[] = [[146, 560], [150, 760], [158, 951], [264, 951], [250, 800], [252, 660], [300, 600], [240, 520]];
-  unionFill(p, [torso, skirt], THOBE, thobeDark, light);
+  unionFill(p, [torso, skirt], THOBE, mul(THOBE, SH_CLOTH), light);
   if (o.shawlNear) shawl();
   profileHead(p, head[0], head[1], 1.48, light, o.seed ?? 1); // crown forward, a touch above level: not hanging
   // near arm: straight from the shoulder to the knee, hand over the kneecap
@@ -656,7 +676,7 @@ export const travellerSujood = (p: Pen, o: PoseOpts = {}) => {
   const shawl = () => sideShawl(p, sh, B, F[1] > 0 ? F : [-F[0], -F[1]], light, 200);
   if (!o.shawlNear) shawl(); // far shoulder: behind the body
   const parts = [cap(knee, hip, 48, 56), cap(knee, ankle, 40, 30), cap(hip, sh, 58, 50)];
-  unionFill(p, parts, THOBE, thobeDark, light);
+  unionFill(p, parts, THOBE, mul(THOBE, SH_CLOTH), light);
   if (o.shawlNear) shawl();
   profileHead(p, 505, 905, 1.75, light, o.seed ?? 1);
   // near arm on top: elbow raised clear of the floor, palm flat on the floor beside the head
@@ -679,7 +699,7 @@ export const travellerJalsa = (p: Pen, o: PoseOpts = {}) => {
   const shawl = drapeShawl(254, 648, 150, light);
   if (!o.shawlNear) { shawl.panel(p); shawl.cap(p); } // far shoulder: behind the body
   const parts = [cap(seat, sh, 64, 52), cap(seat, knee, 52, 38), cap(knee, ankle, 34, 26)];
-  unionFill(p, parts, THOBE, thobeDark, light);
+  unionFill(p, parts, THOBE, mul(THOBE, SH_CLOTH), light);
   if (o.shawlNear) shawl.panel(p);
   // near arm: hand resting on the thigh, fingers toward the knee
   sleeve(p, [258, 668], [276, 800], [366, 886]);
@@ -733,7 +753,7 @@ export const travellerChair = (p: Pen, o: PoseOpts & { arms?: "type" | "wave" | 
   const shawl = drapeShawl(300, 540, 190, light, o.wind ?? 0);
   if (!o.shawlNear) { shawl.panel(p); shawl.cap(p); }
   const parts = [cap(hip, sh, 64, 52), cap(hip, knee, 54, 42), cap(knee, ankle, 38, 28)];
-  unionFill(p, parts, THOBE, thobeDark, light);
+  unionFill(p, parts, THOBE, mul(THOBE, SH_CLOTH), light);
   if (o.shawlNear) shawl.panel(p);
   const tilt = o.tilt ?? 0;
   if (arms === "rest") {
@@ -780,7 +800,7 @@ export const travellerBedPhone = (p: Pen, o: PoseOpts & { scroll?: number; dark?
   neck(p, [256, 735], [266, hc + 50], light);
   const shawl = drapeShawl(254, 724, 170, light);
   if (!o.shawlNear) { shawl.panel(p); shawl.cap(p); }
-  unionFill(p, [cap(hip, sh, 64, 52), cap(hip, knee, 54, 44), cap(knee, ankle, 44, 34)], THOBE, thobeDark, light);
+  unionFill(p, [cap(hip, sh, 64, 52), cap(hip, knee, 54, 44), cap(knee, ankle, 44, 34)], THOBE, mul(THOBE, SH_CLOTH), light);
   if (o.shawlNear) { shawl.panel(p); shawl.cap(p); }
   // the blanket over his legs, from the hips to past his feet, resting on the mattress (part of the drawing)
   const bl = cw(join(qc([300, 975], [300, 900], [340, 880]), qc([340, 880], [520, 862], [700, 900]), qc([700, 900], [735, 930], [740, 975])) as P2[]);
@@ -808,7 +828,7 @@ export const travellerLying = (p: Pen, o: PoseOpts & { stir?: number } = {}) => 
   // head on the pillow (profile, face up: rotated so the crown points left)
   profileHead(p, 300, B - 132 - 6 * st, -Math.PI / 2 + 0.08, light, o.seed ?? 1);
   // shoulders and chest in the thobe, under the blanket's top edge
-  unionFill(p, [cap([385, B - 95 - 4 * st], [520, B - 92], 54, 50)], THOBE, thobeDark, light);
+  unionFill(p, [cap([385, B - 95 - 4 * st], [520, B - 92], 54, 50)], THOBE, mul(THOBE, SH_CLOTH), light);
   // the blanket: over his body to the feet, folded back at the chest; soft folds; a fold-over band of sheet
   const bl = cw(join(
     qc([470, B - 4], [468, B - 120], [500, B - 150]),

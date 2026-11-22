@@ -1,6 +1,7 @@
 // A story film: several sets (bedroom, street, office, gym, courtyard) and one Traveller, everything a pure function of
 // the frame. The player (StoryPlayer.tsx) builds every set once and shows only the one the frame is in.
 import type React from "react";
+import type * as THREE from "three";
 import type { Cam, V3 } from "../camera/ease";
 import type { Pen } from "../draw/toon";
 import type { Accent } from "../film/film";
@@ -14,7 +15,7 @@ export const SET_OFFSET: Record<SetId, V3> = {
 
 /** the Traveller this frame (world position of his soles / the card's pivot), or null when he is off screen */
 /** yaw: a fixed facing (radians; default: turned toward the camera) - e.g. parallel to the bed he sits on */
-export type TravellerCard = { pos: V3; key: string; draw: (p: Pen) => void; mirror?: boolean; roll?: number; blob?: string | null; wide?: boolean; yaw?: number };
+export type TravellerCard = { pos: V3; key: string; draw: (p: Pen) => void; mirror?: boolean; roll?: number; blob?: string | null; wide?: boolean; yaw?: number; scale?: number; castShadow?: boolean };
 export type Plan = { cam: Cam; focus: V3; cInf: number; nearScale: number; anchor?: V3 };
 
 /** what one view shows at one frame */
@@ -22,6 +23,8 @@ export type Frame = {
   set: SetId; state: string; t: number;           // set, its state, and time (s) for its animations
   plan: Plan;
   traveller: TravellerCard | null;
+  /** other characters on screen this frame (friends, family, worshippers, passers-by, a cat) */
+  others?: TravellerCard[];
   /** the courtyard's own effects: light levels, the tile glow and the star mark of the ending */
   courtyard?: { levels: { main: number; lanterns: number; night: number }; grooves?: [number, number, number, number, number]; mark?: [number, number, number, number, number]; swirl?: number; rays?: boolean };
   /** extra per-frame control of a set (e.g. the street's sun following him, a screen banner) */
@@ -46,6 +49,9 @@ export type StoryFilm = {
   sets?: SetId[];
   /** the shatter: the rendered frame breaks into pieces that fly at the lens (see StoryPlayer) */
   shatterAt?: (f: number) => Shatter | null;
+  /** extra background life for this film only (built once per view into the set roots; update runs every frame after
+   *  the set's own light, before the camera). Things it adds should sit on the NOINK layer so collision ignores them. */
+  life?: (roots: Partial<Record<SetId, THREE.Object3D>>) => { update: (fr: Frame, f: number) => void };
 };
 
 /** crack: 0..1 the cracks spreading from (x, y) over the frame; fly: 0..1 the pieces flying toward the lens and past

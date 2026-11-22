@@ -24,6 +24,24 @@ sources:
     checked_on: 2026-11-18
     checked_by: Claude (sunnah.com page read; English opening sentence and grade confirmed)
 
+  # The Quran version (The_First_Question_QURAN.mp4): captions only; the recitation audio is added in TikTok.
+  - id: quran-19-59-63
+    type: quran
+    used_in: The_First_Question_QURAN.mp4 (on-screen captions; no hadith, no narration)
+    reference: Surah Maryam 19:59-63 (the video ends in the breath before 19:64; no part of 19:64 is shown or heard)
+    recited_by: Sheikh Yasser Al-Dossari (audio added in TikTok, not in our file)
+    grade: n/a (Quran)
+    arabic_text: quran.com API v4, text_uthmani, saved verbatim in quran/19_59.json ... 19_63.json
+    translation_used: Saheeh International (quran.com translation id 20, name confirmed in quran/translations_list.json)
+    link: https://quran.com/19/59-63
+    api: https://api.quran.com/api/v4/verses/by_key/19:{59..63}?fields=text_uthmani&translations=20
+    quoted_exactly: >-
+      Every caption is an exact slice of the saved API text; tools/build_quran_timing.py fails unless the phrases of
+      each verse join back into the API text exactly (Arabic) and into the translation with only the footnote markers
+      removed (English). Phrase list and timing: quran/timing.json.
+    checked_on: 2026-11-20
+    checked_by: Claude (API responses saved; translation name confirmed; text checked mechanically against the saved files)
+
   # quran-20-14 is not used in the final version of the script (2026-11-19); kept here only as a note.
   - id: quran-20-14
     type: quran
@@ -35,7 +53,7 @@ sources:
     checked_on: null
 
 reviewer:
-  name: TODO
-  role: TODO (e.g. local imam / qualified student of knowledge)
-  approved: false
-  notes: ""
+  name: Arafat Rouf
+  role: channel owner
+  approved: true
+  notes: "2026-11-20: the Quran version's text (Maryam 19:59-63, Arabic and Saheeh International English) reviewed and approved."
