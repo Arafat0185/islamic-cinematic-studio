@@ -155,3 +155,27 @@ vite.config.ts.timestamp-*
 .nx/cache
 .nx/workspace-data
 .nx/migrate-runs
+
+# Generated audio (narration, mixes): kept out of git
+videos/*/voice/
+engine/public/audio/
+
+# rendered narration tracks (rebuilt by the planner)
+videos/*/final/*.wav
+__pycache__/
+
+# ---- curated repo: never commit media, renders or local tooling ----
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.flac
+*.mp4
+*.mov
+*.webm
+!docs/showcase/*.mp4
+*.pyc
+.remotion-tmp/
+.venv*/
+engine/out/
+engine/NIGHT_REPORT.md

@@ -27,14 +27,15 @@ Read this first. Full detail lives in `docs/phase-1-plan.md` and `characters/tra
 - **Concept A, "The Courtyard":** every video happens in one imagined, empty courtyard and the rooms around it.
   Time of day mirrors the theme (pre-dawn for salah, night rain for tawbah, dusk stone room for death).
   Desert exteriors may be borrowed for death and sabr stories.
-- **Palette:** night indigo `#0E1430`, lapis `#1F3B73`, limestone `#D9CBB0`, lamp gold `#E8B04B`,
-  dawn rose `#C98B7A`.
+- **Channel brand** (logo `brand/logo/traveller_logo_transparent.svg`, no name with it): brown `#4D312C`, orange `#FB5606`, white. UI panels
+  brown at 85 %, keywords orange, warnings red `#E5484D`, good actions green `#3FB37F`, captions white.
+- **Scene palette:** night indigo `#0E1430`, lapis `#1F3B73`, limestone `#D9CBB0`, lamp gold `#E8B04B`, dawn rose `#C98B7A`.
 - **Fonts:** Amiri or Noto Naskh Arabic (Arabic), Cormorant Garamond (English titles), Inter (subtitles).
 - **The Traveller (v7, locked):** the recurring protagonist. Calm faceless man, 6 heads tall.
-  - Skin `#C08A5E`, sand thobe `#CDB58C`, indigo shawl `#363C58`, off-white kufi `#F2EEE3`,
-    near-black beard `#1A1416`, sandals `#6B4A33`, ink outlines `#241726`.
+  - Skin `#C08A5E`, brown thobe `#7B5238`, orange scarf `#EE5A0A`, cream kufi `#F2EEE3`,
+    near-black beard `#1A1416`, sandals `#6B4A33`, ink outlines `#241726`. Back view: hair on the top half only.
   - Head width 0.75 × height, slim jaw, rounded chin beard ("beard B"), snug kufi that never crosses the face.
-  - Code: `characters/traveller/traveller.ts`. Any redraw must match `DESIGN.md` exactly.
+  - Code: `engine/src/characters/traveller.ts`. Any redraw must match `characters/traveller/DESIGN.md` exactly.
 
 ## Machine notes (from the scratch project, Windows, Radeon 760M integrated GPU)
 - **1 browser tab:** `Config.setConcurrency(1)`. 6 tabs was ~3× slower; 2 tabs crashed Chrome ("Target closed").
