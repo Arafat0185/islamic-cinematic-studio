@@ -1,0 +1,671 @@
+{
+ "about": "Video 003 The Sirat: the shot list for Maryam 19:66-72 (the Taraweeh recording, 0-110.2 s): a new angle every 1.5-3 s; never the same shot type twice in a row; at most 3 foot close-ups, each under 2 s. No hooks, nothing curved or alive-looking: only iron, rock, fire, smoke and chains. Shared by the picture (engine/src/scenes/sirat/), the sound (engine/tools/mix_sirat.py) and QA. Times in seconds. type: the shot type; tpl: the template's frame (s) this beat follows (null: a new shot type). transitions: whip, smoke, flash (red lightning cut), flashHot (white-yellow fire flash), burn (fire-burn wipe), heart (heartbeat cut), smash (to black, <= 0.3 s), impact. occlude: moments the fire's light dips as if something passed in front of it (nothing is ever shown). heartRate: [from, to, bpm at from, bpm at to].",
+ "shots": [
+  {
+   "at": 0.0,
+   "kind": "burst",
+   "type": "WIDE",
+   "set": "abyss",
+   "tpl": 1,
+   "why": "19:66 'when I have died, will I be brought forth alive?': the camera bursts out of smoke into the reveal: a blood-red boiling sky, the ocean of fire, the bridge one burning line across the pit; tiny silhouettes at the bottom"
+  },
+  {
+   "at": 3.2,
+   "kind": "bridgeFly",
+   "type": "DRONE",
+   "set": "abyss",
+   "tpl": 3,
+   "why": "a slow, ominous drone flight along the burning line, sparks dripping into the pit"
+  },
+  {
+   "at": 6.0,
+   "kind": "skyBolt",
+   "type": "SKY",
+   "set": "abyss",
+   "tpl": 4,
+   "why": "red lightning splits the black sky above the bridge"
+  },
+  {
+   "at": 8.0,
+   "kind": "cliffOrbit",
+   "type": "CROWD",
+   "set": "abyss",
+   "tpl": 6,
+   "why": "19:67 THE EDGE: a slow orbit around the faceless crowd on the cliff edge, the Traveller among them"
+  },
+  {
+   "at": 11.0,
+   "kind": "fearUp",
+   "type": "FEAR",
+   "set": "abyss",
+   "tpl": 11,
+   "why": "low-angle close-up on his faceless head, trembling, lit from below; slow push-in"
+  },
+  {
+   "at": 13.6,
+   "kind": "topDown",
+   "type": "DRONE",
+   "set": "abyss",
+   "tpl": null,
+   "why": "top-down drone (environment only): the bridge a thin line over the fire"
+  },
+  {
+   "at": 15.8,
+   "kind": "hands",
+   "type": "HANDS",
+   "set": "abyss",
+   "tpl": null,
+   "why": "'while he was nothing': his hands shaking, gripping nothing, ash landing on them"
+  },
+  {
+   "at": 18.3,
+   "kind": "smokeDevils",
+   "type": "SMOKE",
+   "set": "abyss",
+   "tpl": null,
+   "why": "19:68 'gather them and the devils': smoke rolling over the pit; vague dark shadows move inside it (nothing more)"
+  },
+  {
+   "at": 21.2,
+   "kind": "cliffLow",
+   "type": "CROWD",
+   "set": "abyss",
+   "tpl": 8,
+   "why": "the crowd driven to the edge, seen from below the cliff's lip against the boiling sky"
+  },
+  {
+   "at": 23.8,
+   "kind": "ots",
+   "type": "OTS",
+   "set": "abyss",
+   "tpl": 16,
+   "why": "over his shoulder, out over the pit"
+  },
+  {
+   "at": 26.4,
+   "kind": "kneelEdge",
+   "type": "CROWD",
+   "set": "abyss",
+   "tpl": 8,
+   "why": "the crowd dropping to their knees along the edge; others pushing past"
+  },
+  {
+   "at": 29.4,
+   "kind": "fearTight",
+   "type": "FEAR",
+   "set": "abyss",
+   "tpl": 13,
+   "why": "tighter on his faceless head, a Dutch angle"
+  },
+  {
+   "at": 31.4,
+   "kind": "otsErupt",
+   "type": "OTS",
+   "set": "abyss",
+   "tpl": 18,
+   "why": "'around Hell': over his shoulder as the flames below ERUPT"
+  },
+  {
+   "at": 33.8,
+   "kind": "eruptWide",
+   "type": "ERUPT",
+   "set": "abyss",
+   "tpl": 21,
+   "why": "the eruption, wide: a crash zoom toward the column"
+  },
+  {
+   "at": 36.4,
+   "kind": "underBridge",
+   "type": "BELOW",
+   "set": "abyss",
+   "tpl": 23,
+   "why": "from inside the flames, up at the burning line"
+  },
+  {
+   "at": 38.8,
+   "kind": "emberLens",
+   "type": "EMBER",
+   "set": "abyss",
+   "tpl": 25,
+   "why": "heat haze and a storm of embers blow into the lens"
+  },
+  {
+   "at": 40.8,
+   "kind": "stareA",
+   "type": "FEAR",
+   "set": "abyss",
+   "tpl": 28,
+   "why": "THE STARE: chest-up, the camera circling slowly, ash falling"
+  },
+  {
+   "at": 43.6,
+   "kind": "kneelWide",
+   "type": "CROWD",
+   "set": "abyss",
+   "tpl": 8,
+   "why": "'upon their knees': the whole crowd kneeling along the edge of the pit, shadows in the smoke behind"
+  },
+  {
+   "at": 46.3,
+   "kind": "pillarsRise",
+   "type": "RUIN",
+   "set": "abyss",
+   "tpl": null,
+   "why": "19:69 'extract from every sect': as the smoke parts, straight rusted iron spikes, broken girders and jagged rock pillars rise out of the lava; one pillar cracks and collapses into the fire"
+  },
+  {
+   "at": 49.0,
+   "kind": "crowdPush",
+   "type": "CROWD",
+   "set": "abyss",
+   "tpl": 34,
+   "why": "figures shoved past the camera, out of focus; he stands frozen behind them"
+  },
+  {
+   "at": 51.4,
+   "kind": "crumbleSnatch",
+   "type": "CRUMBLE",
+   "set": "abyss",
+   "tpl": 86,
+   "why": "the burning line cracks and crumbles under a faceless figure; he drops into the fire"
+  },
+  {
+   "at": 54.0,
+   "kind": "skyBolt2",
+   "type": "SKY",
+   "set": "abyss",
+   "tpl": null,
+   "why": "red lightning tears across the sky over the hooks"
+  },
+  {
+   "at": 56.0,
+   "kind": "stumbleAhead",
+   "type": "CROSSERS",
+   "set": "abyss",
+   "tpl": 61,
+   "why": "the crossing begins: someone stumbles on the line; a geyser of fire bursts up beside him in a spray of sparks"
+  },
+  {
+   "at": 58.4,
+   "kind": "debrisPass",
+   "type": "DEBRIS",
+   "set": "abyss",
+   "tpl": null,
+   "why": "'worst against the Most Merciful': a burning boulder and debris fall right past the camera"
+  },
+  {
+   "at": 60.6,
+   "kind": "wideLone",
+   "type": "WIDE",
+   "set": "abyss",
+   "tpl": null,
+   "why": "the whole bridge from far away, a tiny lone figure on it, the fire ocean below"
+  },
+  {
+   "at": 63.0,
+   "kind": "crossers",
+   "type": "CROSSERS",
+   "set": "abyss",
+   "tpl": null,
+   "why": "19:70: streaks of light race along the line (the crossing speeds)"
+  },
+  {
+   "at": 65.4,
+   "kind": "eruptRise",
+   "type": "ERUPT",
+   "set": "abyss",
+   "tpl": null,
+   "why": "flames surge up out of the pit under the bridge"
+  },
+  {
+   "at": 67.8,
+   "kind": "stareB",
+   "type": "FEAR",
+   "set": "abyss",
+   "tpl": 30,
+   "why": "still circling him, from the other side"
+  },
+  {
+   "at": 70.0,
+   "kind": "matFire",
+   "type": "OBJECTS",
+   "set": "abyss",
+   "tpl": 65,
+   "why": "'most worthy of burning therein': an abandoned prayer mat on the bridge catches fire"
+  },
+  {
+   "at": 72.0,
+   "kind": "toBridge",
+   "type": "CROWD",
+   "set": "abyss",
+   "tpl": 41,
+   "why": "the crowd surges to the edge; he is pushed to the bridge's foot"
+  },
+  {
+   "at": 73.4,
+   "kind": "feetEdge",
+   "type": "FEET",
+   "set": "abyss",
+   "tpl": 44,
+   "why": "19:71 THE CORE 'none of you except he will come to it': his bare foot steps off the rock onto the burning edge; stones crumble (foot close-up 1 of 3)"
+  },
+  {
+   "at": 75.2,
+   "kind": "sideTrack",
+   "type": "SIDE",
+   "set": "abyss",
+   "tpl": null,
+   "why": "side profile: he walks along the bridge, the camera tracking alongside him"
+  },
+  {
+   "at": 77.8,
+   "kind": "otsBridge",
+   "type": "OTS",
+   "set": "abyss",
+   "tpl": null,
+   "why": "from behind him, looking ahead down the endless bridge into darkness"
+  },
+  {
+   "at": 80.4,
+   "kind": "underCross",
+   "type": "BELOW",
+   "set": "abyss",
+   "tpl": null,
+   "why": "from below, through the flames: silhouettes crossing the line above"
+  },
+  {
+   "at": 82.8,
+   "kind": "crossersPast",
+   "type": "CROSSERS",
+   "set": "abyss",
+   "tpl": null,
+   "why": "streaks of light fly past him on the line"
+  },
+  {
+   "at": 85.0,
+   "kind": "feetVertigo",
+   "type": "FEET",
+   "set": "abyss",
+   "tpl": 48,
+   "why": "a vertigo dolly-zoom down past his feet into the fire (foot close-up 2 of 3)"
+  },
+  {
+   "at": 86.6,
+   "kind": "hourglass",
+   "type": "OBJECTS",
+   "set": "abyss",
+   "tpl": null,
+   "why": "19:71 'an inevitability decreed': an hourglass on a rock at the edge, its last grains running out (cutaway)"
+  },
+  {
+   "at": 88.2,
+   "kind": "lookDown2",
+   "type": "FEAR",
+   "set": "abyss",
+   "tpl": 56,
+   "why": "'an inevitability decreed': his head bowed, breath shaking"
+  },
+  {
+   "at": 89.6,
+   "kind": "crawlDrag",
+   "type": "CROSSERS",
+   "set": "abyss",
+   "tpl": 72,
+   "why": "ahead: one crawls, the last one is dragged"
+  },
+  {
+   "at": 91.2,
+   "kind": "itemsFall",
+   "type": "OBJECTS",
+   "set": "abyss",
+   "tpl": 63,
+   "why": "gold coins, a watch and a phone slip from a hand and melt as they fall"
+  },
+  {
+   "at": 92.5,
+   "kind": "crossersSafe",
+   "type": "CROSSERS",
+   "set": "abyss",
+   "tpl": null,
+   "why": "19:72 'We will save those who feared Allah': streaks of light race along the line to the far side"
+  },
+  {
+   "at": 94.8,
+   "kind": "feetFire",
+   "type": "FEET",
+   "set": "abyss",
+   "tpl": 70,
+   "why": "his feet over the white-hot fire, from under the bridge (foot close-up 3 of 3)"
+  },
+  {
+   "at": 96.5,
+   "kind": "breaking",
+   "type": "FEAR",
+   "set": "abyss",
+   "tpl": 75,
+   "why": "BREAKING: a tight push-in, the heartbeat pounding; behind him, out of focus, a rock pillar cracks and starts to fall"
+  },
+  {
+   "at": 98.6,
+   "kind": "smash1",
+   "type": "SMASH",
+   "set": "abyss",
+   "tpl": 80,
+   "why": "a smash to black (0.25 s)"
+  },
+  {
+   "at": 98.85,
+   "kind": "engulf",
+   "type": "ENGULF",
+   "set": "abyss",
+   "tpl": 80,
+   "why": "'and leave the wrongdoers': a burst of fire engulfs a figure on the line; when it clears he is gone (impact)"
+  },
+  {
+   "at": 101.0,
+   "kind": "smash2",
+   "type": "SMASH",
+   "set": "abyss",
+   "tpl": 87,
+   "why": "a smash to black (0.2 s)"
+  },
+  {
+   "at": 101.2,
+   "kind": "fallWith",
+   "type": "FALL",
+   "set": "abyss",
+   "tpl": 88,
+   "why": "THE FALL: the camera falls WITH him, spinning, into the blinding fire (a silhouette only)"
+  },
+  {
+   "at": 104.6,
+   "kind": "continue",
+   "type": "END",
+   "set": "abyss",
+   "tpl": 93,
+   "why": "the ending on the last phrase: a near-black ember frame, a fire glow pulsing: How fast will you cross?"
+  },
+  {
+   "at": 110.2,
+   "kind": "endCard",
+   "type": "END",
+   "set": "abyss",
+   "tpl": null,
+   "why": "the end card (5 s): the logo and the credits on dark red, embers drifting; the recitation's echo fades under it, then rumble and fire fade to silence"
+  }
+ ],
+ "events": {
+  "transitions": [
+   [
+    3.2,
+    "whip"
+   ],
+   [
+    6.0,
+    "flash"
+   ],
+   [
+    8.0,
+    "smoke"
+   ],
+   [
+    11.0,
+    "heart"
+   ],
+   [
+    13.6,
+    "whip"
+   ],
+   [
+    15.8,
+    "heart"
+   ],
+   [
+    18.3,
+    "smoke"
+   ],
+   [
+    21.2,
+    "burn"
+   ],
+   [
+    23.8,
+    "heart"
+   ],
+   [
+    26.4,
+    "smoke"
+   ],
+   [
+    29.4,
+    "heart"
+   ],
+   [
+    31.4,
+    "whip"
+   ],
+   [
+    33.8,
+    "flashHot"
+   ],
+   [
+    36.4,
+    "whip"
+   ],
+   [
+    38.8,
+    "flashHot"
+   ],
+   [
+    40.8,
+    "burn"
+   ],
+   [
+    43.6,
+    "heart"
+   ],
+   [
+    46.3,
+    "burn"
+   ],
+   [
+    49.0,
+    "heart"
+   ],
+   [
+    51.4,
+    "whip"
+   ],
+   [
+    54.0,
+    "flash"
+   ],
+   [
+    56.0,
+    "whip"
+   ],
+   [
+    58.4,
+    "heart"
+   ],
+   [
+    60.6,
+    "smoke"
+   ],
+   [
+    63.0,
+    "whip"
+   ],
+   [
+    65.4,
+    "flashHot"
+   ],
+   [
+    67.8,
+    "heart"
+   ],
+   [
+    70.0,
+    "burn"
+   ],
+   [
+    72.0,
+    "heart"
+   ],
+   [
+    73.4,
+    "burn"
+   ],
+   [
+    75.2,
+    "heart"
+   ],
+   [
+    77.8,
+    "whip"
+   ],
+   [
+    80.4,
+    "smoke"
+   ],
+   [
+    82.8,
+    "whip"
+   ],
+   [
+    85.0,
+    "heart"
+   ],
+   [
+    86.6,
+    "heart"
+   ],
+   [
+    88.2,
+    "smoke"
+   ],
+   [
+    89.6,
+    "whip"
+   ],
+   [
+    91.2,
+    "burn"
+   ],
+   [
+    92.5,
+    "flash"
+   ],
+   [
+    94.8,
+    "heart"
+   ],
+   [
+    96.5,
+    "heart"
+   ],
+   [
+    98.6,
+    "smash"
+   ],
+   [
+    98.85,
+    "impact"
+   ],
+   [
+    101.0,
+    "smash"
+   ],
+   [
+    104.6,
+    "burn"
+   ],
+   [
+    110.2,
+    "smoke"
+   ]
+  ],
+  "lightning": [
+   6.6,
+   7.3,
+   22.0,
+   34.5,
+   54.4,
+   55.1,
+   68.2,
+   92.6,
+   103.0
+  ],
+  "erupt": [
+   31.8,
+   33.8,
+   38.6,
+   40.8
+  ],
+  "rise": [
+   65.4,
+   66.0,
+   67.8
+  ],
+  "crumble": 74.2,
+  "heartRate": [
+   [
+    11.0,
+    18.3,
+    50,
+    56
+   ],
+   [
+    23.8,
+    46.3,
+    56,
+    70
+   ],
+   [
+    46.3,
+    73.4,
+    70,
+    86
+   ],
+   [
+    73.4,
+    96.5,
+    86,
+    116
+   ],
+   [
+    96.5,
+    98.6,
+    116,
+    150
+   ]
+  ],
+  "pass": 59.4,
+  "snatch": 52.2,
+  "strike": 99.6,
+  "items": 91.1,
+  "bridgeFrom": 73.4,
+  "toBridge": 72.0,
+  "occlude": [
+   20.4,
+   27.9,
+   44.6,
+   62.0,
+   77.2,
+   96.0
+  ],
+  "hourglass": [
+   -1.5,
+   0.02,
+   4.2
+  ],
+  "pillarRise": [
+   45.6,
+   49.0
+  ],
+  "collapse": [
+   47.6,
+   97.4
+  ]
+ }
+}

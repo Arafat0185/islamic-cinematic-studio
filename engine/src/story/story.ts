@@ -6,12 +6,12 @@ import type { Cam, V3 } from "../camera/ease";
 import type { Pen } from "../draw/toon";
 import type { Accent } from "../film/film";
 
-export type SetId = "courtyard" | "bedroom" | "street" | "office" | "gym" | "feed" | "void" | "deadlines" | "airport" | "car" | "sofa" | "hospital" | "cemetery";
+export type SetId = "courtyard" | "bedroom" | "street" | "office" | "gym" | "feed" | "void" | "deadlines" | "airport" | "car" | "sofa" | "hospital" | "cemetery" | "abyss";
 /** world offset of each set (local coordinates + offset = world) */
 export const SET_OFFSET: Record<SetId, V3> = {
   courtyard: [0, 0, 0], bedroom: [200, 0, 0], street: [400, 0, 0], office: [600, 0, 0], gym: [800, 0, 0],
   feed: [1000, 0, 0], void: [1200, 0, 0], deadlines: [1400, 0, 0], airport: [1600, 0, 0], car: [1800, 0, 0], sofa: [2000, 0, 0],
-  hospital: [2200, 0, 0], cemetery: [2400, 0, 0],
+  hospital: [2200, 0, 0], cemetery: [2400, 0, 0], abyss: [0, 0, 6000],
 };
 
 /** the Traveller this frame (world position of his soles / the card's pivot), or null when he is off screen */
@@ -64,4 +64,6 @@ export type FrameFx = {
   zoom?: { scale: number; x: number; y: number; blur: number };
   /** extra CSS filters on the 3D picture (a film's colour grade, e.g. "saturate(0.45) brightness(0.9)") */
   css?: string;
+  /** heat haze: the picture shimmers (turbulence displacement, px) */
+  haze?: number;
 };

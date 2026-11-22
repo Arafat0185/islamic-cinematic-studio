@@ -7,7 +7,8 @@
 //   2. clearance: short rays from the camera in 26 directions. If any surface is closer than MARGIN, the camera is
 //      pushed away from it.
 // safeCam() returns the corrected camera and what it had to do, so shots can be checked frame by frame
-// (cameraReport) and designed so that no correction is ever needed.
+// (cameraReport) and designed so that no correction is ever needed. Objects with userData.noCollide (things meant to
+// sweep right past the lens, e.g. video 003's hooks) are ignored.
 import * as THREE from "three";
 import { Cam, V3 } from "./ease";
 
@@ -28,7 +29,7 @@ export const safeCam = (root: THREE.Object3D, c: Cam, margin = MARGIN): CamCheck
   const dist = D.length();
   D.normalize();
   ray.set(T, D); ray.near = 0.1; ray.far = dist;
-  const hit = ray.intersectObject(root, true)[0];
+  const hit = ray.intersectObject(root, true).find((h) => !h.object.userData.noCollide);
   let occluded = Infinity;
   if (hit) { occluded = hit.distance; P.copy(T).addScaledVector(D, Math.max(0.1, hit.distance - margin)); }
   // 2. clearance: push away from anything closer than the margin (two passes for corners)
@@ -36,7 +37,7 @@ export const safeCam = (root: THREE.Object3D, c: Cam, margin = MARGIN): CamCheck
   for (let pass = 0; pass < 2; pass++) {
     for (const d of DIRS) {
       ray.set(P, d); ray.near = 0; ray.far = margin;
-      const h = ray.intersectObject(root, true)[0];
+      const h = ray.intersectObject(root, true).find((x) => !x.object.userData.noCollide);
       if (!h) continue;
       clearance = Math.min(clearance, h.distance);
       P.addScaledVector(d, -(margin - h.distance));
