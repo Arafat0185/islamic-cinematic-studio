@@ -1,0 +1,38 @@
+# References for video 006 · Hold On To This
+# Rule: nothing ships until every source is checked and reviewer.approved is true.
+
+video: 006-hold-on
+sources:
+  - id: quran-13-28-29
+    type: quran
+    used_in: Hold_On_To_This.mp4 (recitation in our sound track from 40.5 s + on-screen captions)
+    reference: Surat Ar-Ra'd 13:28-29
+    recited_by: Sheikh Yasser Al-Dossari
+    recitation_audio: https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/013028.mp3 and 013029.mp3 (see NOTICE.md); never committed
+    grade: n/a (Quran)
+    arabic_text: quran.com API v4, text_uthmani, saved verbatim in quran/13_28.json, quran/13_29.json
+    translation_used: Saheeh International (quran.com translation id 20, name confirmed in quran/translations_list.json)
+    link: https://quran.com/13/28-29
+    api: https://api.quran.com/api/v4/verses/by_key/13:{28..29}?fields=text_uthmani&translations=20
+    quoted_exactly: >-
+      Every recitation caption is an exact slice of the saved API text; tools/build_hold_timing.py fails unless the
+      phrases of each verse join back into the API text exactly (Arabic) and into the translation with the footnote
+      markers removed (English). The one change: Saheeh International's 13:28 ends with a closing quotation mark (the
+      quotation opens in 13:27); it is left off the last caption of 13:28, and the build checks that it is the only
+      difference. Phrase list and timing: timing.json.
+    checked_on: 2026-11-26
+    checked_by: Claude (API responses saved; translation name confirmed; text checked mechanically)
+
+  - id: talk
+    type: talk by a sheikh (not a religious text quoted as scripture)
+    used_in: 0-39.9 s, added by the channel owner in TikTok; NOT in our file
+    caption_text: the 14 Arabic/English lines are the channel owner's text, used exactly as supplied (the speaker also
+      says "واسمع يا أختي المباركة" and "والله يا أبو غازي", which are not captioned)
+    timing: narration/whisper_words.json (local Whisper small, Arabic, word timings)
+    note: the guide recording (engine/public/audio/guide/deen_guide.mp4) is for timing and the preview only, never exported or committed
+
+reviewer:
+  name: Arafat Rouf
+  role: channel owner
+  approved: pending
+  notes: ""

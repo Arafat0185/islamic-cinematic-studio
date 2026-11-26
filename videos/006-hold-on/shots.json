@@ -1,0 +1,163 @@
+{
+ "about": "Video 006 Hold On To This: the shot list (a new shot every 2-4 s, each matching its caption), shared by the picture (engine/src/scenes/hold/) and the sound (engine/tools/mix_hold.py). world = the nature set's world (sets/nature.ts).",
+ "shots": [
+  {
+   "at": 0.0,
+   "kind": "forestWalk",
+   "world": "forest",
+   "why": "dawn over the misty pine forest: a drone glides down to him walking the path into the light"
+  },
+  {
+   "at": 1.8,
+   "kind": "quranHands",
+   "world": "forest",
+   "why": "a mushaf held gently against his chest, light falling on it"
+  },
+  {
+   "at": 3.3,
+   "kind": "cliffRise",
+   "world": "cliff",
+   "why": "Look, young man: on a rock above the clouds at sunrise, the camera rises with him"
+  },
+  {
+   "at": 6.6,
+   "kind": "cliffOrbit",
+   "world": "cliff",
+   "why": "honour and dignity: a slow orbit, chest up, the wind"
+  },
+  {
+   "at": 9.94,
+   "kind": "canyonChair",
+   "world": "canyon",
+   "why": "you lose your father: the empty chair on the porch above the canyon, the kufi on it; his hand reaches to it; the river flows on"
+  },
+  {
+   "at": 12.04,
+   "kind": "window",
+   "world": "window",
+   "why": "you lose your mother: a shawl on the sill, tea still steaming, light through the curtains"
+  },
+  {
+   "at": 13.94,
+   "kind": "coins",
+   "world": "stream",
+   "why": "you lose your wealth: gold coins slip from his hand into a clear stream and wash away"
+  },
+  {
+   "at": 15.64,
+   "kind": "homeDusk",
+   "world": "home",
+   "why": "you lose your wife and children: the home at dusk, small shoes by the door, the swing moving, empty"
+  },
+  {
+   "at": 18.12,
+   "kind": "wheelOrbit",
+   "world": "valley",
+   "why": "you lose your limbs: in a wheelchair by a big window over a green valley, sunlight on him; the camera circles"
+  },
+  {
+   "at": 20.6,
+   "kind": "valleyView",
+   "world": "valley",
+   "why": "calm: past him, through the window, over the valley"
+  },
+  {
+   "at": 22.84,
+   "kind": "lakeOut",
+   "world": "lake",
+   "why": "but lose this religion: the light drains, the masjid lantern on the lake goes out, fog swallows the lake"
+  },
+  {
+   "at": 25.86,
+   "kind": "bambooCar",
+   "world": "bamboo",
+   "why": "I know a young man: a sleek car glides through a bamboo grove at night"
+  },
+  {
+   "at": 28.44,
+   "kind": "pentCards",
+   "world": "pent",
+   "why": "three bank cards: cards on the glass table, shining"
+  },
+  {
+   "at": 30.4,
+   "kind": "pentWide",
+   "world": "pent",
+   "why": "everything comes to him: the penthouse over the lavender-lit city, shopping bags"
+  },
+  {
+   "at": 33.58,
+   "kind": "sofaCall",
+   "world": "pent",
+   "why": "bored and fed up: alone on a huge sofa, phone to his ear, motionless, the city glittering"
+  },
+  {
+   "at": 36.86,
+   "kind": "wheatSun",
+   "world": "wheat",
+   "why": "why are you bored?: a slow push into the setting sun over the wheat; the question held in silence"
+  },
+  {
+   "at": 40.5,
+   "kind": "pentDawn",
+   "world": "pent",
+   "why": "13:28 Those who have believed: dawn; he puts the phone down"
+  },
+  {
+   "at": 43.4,
+   "kind": "wudu",
+   "world": "stream",
+   "why": "and whose hearts are assured: wudu at a stream, water over his hands"
+  },
+  {
+   "at": 46.4,
+   "kind": "walkMasjid",
+   "world": "lake",
+   "why": "by the remembrance of Allah: he walks the dock toward the small masjid glowing by the lake as the fog lifts"
+  },
+  {
+   "at": 50.25,
+   "kind": "pray",
+   "world": "lake",
+   "why": "Unquestionably...: the Traveller and he pray side by side"
+  },
+  {
+   "at": 53.6,
+   "kind": "birds",
+   "world": "lake",
+   "why": "hearts are assured: birds take off over the water"
+  },
+  {
+   "at": 56.85,
+   "kind": "droneLavender",
+   "world": "lavender",
+   "why": "13:29 Those who believed and did righteous deeds: a drone glides over lavender at golden hour"
+  },
+  {
+   "at": 60.0,
+   "kind": "droneWheat",
+   "world": "wheat",
+   "why": "the wheat in the rising sun"
+  },
+  {
+   "at": 63.2,
+   "kind": "walkHome",
+   "world": "wheat",
+   "why": "a good state is theirs: the two walk home together on the path, the sunrise ahead"
+  },
+  {
+   "at": 66.4,
+   "kind": "craneUp",
+   "world": "wheat",
+   "why": "and a good return: a slow crane up into the sky"
+  }
+ ],
+ "events": {
+  "lanternOut": 23.7,
+  "carDoor": 26.2,
+  "phoneBuzz": 34.0,
+  "phoneDown": 41.6,
+  "coinsFrom": 14.2,
+  "birdsFrom": 54.0
+ }
+}
