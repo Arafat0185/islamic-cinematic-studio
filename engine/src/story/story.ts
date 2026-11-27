@@ -6,12 +6,12 @@ import type { Cam, V3 } from "../camera/ease";
 import type { Pen } from "../draw/toon";
 import type { Accent } from "../film/film";
 
-export type SetId = "courtyard" | "bedroom" | "street" | "office" | "gym" | "feed" | "void" | "deadlines" | "airport" | "car" | "sofa" | "hospital" | "cemetery" | "abyss" | "library" | "bookworlds" | "nature";
+export type SetId = "lesson" | "courtyard" | "bedroom" | "street" | "office" | "gym" | "feed" | "void" | "deadlines" | "airport" | "car" | "sofa" | "hospital" | "cemetery" | "abyss" | "library" | "bookworlds" | "nature";
 /** world offset of each set (local coordinates + offset = world) */
 export const SET_OFFSET: Record<SetId, V3> = {
   courtyard: [0, 0, 0], bedroom: [200, 0, 0], street: [400, 0, 0], office: [600, 0, 0], gym: [800, 0, 0],
   feed: [1000, 0, 0], void: [1200, 0, 0], deadlines: [1400, 0, 0], airport: [1600, 0, 0], car: [1800, 0, 0], sofa: [2000, 0, 0],
-  hospital: [2200, 0, 0], cemetery: [2400, 0, 0], abyss: [0, 0, 6000], library: [0, 0, -6000], bookworlds: [0, 0, 12000], nature: [0, 0, 18000],
+  hospital: [2200, 0, 0], cemetery: [2400, 0, 0], abyss: [0, 0, 6000], library: [0, 0, -6000], bookworlds: [0, 0, 12000], nature: [0, 0, 18000], lesson: [0, 0, 24000],
 };
 
 /** the Traveller this frame (world position of his soles / the card's pivot), or null when he is off screen */
@@ -48,6 +48,9 @@ export type StoryFilm = {
   audio?: string;
   /** the sets this film uses (only these are built; default: the original five) */
   sets?: SetId[];
+  /** video 007: the black & gold grade (everything grey but gold; FrameFx.mono sets it per frame) and heavier grain */
+  mono?: boolean;
+  grainAmount?: number;
   /** the shatter: the rendered frame breaks into pieces that fly at the lens (see StoryPlayer) */
   shatterAt?: (f: number) => Shatter | null;
   /** extra background life for this film only (built once per view into the set roots; update runs every frame after
@@ -68,4 +71,6 @@ export type FrameFx = {
   haze?: number;
   /** a CSS clip-path for the 3D picture (e.g. the page of a book the camera is pushing into); the overlay frames it */
   clip?: string;
+  /** with film.mono: how grey everything but gold is (0..1, default 1), gold's kept saturation, the black crush */
+  mono?: number; goldKeep?: number; crush?: number;
 };

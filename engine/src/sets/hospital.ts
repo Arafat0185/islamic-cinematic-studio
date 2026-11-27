@@ -85,6 +85,14 @@ export const buildHospital = (offset: V3): StorySet => {
   });
   const apply = (state: string, t: number): SetLook => {
     // "on", "dark", or "mon:<phase>:<amp>" (the light on, the monitor's beat phase and strength set by the shot)
+    // "nm:<phase>:<amp>" (video 007): the room dark, only the monitor and the cold window light
+    if (state.startsWith("nm:")) {
+      const v = state.split(":").map(Number); drawMonitor(true, v[1], v[2]);
+      ceiling.intensity = 0; monL.intensity = 0.9; monL.color.set("#d6e2f2");   // a neutral glow (a green light turns skin yellow in the black & gold grade) (panel.material as THREE.MeshBasicMaterial).color.set("#f4f7fb").multiplyScalar(0.06);
+      coldBeam.setLevel(1.4); coldL.intensity = 1.3;
+      return { lit: [0.2, 0.22, 0.28], shade: [0.04, 0.045, 0.06], lift: [0.006, 0.007, 0.01], sat: 0.7, charTint: [0.72, 0.78, 0.92], cardGain: 0.5, cardPointK: 1.3, pointK: 1.2, grade: GRADE_NIGHT, fog: ["#080b10", 3, 12] };
+    }
+    monL.color.set("#9fffd0");
     const mon = state.startsWith("mon:") ? state.split(":").map(Number) : null, on = state === "on" || !!mon;
     drawMonitor(on, mon ? mon[1] : t * 0.9, mon ? mon[2] : 1);
     ceiling.intensity = on ? 2.2 : 0; monL.intensity = on ? 0.5 : 0;

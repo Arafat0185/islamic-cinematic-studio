@@ -37,6 +37,8 @@ import { buildAbyss } from "../sets/abyss";
 import { buildLibrary } from "../sets/library";
 import { buildBookWorlds } from "../sets/bookworlds";
 import { buildNature } from "../sets/nature";
+import { buildLesson } from "../sets/lesson";
+import { MonoGoldEffect } from "../render/monogold";
 import type { SetLook, StorySet } from "../sets/common";
 import { SET_OFFSET, SetId, StoryFilm, FrameFx, Shatter } from "./story";
 import { buildCourtyardFx } from "../brand/courtyardFx";
@@ -75,7 +77,7 @@ const buildWorld = (traffic: Vehicle[], ids: SetId[] = DEFAULT_SETS) => {
   if (has("office")) { office = buildOffice(SET_OFFSET.office); sets.office = office.set; }
   const simple: [SetId, (o: [number, number, number]) => StorySet][] = [
     ["bedroom", buildBedroom], ["gym", buildGym], ["feed", buildFeed], ["void", buildVoid], ["deadlines", buildDeadlines],
-    ["airport", buildAirport], ["car", buildCar], ["sofa", buildSofa], ["hospital", buildHospital], ["abyss", buildAbyss], ["library", buildLibrary], ["bookworlds", buildBookWorlds], ["nature", buildNature],
+    ["airport", buildAirport], ["car", buildCar], ["sofa", buildSofa], ["hospital", buildHospital], ["abyss", buildAbyss], ["library", buildLibrary], ["bookworlds", buildBookWorlds], ["nature", buildNature], ["lesson", buildLesson],
   ];
   for (const [id, b] of simple) if (has(id)) sets[id] = b(SET_OFFSET[id]);
   let cemetery: ReturnType<typeof buildCemetery> | null = null;
@@ -161,9 +163,10 @@ const Inner: React.FC<{ film: StoryFilm; outgoing?: boolean; traffic: Vehicle[] 
     bloom: makeBloom(),
     tone: new ToneMappingEffect({ mode: ToneMappingMode.NEUTRAL }),
     grade: new GradeEffect(GRADE_NIGHT, 1),
-    grain: new GrainEffect({ amount: 0.018, cellPx: 1.4 }),
+    grain: new GrainEffect({ amount: film.grainAmount ?? 0.018, cellPx: 1.4 }),
+    mono: new MonoGoldEffect(),
     gradeNow: { p: GRADE_NIGHT as GradeParams },
-  }), [camera, scene]);
+  }), [camera, scene, film]);
   useEffect(() => () => post.ink.dispose(), [post]);
   const chain = useMemo(() => (
     <EffectComposer multisampling={4}>
@@ -173,6 +176,7 @@ const Inner: React.FC<{ film: StoryFilm; outgoing?: boolean; traffic: Vehicle[] 
       {on.bloom ? <primitive object={post.bloom} dispose={null} /> : <></>}
       <primitive object={post.tone} dispose={null} />
       {on.grade ? <primitive object={post.grade} dispose={null} /> : <></>}
+      {film.mono ? <primitive object={post.mono} dispose={null} /> : <></>}
       {film.fxAt ? <primitive object={post.grain} dispose={null} /> : <></>}
     </EffectComposer>
   ), [post, on, film]);
@@ -180,6 +184,7 @@ const Inner: React.FC<{ film: StoryFilm; outgoing?: boolean; traffic: Vehicle[] 
   const gl = useThree((s3) => s3.gl);
   useFrame(() => { if (!outgoing) drawShatter(gl.domElement, film.shatterAt?.(f) ?? null); }, 2); // after the composer (priority 1)
   post.grain.seed = f;
+  if (film.mono) { const fx0 = film.fxAt?.(f); post.mono.set(fx0?.mono ?? 1, fx0?.goldKeep ?? 1, fx0?.crush ?? 0.5); }
 
   const fr = film.frameAt(f, !!outgoing);
   for (const [id, r] of Object.entries(w.roots)) r.visible = id === fr.set;

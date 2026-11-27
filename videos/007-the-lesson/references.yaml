@@ -1,0 +1,25 @@
+# References for video 007 · The Lesson
+# Rule: nothing ships until every source is checked and reviewer.approved is true.
+
+video: 007-the-lesson
+sources:
+  - id: talk
+    type: a talk by a young man about what he learned on his sickbed (not a religious text quoted as scripture)
+    used_in: 0-67.2 s, added by the channel owner in TikTok; NOT in our file (our file is sound design only)
+    caption_text: >-
+      The 28 Arabic/English lines are the channel owner's text, used exactly as supplied (timing.json "talk").
+      What is actually said differs slightly in three places, and the captions were NOT changed (nothing was confidently
+      heard that would justify a change): (1) after "استحقرت الدنيا" (8.3-9.9 s) he adds a few words Whisper hears as
+      "مع صغرها... قيمة" (unclear; not captioned); (2) after "الدنيا ما فيها" (about 46.0 s) he adds "دنيئة"; (3) in
+      "مع طبعاً أمور الدنيا" (61.1-62.3 s) he seems to add "أكيد". Whisper also hears "في فراش الموت" where the text has
+      "على فراش الموت" (50.1 s); kept as supplied. No Quran, hadith or scholarly quotes appear in this video.
+    source_seen: the guide video carries the watermark "@serverofdeen" (TikTok)
+    timing: narration/whisper_words.json (local Whisper small, Arabic, word timings) cross-checked with the guide's own
+      subtitle changes; speech ends 67.15 s ("قلبي"), TikTok's outro from 67.3 s is ignored
+    note: the guide recording (engine/public/audio/guide/lesson_guide.mp4) is for timing and the preview only, never exported or committed; its pictures are never used
+
+reviewer:
+  name: Arafat Rouf
+  role: channel owner
+  approved: pending
+  notes: ""

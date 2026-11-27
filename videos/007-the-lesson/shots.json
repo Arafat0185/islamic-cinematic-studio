@@ -1,0 +1,41 @@
+{
+ "note": "Video 007 'The Lesson': Black & Gold Noir. Every shot matches its caption; 'set' is the engine set, 'world' the area inside it. Transitions: sand (a wall of blowing sand sweeps across), rain (a dissolve through rain on glass), black (a fade through black with grain); every other cut is a hard cut.",
+ "shots": [
+  {"at": 0.0, "kind": "windowPush", "set": "hospital", "world": "room", "why": "I always say, one of the greatest lessons: a slow push through the rainy window into the dark room"},
+  {"at": 3.4, "kind": "bedStill", "set": "hospital", "world": "room", "why": "I took in and absorbed during my illness: he lies still, the monitor line glowing"},
+  {"at": 6.9, "kind": "duneCrest", "set": "lesson", "world": "dunes", "why": "I came to see the dunya as worthless: an endless dark desert, the wind lifting sand off a crest"},
+  {"at": 9.85, "kind": "carCrumble", "set": "lesson", "world": "dunes", "why": "a nice car: a ghost-gold car on the dunes crumbles to sand from front to back"},
+  {"at": 11.9, "kind": "houseRise", "set": "lesson", "world": "dunes", "why": "a house, these worldly things: a ghost-gold house rises out of the sand, lights on, then pours away like an hourglass"},
+  {"at": 15.2, "kind": "chestOrbit", "set": "hospital", "world": "room", "why": "they didn't mean much in my heart: his hand on his chest, a slow orbit, one small real-gold glow"},
+  {"at": 19.6, "kind": "ivDrip", "set": "hospital", "world": "room", "why": "when I'm in hospital: the IV drip falling in slow motion, the monitor beeping"},
+  {"at": 21.3, "kind": "corridor", "set": "lesson", "world": "corridor", "why": "at my worst: a long corridor, flickering lights"},
+  {"at": 23.85, "kind": "rainGlass", "set": "hospital", "world": "room", "why": "the hardest stages of my health: heavier rain on the glass, the room behind it"},
+  {"at": 27.5, "kind": "palace", "set": "lesson", "world": "dunes", "why": "even if you had palaces, what would that palace do for you?: the camera rises up a towering ghost-gold palace, which collapses into a sandstorm"},
+  {"at": 30.85, "kind": "topDown", "set": "hospital", "world": "room", "why": "you're ill, on your deathbed: top-down over the bed, a slow pull up, the room small and dark"},
+  {"at": 32.75, "kind": "ghostRow", "set": "lesson", "world": "dunes", "why": "servants and attendants, cars and palaces: a row of faceless ghost servants, cars and palaces glowing cold gold"},
+  {"at": 36.6, "kind": "crumbleRow", "set": "lesson", "world": "dunes", "why": "what's the use?: one by one they crumble to sand"},
+  {"at": 40.0, "kind": "windAway", "set": "lesson", "world": "dunes", "why": "what would they do for you?: top-down over the dunes, the wind carrying it all away (no person)"},
+  {"at": 42.4, "kind": "aloneDune", "set": "lesson", "world": "dunes", "why": "the dunya has no value: a huge empty dune at night, one tiny figure"},
+  {"at": 46.75, "kind": "lowHollow", "set": "lesson", "world": "dunes", "why": "it comes from lowliness: the camera sinks low, sand trickling down into a low hollow"},
+  {"at": 50.1, "kind": "fingersSheet", "set": "hospital", "world": "room", "why": "took to heart on my deathbed: his fingers tightening on the sheet; lightning at the window"},
+  {"at": 52.6, "kind": "monitorLine", "set": "hospital", "world": "room", "why": "...on my deathbed: the monitor line, the room"},
+  {"at": 54.9, "kind": "chestGold", "set": "hospital", "world": "room", "why": "the dunya has no value: the gold light in his chest grows"},
+  {"at": 56.6, "kind": "roomGold", "set": "hospital", "world": "room", "why": "strong faith: warm light spreads across the bed and the room; the rain on the window catches gold"},
+  {"at": 58.75, "kind": "doorsDawn", "set": "lesson", "world": "exterior", "why": "I began to want the Hereafter: dawn, he walks out of the hospital doors into the first light"},
+  {"at": 60.3, "kind": "footprints", "set": "lesson", "world": "dunes", "why": "to strive for it and prepare for it: he walks across the dunes toward the sunrise, his footprints in gold"},
+  {"at": 62.4, "kind": "foundation", "set": "lesson", "world": "dunes", "why": "the Hereafter is the foundation: a stone foundation glowing in the sand; the sand blows over everything else but not over it"},
+  {"at": 65.3, "kind": "crestSun", "set": "lesson", "world": "dunes", "why": "it has taken most of my heart: he stands on the crest facing the rising sun, a slow crane up into the gold"}
+ ],
+ "events": {
+  "carAppear": 9.85, "carCrumble": 10.55,
+  "houseRise": [11.95, 13.3], "housePour": 13.55,
+  "palaceCollapse": 29.3,
+  "rowAppear": 32.8, "rowCrumble": 36.75, "rowGap": 0.42,
+  "lightning": [51.05, 51.55],
+  "goldGrow": [54.9, 58.75],
+  "doorsOpen": 58.85,
+  "thunder": [1.6, 25.2, 31.6, 51.1],
+  "swells": [6.9, 29.3, 42.4, 54.9, 62.95],
+  "transitions": [[6.9, "sand"], [15.2, "rain"], [21.3, "black"], [23.85, "rain"], [27.5, "sand"], [30.85, "black"], [32.75, "sand"], [42.4, "black"], [50.1, "rain"], [58.75, "black"], [60.3, "sand"]]
+ }
+}
