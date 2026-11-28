@@ -49,6 +49,8 @@ Read this first. Full detail lives in `docs/phase-1-plan.md` and `characters/tra
 ## How to work with me
 - I'm a beginner: explain simply, define jargon the first time, and say what a command does before running it.
 - **One feature per git branch.** Branch off `main`, merge when it works.
+- **Same-day merge:** when a video is finished and I have approved it, open a PR and squash-merge it into `main` the SAME
+  DAY (so my GitHub contribution graph gets the commit). Short professional PR description; no audio or renders.
 - npm packages are fine to install. **Ask before installing anything else** (Python, system tools, fonts,
   browser builds, global installs).
 - Preview the result (a still frame or low-res render) before calling visual work done.

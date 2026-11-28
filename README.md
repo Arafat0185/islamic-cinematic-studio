@@ -106,6 +106,7 @@ The hardest problems and how they were solved are written up in **[docs/ENGINEER
 | 004 | **The Man Who Never Rested**: a library whose books carry him into other worlds | Quran 35:34 · 13:24 · scholars' sayings | 1:02 | [▶ clip](docs/showcase/004-the-man-who-never-rested.mp4) | 🎬 Final cut |
 | 005 | **The Dunya**: one rainy night re-lived in slow motion, ending in a crane up into the rain | Quran 9:51 · Surat Al-Hadid 57:22–23 | 1:25 | [▶ clip](docs/showcase/005-the-dunya.mp4) | 🎬 Final cut |
 | 006 | **Hold On To This**: a talk on holding on to the deen, across calm golden-hour worlds | Surat Ar-Ra'd 13:28–29 | 1:12 | [▶ clip](docs/showcase/006-hold-on-to-this.mp4) | 🎬 Final cut |
+| 007 | **The Lesson**: what a young man learned on his sickbed; every worldly thing crumbles to sand | A talk (no scripture quoted) | 1:10 | [▶ clip](docs/showcase/007-the-lesson.mp4) | 🎬 Final cut |
 
 <table>
 <tr><td align="center"><b>001 · The First Question</b><br/><img src="docs/showcase/001-the-first-question_sheet.jpg" alt="Contact sheet: The First Question" /></td></tr>
@@ -114,6 +115,7 @@ The hardest problems and how they were solved are written up in **[docs/ENGINEER
 <tr><td align="center"><b>004 · The Man Who Never Rested</b><br/><img src="docs/showcase/004-the-man-who-never-rested_sheet.jpg" alt="Contact sheet: The Man Who Never Rested" /></td></tr>
 <tr><td align="center"><b>005 · The Dunya</b><br/><img src="docs/showcase/005-the-dunya_sheet.jpg" alt="Contact sheet: The Dunya" /></td></tr>
 <tr><td align="center"><b>006 · Hold On To This</b><br/><img src="docs/showcase/006-hold-on-to-this_sheet.jpg" alt="Contact sheet: Hold On To This" /></td></tr>
+<tr><td align="center"><b>007 · The Lesson</b><br/><img src="docs/showcase/007-the-lesson_sheet.jpg" alt="Contact sheet: The Lesson" /></td></tr>
 </table>
 
 <sub>Showcase clips are silent: recitations and narration are third-party audio and are never committed.</sub>
