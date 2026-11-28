@@ -1,0 +1,239 @@
+{
+ "fps": 30,
+ "speechEnd": 39.7,
+ "clipEnd": 39.9,
+ "recStart": 40.5,
+ "recEnd": 69.864,
+ "verseStarts": {
+  "13:28": 40.5,
+  "13:29": 56.847
+ },
+ "gap": 0.3,
+ "cardFrom": 68.867,
+ "length": 72.067,
+ "surah": "Ar-Ra'd",
+ "range": "13:28-29",
+ "reciter": "Sheikh Yasser Al-Dossari",
+ "translation": "Saheeh International",
+ "talk": [
+  {
+   "i": 0,
+   "ar": "أعظم شيء تتمسك فيه دين الله جل وعلا",
+   "en": "The greatest thing you can hold on to is the religion of Allah, Exalted is He.",
+   "keys": [
+    "religion of Allah"
+   ],
+   "start": 0.0,
+   "end": 2.9
+  },
+  {
+   "i": 1,
+   "ar": "ترى، شوف يا شاب، أقسم بالله",
+   "en": "Look, young man - I swear by Allah,",
+   "keys": [
+    "young man"
+   ],
+   "start": 3.0,
+   "end": 6.54
+  },
+  {
+   "i": 2,
+   "ar": "أنك عزيز وكريم بهذا الدين",
+   "en": "this religion is what gives you honour and dignity.",
+   "keys": [
+    "honour",
+    "dignity"
+   ],
+   "start": 6.64,
+   "end": 9.84
+  },
+  {
+   "i": 3,
+   "ar": "والله، تفقد أبوك، عادي",
+   "en": "Wallah, you lose your father - you'll cope.",
+   "keys": [
+    "father"
+   ],
+   "start": 9.94,
+   "end": 11.94
+  },
+  {
+   "i": 4,
+   "ar": "تفقد أمك، عادي",
+   "en": "You lose your mother - you'll cope.",
+   "keys": [
+    "mother"
+   ],
+   "start": 12.04,
+   "end": 13.84
+  },
+  {
+   "i": 5,
+   "ar": "تفقد مالك، عادي",
+   "en": "You lose your wealth - you'll cope.",
+   "keys": [
+    "wealth"
+   ],
+   "start": 13.94,
+   "end": 15.54
+  },
+  {
+   "i": 6,
+   "ar": "تفقد زوجتك وأولادك، عادي",
+   "en": "You lose your wife and children - you'll cope.",
+   "keys": [
+    "wife and children"
+   ],
+   "start": 15.64,
+   "end": 18.02
+  },
+  {
+   "i": 7,
+   "ar": "تفقد أعضاءك، تصير مشلول، عادي",
+   "en": "You lose your limbs, become paralysed - you'll cope.",
+   "keys": [
+    "limbs"
+   ],
+   "start": 18.12,
+   "end": 22.74
+  },
+  {
+   "i": 8,
+   "ar": "لكن تفقد هذا الدين، أقسم بالله أنك خسران",
+   "en": "But lose this religion - I swear by Allah, you've truly lost.",
+   "keys": [
+    "lose this religion",
+    "truly lost"
+   ],
+   "start": 22.84,
+   "end": 25.76
+  },
+  {
+   "i": 9,
+   "ar": "إي والله. والله أعرف شاب",
+   "en": "Yes, wallah. I know a young man",
+   "keys": [],
+   "start": 25.86,
+   "end": 28.34
+  },
+  {
+   "i": 10,
+   "ar": "عنده أجمل السيارات، ومعه ثلاث بطاقات صراف إلكتروني",
+   "en": "who has the finest cars, three bank cards,",
+   "keys": [
+    "finest cars"
+   ],
+   "start": 28.44,
+   "end": 31.96
+  },
+  {
+   "i": 11,
+   "ar": "وكل شي يبغاه يجيه",
+   "en": "and everything he wants comes to him.",
+   "keys": [
+    "everything"
+   ],
+   "start": 32.06,
+   "end": 33.48
+  },
+  {
+   "i": 12,
+   "ar": "أقسم بالله إنه دائمًا يتصل علي يقول: إني طفشان وزهقان",
+   "en": "I swear he always calls me and says, \"I'm bored and fed up.\"",
+   "keys": [
+    "bored and fed up"
+   ],
+   "start": 33.58,
+   "end": 36.76
+  },
+  {
+   "i": 13,
+   "ar": "قلت: يا أخي، ليش تطفش؟",
+   "en": "I said, \"Brother - why are you bored?\"",
+   "keys": [
+    "why are you bored?"
+   ],
+   "start": 36.86,
+   "end": 40.2
+  }
+ ],
+ "phrases": [
+  {
+   "i": 0,
+   "verse": "13:28",
+   "ar": "ٱلَّذِينَ ءَامَنُوا۟",
+   "arKeys": [],
+   "en": "Those who have believed",
+   "keys": [
+    "believed"
+   ],
+   "start": 40.5,
+   "end": 42.54
+  },
+  {
+   "i": 1,
+   "verse": "13:28",
+   "ar": "وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ ٱللَّهِ ۗ",
+   "arKeys": [
+    0,
+    2
+   ],
+   "en": "and whose hearts are assured by the remembrance of Allāh.",
+   "keys": [
+    "hearts are assured",
+    "remembrance of Allāh"
+   ],
+   "start": 42.66,
+   "end": 50.13
+  },
+  {
+   "i": 2,
+   "verse": "13:28",
+   "ar": "أَلَا بِذِكْرِ ٱللَّهِ تَطْمَئِنُّ ٱلْقُلُوبُ",
+   "arKeys": [
+    1,
+    3
+   ],
+   "en": "Unquestionably, by the remembrance of Allāh hearts are assured.",
+   "keys": [
+    "hearts are assured"
+   ],
+   "start": 50.25,
+   "end": 56.727
+  },
+  {
+   "i": 3,
+   "verse": "13:29",
+   "ar": "ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّـٰلِحَـٰتِ",
+   "arKeys": [
+    3
+   ],
+   "en": "Those who have believed and done righteous deeds -",
+   "keys": [
+    "righteous deeds"
+   ],
+   "start": 56.847,
+   "end": 61.007
+  },
+  {
+   "i": 4,
+   "verse": "13:29",
+   "ar": "طُوبَىٰ لَهُمْ وَحُسْنُ مَـَٔابٍ",
+   "arKeys": [
+    0,
+    3
+   ],
+   "en": "a good state is theirs and a good return.",
+   "keys": [
+    "a good state",
+    "a good return"
+   ],
+   "start": 61.127,
+   "end": 68.747
+  }
+ ],
+ "sources": {
+  "recitation": "https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/013028.mp3 + 013029.mp3",
+  "text": "https://api.quran.com/api/v4/verses/by_key/13:{28..29}?fields=text_uthmani&translations=20"
+ }
+}

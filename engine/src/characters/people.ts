@@ -38,6 +38,8 @@ export const LOOKS: Record<string, Look> = {
   m6: { skin: "#a0704c", thobe: "#8a8880", shawl: "#33373c", kufi: "#ffffff", beard: "#1a1416" },
   /** the Traveller in video 002: his brand colours muted (dark rust scarf, a darker thobe) */
   travellerMuted: { shawl: "#5c2a1f", thobe: "#5a4232" },
+  /** video 006: the young man with everything (dark clothes, no scarf) */
+  youth: { skin: "#b98a62", thobe: "#23262e", shawl: null, kufi: "#2a2420", beard: "#1a1416" },
   kid1: { skin: "#c08a5e", thobe: "#c94f3a", shawl: null, kufi: "#ffffff", beard: "#1a1416", beardless: true },
   kid2: { skin: "#8d5b3c", thobe: "#3f8a6a", shawl: null, kufi: "#ffffff", beard: "#1a1416", beardless: true },
   kid3: { skin: "#b07a54", thobe: "#e0b04a", shawl: null, kufi: "#ffffff", beard: "#2a1e1a", beardless: true },

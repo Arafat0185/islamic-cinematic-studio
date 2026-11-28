@@ -26,7 +26,7 @@ export const GRADE_WARM: GradeParams = { ky: [0, 0.06, 0.22, 0.52, 0.8, 0.94, 1]
 export const GRADE_STORM: GradeParams = { ky: [0, 0.06, 0.2, 0.5, 0.78, 0.93, 1], sat: [0.9, 0.95, 1.0], tintS: [0.04, -0.03], tintM: [0.02, -0.01], tintH: [0.0, 0.0], vig: [0.36, 0.3] };
 
 /** a sky dome for one world: gradient, boiling clouds, stars, a sun/glow, lightning; all from uniforms */
-const skyFor = (parent: THREE.Object3D, R = 420) => {
+export const skyFor = (parent: THREE.Object3D, R = 420) => {
   const u = {
     uT: { value: 0 }, uTop: { value: new THREE.Color() }, uHor: { value: new THREE.Color() }, uCloud: { value: 0 }, uCloudCol: { value: new THREE.Color() },
     uStars: { value: 0 }, uSun: { value: new THREE.Vector3(0, 0.05, -1).normalize() }, uSunCol: { value: new THREE.Color() }, uSunK: { value: 0 }, uFlash: { value: 0 }, uTear: { value: 0 },
@@ -59,11 +59,11 @@ const skyFor = (parent: THREE.Object3D, R = 420) => {
   const mesh = new THREE.Mesh(new THREE.SphereGeometry(R, 40, 20), m); mesh.renderOrder = -1; mesh.frustumCulled = false; mesh.layers.set(NOINK); parent.add(mesh);
   return u;
 };
-const dotTex = () => ctex("bwDot", 64, 64, (g) => { const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, "rgba(255,255,255,1)"); gr.addColorStop(0.3, "rgba(255,255,255,0.7)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); });
-const steamTex = () => ctex("bwSteam", 128, 128, (g, r) => { for (let i = 0; i < 16; i++) { const x = 30 + r() * 68, y = 30 + r() * 68, rad = 14 + 30 * r(); const gr = g.createRadialGradient(x, y, 0, x, y, rad); gr.addColorStop(0, "rgba(255,255,255,0.3)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(x - rad, y - rad, rad * 2, rad * 2); } });
+export const dotTex = () => ctex("bwDot", 64, 64, (g) => { const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, "rgba(255,255,255,1)"); gr.addColorStop(0.3, "rgba(255,255,255,0.7)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); });
+export const steamTex = () => ctex("bwSteam", 128, 128, (g, r) => { for (let i = 0; i < 16; i++) { const x = 30 + r() * 68, y = 30 + r() * 68, rad = 14 + 30 * r(); const gr = g.createRadialGradient(x, y, 0, x, y, rad); gr.addColorStop(0, "rgba(255,255,255,0.3)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(x - rad, y - rad, rad * 2, rad * 2); } });
 const sandTex = (k: string, base: string) => rep(ctex("bwSand" + k, 512, 512, (g, r) => { g.fillStyle = base; g.fillRect(0, 0, 512, 512); for (let i = 0; i < 2500; i++) { g.fillStyle = `rgba(${r() < 0.5 ? "255,240,210" : "90,60,30"},${0.06 * r()})`; g.fillRect(r() * 512, r() * 512, 2 + 3 * r(), 1 + 2 * r()); } for (let i = 0; i < 30; i++) { g.strokeStyle = "rgba(120,80,40,0.12)"; g.lineWidth = 2; g.beginPath(); const y = r() * 512; g.moveTo(0, y); g.bezierCurveTo(170, y + 20 * r(), 340, y - 20 * r(), 512, y + 10 * r()); g.stroke(); } }), 30, 30);
 /** points that are a pure function of time (n of them, made by gen, moved by move) */
-const pointsOf = (parent: THREE.Object3D, n: number, col: string, size: number, additive = true) => {
+export const pointsOf = (parent: THREE.Object3D, n: number, col: string, size: number, additive = true) => {
   const pos = new Float32Array(n * 3), geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
   const m = new THREE.PointsMaterial({ map: dotTex(), color: new THREE.Color(col), size, transparent: true, depthWrite: false, blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending, fog: false });
   const p = new THREE.Points(geo, m); p.frustumCulled = false; p.layers.set(NOINK); parent.add(p);
@@ -76,7 +76,7 @@ const rainLines = (parent: THREE.Object3D, n: number, col: string, len: number) 
   const l = new THREE.LineSegments(geo, m); l.frustumCulled = false; l.layers.set(NOINK); parent.add(l);
   return { p: l, m, pos, len, set: (j: number, x: number, y: number, z: number, dx: number, dy: number) => { pos.set([x, y, z, x + dx * len, y + dy * len, z], j * 6); }, done: () => { geo.attributes.position.needsUpdate = true; } };
 };
-const hash = (n: number) => { const x = Math.sin(n * 127.1) * 43758.5453; return x - Math.floor(x); };
+export const hash = (n: number) => { const x = Math.sin(n * 127.1) * 43758.5453; return x - Math.floor(x); };
 /** the shared sea surface height (also used to float the boat) */
 export const seaY = (x: number, z: number, t: number, storm: number) => storm * (0.9 * Math.sin(0.23 * x + 0.9 * t) + 0.6 * Math.sin(0.31 * z - 1.1 * t + 1) + 0.35 * Math.sin(0.57 * (x + z) + 1.7 * t)) + 0.15 * Math.sin(0.8 * x - 2 * t);
 

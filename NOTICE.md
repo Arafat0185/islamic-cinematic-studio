@@ -78,3 +78,11 @@ card. `engine/public/audio/guide/dunya_guide.mp4` (a TikTok video supplied by th
 only for timing and the local check file `The_Dunya_PREVIEW.mp4`: its Arabic voice clip is a TikTok sound the channel
 owner adds in TikTok, and its pictures are never used. None of these files is ever committed (engine/public/audio/ is
 git-ignored).
+## Recitation and talk (video 006, "Hold On To This")
+
+`engine/public/audio/recitation/dossari_013028.mp3`, `dossari_013029.mp3`: Sheikh Yasser Al-Dossari, Surat Ar-Ra'd 13:28
+and 13:29, downloaded from everyayah.com (https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/, 2026-11-26). They ARE in
+our video's sound track: joined with a 0.3 s gap, level only (-14 LUFS), the last tail faded out under the end card.
+`engine/public/audio/guide/deen_guide.mp4` (a TikTok video supplied by the channel owner, 2026-11-26) is used only for
+timing and the local check file `Hold_On_To_This_PREVIEW.mp4`: its Arabic talk is a TikTok sound the channel owner adds
+in TikTok, and its pictures are never used. None of these files is ever committed (engine/public/audio/ is git-ignored).
