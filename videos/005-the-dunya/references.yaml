@@ -1,0 +1,49 @@
+# References for video 005 · The Dunya
+# Rule: nothing ships until every source is checked and reviewer.approved is true.
+
+video: 005-the-dunya
+sources:
+  - id: quran-57-22-23
+    type: quran
+    used_in: The_Dunya.mp4 (recitation in our sound track from 33.1 s + on-screen captions)
+    reference: Surat Al-Hadid 57:22-23
+    recited_by: Sheikh Yasser Al-Dossari
+    recitation_audio: https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/057022.mp3 and 057023.mp3 (see NOTICE.md); never committed
+    grade: n/a (Quran)
+    arabic_text: quran.com API v4, text_uthmani, saved verbatim in quran/57_22.json, quran/57_23.json
+    translation_used: Saheeh International (quran.com translation id 20, name confirmed in quran/translations_list.json)
+    link: https://quran.com/57/22-23
+    api: https://api.quran.com/api/v4/verses/by_key/57:{22..23}?fields=text_uthmani&translations=20
+    quoted_exactly: >-
+      Every recitation caption is an exact slice of the saved API text; tools/build_dunya_timing.py fails unless the
+      phrases of each verse join back into the API text exactly (Arabic) and into the translation with the footnote
+      markers removed (English). The Sheikh recites "illa fi kitabin min qabli an nabra'aha" twice; its caption stays
+      up through both readings. Phrase list and timing: timing.json.
+    checked_on: 2026-11-25
+    checked_by: Claude (API responses saved; translation name confirmed; text checked mechanically)
+
+  - id: quran-9-51
+    type: quran (quoted inside the voice clip)
+    used_in: voice caption 5 (11.5-15.0 s), tag "QURAN 9:51"
+    reference: Surat At-Tawbah 9:51
+    grade: n/a (Quran)
+    arabic_text: the caption shows the speaker's words as supplied by the channel owner ("قل لن يصيبنا إلا ما كتب الله لنا"),
+      which are the opening of 9:51; the verse is saved verbatim in quran/9_51.json for checking
+    translation_used: the English line follows Saheeh International's wording of 9:51 ("Never will we be struck except by
+      what Allah has decreed for us"); build_dunya_timing.py checks this against the saved API text
+    link: https://quran.com/9/51
+    checked_on: 2026-11-25
+    checked_by: Claude
+
+  - id: voice-clip
+    type: voice (not a religious source)
+    used_in: 0-33.45 s, added by the channel owner in TikTok; NOT in our file
+    caption_text: the 13 Arabic/English lines are the channel owner's text, used exactly as supplied
+    timing: narration/whisper_words.json (local Whisper small, Arabic, word timings) checked against the guide's subtitle changes
+    note: the guide recording (engine/public/audio/guide/dunya_guide.mp4) is for timing and the preview only, never exported or committed
+
+reviewer:
+  name: Arafat Rouf
+  role: channel owner
+  approved: pending
+  notes: ""

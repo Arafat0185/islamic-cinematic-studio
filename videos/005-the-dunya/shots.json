@@ -1,0 +1,150 @@
+{
+ "about": "Video 005 The Dunya: every shot reuses a shot of video 002 (kind = 002's shot; src = the 002 time window in seconds played over this shot, slowed; default = 002's whole shot). craneUp = pastMasjid with a new camera rising into the sky. Every cut is a soft dissolve through rain on glass.",
+ "shots": [
+  {
+   "at": 0.0,
+   "kind": "windowRain",
+   "src": [
+    19.74,
+    21.28
+   ],
+   "why": "Don't worry about the dunya: rain running down his dark window"
+  },
+  {
+   "at": 3.6,
+   "kind": "walkHome",
+   "why": "he walks home alone in the heavy rain"
+  },
+  {
+   "at": 7.2,
+   "kind": "grabPhone",
+   "why": "the phone glowing in the dark room"
+  },
+  {
+   "at": 11.0,
+   "kind": "missBus",
+   "why": "the night street: the bus pulls away in the rain"
+  },
+  {
+   "at": 14.6,
+   "kind": "lookClosely",
+   "why": "provision is written: he stands still in the rain as the crowd rushes past"
+  },
+  {
+   "at": 18.0,
+   "kind": "drainClose",
+   "why": "don't make it bigger than it is: the windowsill, rain on the glass"
+  },
+  {
+   "at": 21.4,
+   "kind": "gravesTrack",
+   "why": "keep the dunya in your hand: past the rows of graves in the rain"
+  },
+  {
+   "at": 25.0,
+   "kind": "fogPullback",
+   "why": "if it goes, it only left your hand: fog rolls over the grave"
+  },
+  {
+   "at": 28.3,
+   "kind": "umbrellaLine",
+   "why": "that's how you'll live happy: men walking calmly in a line under umbrellas"
+  },
+  {
+   "at": 33.1,
+   "kind": "windowRain",
+   "src": [
+    19.74,
+    20.5
+   ],
+   "why": "57:22 No disaster strikes: the window, the rain"
+  },
+  {
+   "at": 36.8,
+   "kind": "drainWave",
+   "why": "the room, the clock on the wall"
+  },
+  {
+   "at": 40.4,
+   "kind": "beadsFall",
+   "why": "or among yourselves: the prayer beads slip off the nightstand"
+  },
+  {
+   "at": 43.9,
+   "kind": "toss3am",
+   "why": "in a register: he lies awake at night"
+  },
+  {
+   "at": 47.5,
+   "kind": "wakePause",
+   "why": "before We bring it into being: the dark room, rain on the window behind him"
+  },
+  {
+   "at": 51.0,
+   "kind": "walkHome",
+   "src": [
+    24.45,
+    26.0
+   ],
+   "why": "he walks on alone in the rain"
+  },
+  {
+   "at": 54.5,
+   "kind": "phoneDrop",
+   "why": "his phone drops into a puddle"
+  },
+  {
+   "at": 58.0,
+   "kind": "fatherBed",
+   "why": "a father sits on the bed in the dark, holding prayer beads"
+  },
+  {
+   "at": 61.6,
+   "kind": "lightning2",
+   "why": "indeed that, for Allah, is easy: lightning shows the empty room"
+  },
+  {
+   "at": 64.6,
+   "kind": "duaGrave",
+   "why": "men raise their hands in du'a in the rain"
+  },
+  {
+   "at": 67.3,
+   "kind": "pastMasjid",
+   "src": [
+    8.9,
+    9.8
+   ],
+   "why": "57:23 so you don't despair: he walks toward the masjid's warm light in the rain"
+  },
+  {
+   "at": 70.9,
+   "kind": "pastMasjid",
+   "src": [
+    9.8,
+    10.7
+   ],
+   "why": "the warm light spilling from the door"
+  },
+  {
+   "at": 74.0,
+   "kind": "craneUp",
+   "src": [
+    9.6,
+    10.7
+   ],
+   "why": "a slow crane up from the masjid door into the rainy sky"
+  }
+ ],
+ "events": {
+  "thunder": [
+   9.5,
+   26.0,
+   46.0,
+   62.2,
+   63.3,
+   77.5
+  ],
+  "clockTick": 1.0
+ }
+}

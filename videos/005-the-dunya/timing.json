@@ -1,0 +1,252 @@
+{
+ "fps": 30,
+ "speechEnd": 32.6,
+ "clipEnd": 33.45,
+ "recStart": 33.1,
+ "recEnd": 82.931,
+ "verseStarts": {
+  "57:22": 33.1,
+  "57:23": 67.328
+ },
+ "gap": 0.6,
+ "cardFrom": 81.733,
+ "length": 84.733,
+ "surah": "Al-Hadid",
+ "range": "57:22-23",
+ "reciter": "Sheikh Yasser Al-Dossari",
+ "translation": "Saheeh International",
+ "voice": [
+  {
+   "i": 0,
+   "ar": "لا تهتم للدنيا ما تستاهل الدنيا",
+   "en": "Don't worry about the dunya. It isn't worth it.",
+   "keys": [
+    "isn't worth it"
+   ],
+   "start": 0.0,
+   "end": 2.9
+  },
+  {
+   "i": 1,
+   "ar": "الدنيا لا تستحق",
+   "en": "The dunya doesn't deserve it.",
+   "keys": [
+    "doesn't deserve"
+   ],
+   "start": 3.0,
+   "end": 4.34
+  },
+  {
+   "i": 2,
+   "ar": "ولا تستاهل ان نحمل هماً وغماً لاجلها",
+   "en": "It isn't worth carrying worry and grief for.",
+   "keys": [
+    "worry and grief"
+   ],
+   "start": 4.44,
+   "end": 8.94
+  },
+  {
+   "i": 3,
+   "ar": "ما هي كفو الدنيا",
+   "en": "The dunya isn't worth it.",
+   "keys": [
+    "isn't worth it"
+   ],
+   "start": 9.04,
+   "end": 11.44
+  },
+  {
+   "i": 4,
+   "ar": "دائماً قل لن يصيبنا إلا ما كتب الله لنا",
+   "en": "Always say: \"Never will we be struck except by what Allah has decreed for us.\"",
+   "keys": [
+    "decreed"
+   ],
+   "start": 11.54,
+   "end": 15.04,
+   "tag": "QURAN 9:51"
+  },
+  {
+   "i": 5,
+   "ar": "وان الارزاق مكتوبة",
+   "en": "Provision is written.",
+   "keys": [
+    "written"
+   ],
+   "start": 15.14,
+   "end": 16.46
+  },
+  {
+   "i": 6,
+   "ar": "وان الاعمال مكتوبة",
+   "en": "Our deeds are written.",
+   "keys": [
+    "written"
+   ],
+   "start": 16.56,
+   "end": 17.8
+  },
+  {
+   "i": 7,
+   "ar": "ولا تهتم لا تعطي الموضوع أكبر من حجمه",
+   "en": "Don't worry. Don't make it bigger than it is.",
+   "keys": [
+    "bigger"
+   ],
+   "start": 17.9,
+   "end": 21.32
+  },
+  {
+   "i": 8,
+   "ar": "الدنيا اجعلها في يدك ان جاءت",
+   "en": "Keep the dunya in your hand - if it comes,",
+   "keys": [
+    "in your hand"
+   ],
+   "start": 21.42,
+   "end": 24.38
+  },
+  {
+   "i": 9,
+   "ar": "وإن ذهبت فذهبت من اليد",
+   "en": "and if it goes, it only left your hand.",
+   "keys": [
+    "left your hand"
+   ],
+   "start": 24.48,
+   "end": 26.34
+  },
+  {
+   "i": 10,
+   "ar": "لا تدخل الدنيا الى قلبك",
+   "en": "Don't let the dunya into your heart.",
+   "keys": [
+    "heart"
+   ],
+   "start": 26.44,
+   "end": 28.18
+  },
+  {
+   "i": 11,
+   "ar": "وبهذا تعيش سعيداً",
+   "en": "And that's how you'll live happy,",
+   "keys": [
+    "happy"
+   ],
+   "start": 28.28,
+   "end": 30.56
+  },
+  {
+   "i": 12,
+   "ar": "ان شاء الله تعالى",
+   "en": "in sha Allah.",
+   "keys": [],
+   "start": 30.66,
+   "end": 32.9
+  }
+ ],
+ "phrases": [
+  {
+   "i": 0,
+   "verse": "57:22",
+   "ar": "مَآ أَصَابَ مِن مُّصِيبَةٍ فِى ٱلْأَرْضِ",
+   "arKeys": [
+    3
+   ],
+   "en": "No disaster strikes upon the earth",
+   "keys": [
+    "disaster"
+   ],
+   "start": 33.1,
+   "end": 40.31
+  },
+  {
+   "i": 1,
+   "verse": "57:22",
+   "ar": "وَلَا فِىٓ أَنفُسِكُمْ",
+   "arKeys": [
+    2
+   ],
+   "en": "or among yourselves",
+   "keys": [],
+   "start": 40.46,
+   "end": 43.75
+  },
+  {
+   "i": 2,
+   "verse": "57:22",
+   "ar": "إِلَّا فِى كِتَـٰبٍ مِّن قَبْلِ أَن نَّبْرَأَهَآ ۚ",
+   "arKeys": [
+    2
+   ],
+   "en": "except that it is in a register before We bring it into being -",
+   "keys": [
+    "register"
+   ],
+   "start": 43.9,
+   "end": 61.47,
+   "repeatAt": 54.58
+  },
+  {
+   "i": 3,
+   "verse": "57:22",
+   "ar": "إِنَّ ذَٰلِكَ عَلَى ٱللَّهِ يَسِيرٌ",
+   "arKeys": [
+    4
+   ],
+   "en": "indeed that, for Allāh, is easy -",
+   "keys": [
+    "easy"
+   ],
+   "start": 61.62,
+   "end": 67.178
+  },
+  {
+   "i": 4,
+   "verse": "57:23",
+   "ar": "لِّكَيْلَا تَأْسَوْا۟ عَلَىٰ مَا فَاتَكُمْ",
+   "arKeys": [
+    1
+   ],
+   "en": "In order that you not despair over what has eluded you",
+   "keys": [
+    "despair"
+   ],
+   "start": 67.328,
+   "end": 70.918
+  },
+  {
+   "i": 5,
+   "verse": "57:23",
+   "ar": "وَلَا تَفْرَحُوا۟ بِمَآ ءَاتَىٰكُمْ ۗ",
+   "arKeys": [
+    1
+   ],
+   "en": "and not exult [in pride] over what He has given you.",
+   "keys": [
+    "exult"
+   ],
+   "start": 71.068,
+   "end": 75.898
+  },
+  {
+   "i": 6,
+   "verse": "57:23",
+   "ar": "وَٱللَّهُ لَا يُحِبُّ كُلَّ مُخْتَالٍ فَخُورٍ",
+   "arKeys": [
+    5
+   ],
+   "en": "And Allāh does not like everyone self-deluded and boastful -",
+   "keys": [
+    "boastful"
+   ],
+   "start": 76.048,
+   "end": 81.583
+  }
+ ],
+ "sources": {
+  "recitation": "https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/057022.mp3 + 057023.mp3",
+  "text": "https://api.quran.com/api/v4/verses/by_key/57:{22..23}?fields=text_uthmani&translations=20"
+ }
+}

@@ -36,7 +36,10 @@ export const EV = {
 export const TRANSITIONS = (EVJ.transitions as [number, string][]).map(([t, k]) => ({ f: F(t), kind: k }));
 export type PShot = { kind: string; set: SetId; from: number; to: number };
 export const SHOTS: PShot[] = STORY.shots.map((s, i, a) => ({ kind: s.kind, set: s.set as SetId, from: F(s.at), to: i + 1 < a.length ? F(a[i + 1].at) : FRAMES }));
-export const shotOf = (f: number): PShot => { let s = SHOTS[0]; for (const x of SHOTS) if (f >= x.from) s = x; return s; };
+let OVERRIDE: PShot | null = null;
+export const shotOf = (f: number): PShot => { if (OVERRIDE) return OVERRIDE; let s = SHOTS[0]; for (const x of SHOTS) if (f >= x.from) s = x; return s; };
+/** reuse (video 005): evaluate fn as if shot s were playing (e.g. a shot kind that is not in this film's list) */
+export const withShot = <T,>(s: PShot, fn: () => T): T => { const prev = OVERRIDE; OVERRIDE = s; try { return fn(); } finally { OVERRIDE = prev; } };
 export const SETS: SetId[] = ["bedroom", "hospital", "cemetery", "street"];
 
 const q = (v: number, n: number) => Math.round(v * n) / n;

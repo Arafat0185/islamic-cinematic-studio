@@ -47,7 +47,11 @@
     "rest-timing": ".venv-tts\\Scripts\\python tools/build_rest_timing.py",
     "rest-mix": ".venv-tts\\Scripts\\python tools/mix_rest.py",
     "rest": "node tools/render-chunks.mjs TheManWhoNeverRested out/The_Man_Who_Never_Rested.mp4 --chunk 300 --dir out/chunks/Rest_300 --audio public/audio/rest_mix.wav --keep",
-    "rest-qa": ".venv-tts\\Scripts\\python tools/qa_rest.py out/The_Man_Who_Never_Rested.mp4 out/The_Man_Who_Never_Rested_PREVIEW.mp4 out/qa_rest"
+    "rest-qa": ".venv-tts\\Scripts\\python tools/qa_rest.py out/The_Man_Who_Never_Rested.mp4 out/The_Man_Who_Never_Rested_PREVIEW.mp4 out/qa_rest",
+    "dunya-timing": ".venv-tts/Scripts/python tools/build_dunya_timing.py",
+    "dunya-mix": ".venv-tts/Scripts/python tools/mix_dunya.py",
+    "dunya": "node tools/render-chunks.mjs TheDunya out/The_Dunya.mp4 --chunk 300 --dir out/chunks/Dunya_300 --audio public/audio/dunya_mix.wav --keep",
+    "dunya-qa": ".venv-tts/Scripts/python tools/qa_dunya.py out/The_Dunya.mp4 out/The_Dunya_PREVIEW.mp4 out/qa_dunya"
   },
   "dependencies": {
     "@fontsource/amiri": "5.3.0",

@@ -68,3 +68,13 @@ git-ignored).
 timing guide: its narration is a TikTok sound the channel owner adds in TikTok, and it is mixed only into the local check
 file `The_Man_Who_Never_Rested_PREVIEW.mp4`. Its pictures are never used. Our own file carries only our sound design.
 The guide is never committed (engine/public/audio/ is git-ignored). No background vocals file is used.
+
+## Recitation and voice clip (video 005, "The Dunya")
+
+`engine/public/audio/recitation/dossari_057022.mp3`, `dossari_057023.mp3`: Sheikh Yasser Al-Dossari, Surat Al-Hadid 57:22
+and 57:23, downloaded from everyayah.com (https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/, 2026-11-25). They ARE
+in our video's sound track: joined with a 0.6 s gap, level only (-14 LUFS), the last reverb tail faded out under the end
+card. `engine/public/audio/guide/dunya_guide.mp4` (a TikTok video supplied by the channel owner, 2026-11-25) is used
+only for timing and the local check file `The_Dunya_PREVIEW.mp4`: its Arabic voice clip is a TikTok sound the channel
+owner adds in TikTok, and its pictures are never used. None of these files is ever committed (engine/public/audio/ is
+git-ignored).
