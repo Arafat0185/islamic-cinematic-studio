@@ -1,0 +1,38 @@
+# References for video 008 · The Prison
+# Rule: nothing ships until every source is checked and reviewer.approved is true.
+
+video: 008-the-prison
+sources:
+  - id: muslim-2956
+    type: hadith
+    used_in: the narration's opening (0.2-8.6 s), captioned as the guide shows it; the "SAHIH MUSLIM 2956" tag while it is
+      on screen; the end card "Hadith: Sahih Muslim 2956"
+    reference: Sahih Muslim 2956 (Book of Zuhd and Softening of Hearts, hadith 1), narrated by Abu Hurairah
+    grade: sahih
+    grader: Muslim (included in his Sahih)
+    arabic: "الدُّنْيَا سِجْنُ الْمُؤْمِنِ وَجَنَّةُ الْكَافِرِ"
+    translation_checked: "The world is a prison-house for a believer and Paradise for a non-believer" (sunnah.com USC-MSA English)
+    caption_wording: >-
+      The captions follow the guide's own burned-in English, word for word: "The world is a prison for the believer" /
+      "and a paradise for the disbeliever." This is the narration's rendering of the same hadith, not a quote of the
+      USC-MSA translation.
+    link: https://sunnah.com/muslim:2956
+    text_checked_from: hadith/eng-muslim_7417.json, hadith/ara-muslim_7417.json (fawazahmed0/hadith-api, edition
+      eng-muslim / ara-muslim, section 55, hadith 1; sunnah.com refuses automated downloads)
+    checked_on: 2026-11-28
+    checked_by: Claude (API responses saved; reference and wording checked)
+
+  - id: narration
+    type: an Arabic reminder on the hadith (not a religious text quoted as scripture beyond the hadith above)
+    used_in: 0-80.9 s, added by the channel owner in TikTok; NOT in our file (our file is sound design only)
+    caption_text: the 29 English captions copy the guide's burned-in captions exactly (same words, chunks, line breaks
+      and on/off frames, read frame by frame from the guide)
+    source_seen: the guide video carries the watermark "@ahmed_50s" (TikTok)
+    timing: the guide's caption-change frames; narration/whisper_words.json (local Whisper small, Arabic) as a cross-check
+    note: the guide recording (engine/public/audio/guide/prison_guide.mp4) is for timing and the preview only, never exported or committed; its pictures are never used
+
+reviewer:
+  name: Arafat Rouf
+  role: channel owner
+  approved: pending
+  notes: ""

@@ -8,6 +8,7 @@ import { LastRequest, LastRequestSamples, LASTREQUEST_FRAMES, LASTREQUEST_FPS } 
 import { Dunya, DunyaSamples, DUNYA_FRAMES, DUNYA_FPS } from "./scenes/dunya/Dunya";
 import { Hold, HoldSamples, HOLD_FRAMES, HOLD_FPS } from "./scenes/hold/Hold";
 import { Lesson, LessonSamples, LESSON_FRAMES, LESSON_FPS } from "./scenes/lesson/Lesson";
+import { Prison, PrisonSamples, PRISON_FRAMES, PRISON_FPS } from "./scenes/prison/Prison";
 import { Sirat, SiratSamples, SIRAT_FRAMES, SIRAT_FPS } from "./scenes/sirat/Sirat";
 import { Rest, RestSamples, REST_FRAMES, REST_FPS } from "./scenes/rest/Rest";
 import { TravellerMotionTest, MOTION_FRAMES, MOTION_FPS } from "./scenes/motion-test/TravellerMotionTest";
@@ -57,6 +58,8 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="HoldOnToThisSamples" component={HoldSamples} durationInFrames={HOLD_FRAMES} fps={HOLD_FPS} width={1080} height={1920} />
     <Composition id="TheLesson" component={Lesson} durationInFrames={LESSON_FRAMES} fps={LESSON_FPS} width={1080} height={1920} />
     <Composition id="TheLessonSamples" component={LessonSamples} durationInFrames={LESSON_FRAMES} fps={LESSON_FPS} width={1080} height={1920} />
+    <Composition id="ThePrison" component={Prison} durationInFrames={PRISON_FRAMES} fps={PRISON_FPS} width={1080} height={1920} />
+    <Composition id="ThePrisonSamples" component={PrisonSamples} durationInFrames={PRISON_FRAMES} fps={PRISON_FPS} width={1080} height={1920} />
     <Composition id="TheFirstQuestionQuran" component={Quran001} durationInFrames={QURAN001_FRAMES} fps={QURAN001_FPS} width={1080} height={1920} />
     {/* preview only: chosen frames of the Quran version, one per output frame (props {"samples": [frame, ...]}); as long as
         the video (Remotion clamps the frame to the composition's length), render it with --frames=0-<n-1> */}

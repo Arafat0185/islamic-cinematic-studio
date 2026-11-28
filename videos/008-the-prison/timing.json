@@ -1,0 +1,291 @@
+{
+ "fps": 30,
+ "speechEnd": 80.45,
+ "clipEnd": 80.9,
+ "cardFrom": 81.0,
+ "length": 84.0,
+ "hadith": [
+  0.23,
+  8.63
+ ],
+ "hadithTag": "SAHIH MUSLIM 2956",
+ "cardLine": "Hadith: Sahih Muslim 2956",
+ "captions": [
+  {
+   "i": 0,
+   "text": "The Prophet Muhammad ﷺ said:",
+   "keys": [],
+   "start": 0.233,
+   "end": 3.9,
+   "f0": 7,
+   "f1": 117
+  },
+  {
+   "i": 1,
+   "text": "“The world is a prison\nfor the believer”",
+   "keys": [],
+   "start": 3.9,
+   "end": 5.967,
+   "f0": 117,
+   "f1": 179
+  },
+  {
+   "i": 2,
+   "text": "“and a paradise\nfor the disbeliever.”",
+   "keys": [],
+   "start": 5.967,
+   "end": 8.633,
+   "f0": 179,
+   "f1": 259
+  },
+  {
+   "i": 3,
+   "text": "Because this dunya",
+   "keys": [],
+   "start": 8.633,
+   "end": 10.333,
+   "f0": 259,
+   "f1": 310
+  },
+  {
+   "i": 4,
+   "text": "was never meant to give you\neverything your soul desires.",
+   "keys": [],
+   "start": 10.333,
+   "end": 14.367,
+   "f0": 310,
+   "f1": 431
+  },
+  {
+   "i": 5,
+   "text": "You were not created to\nfollow every desire",
+   "keys": [],
+   "start": 14.367,
+   "end": 17.767,
+   "f0": 431,
+   "f1": 533
+  },
+  {
+   "i": 6,
+   "text": "that passes through your heart",
+   "keys": [],
+   "start": 17.767,
+   "end": 20.433,
+   "f0": 533,
+   "f1": 613
+  },
+  {
+   "i": 7,
+   "text": "Sometimes you want something.",
+   "keys": [],
+   "start": 20.433,
+   "end": 22.667,
+   "f0": 613,
+   "f1": 680
+  },
+  {
+   "i": 8,
+   "text": "but Allah has forbidden it.",
+   "keys": [
+    "Allah",
+    "forbidden"
+   ],
+   "start": 22.667,
+   "end": 25.933,
+   "f0": 680,
+   "f1": 778
+  },
+  {
+   "i": 9,
+   "text": "You see something you desire",
+   "keys": [],
+   "start": 25.933,
+   "end": 27.5,
+   "f0": 778,
+   "f1": 825
+  },
+  {
+   "i": 10,
+   "text": "but you lower your gaze",
+   "keys": [],
+   "start": 27.5,
+   "end": 29.767,
+   "f0": 825,
+   "f1": 893
+  },
+  {
+   "i": 11,
+   "text": "You want to speak",
+   "keys": [],
+   "start": 29.767,
+   "end": 31.5,
+   "f0": 893,
+   "f1": 945
+  },
+  {
+   "i": 12,
+   "text": "but you choose silence.",
+   "keys": [],
+   "start": 31.5,
+   "end": 33.867,
+   "f0": 945,
+   "f1": 1016
+  },
+  {
+   "i": 13,
+   "text": "You want to follow your heart",
+   "keys": [],
+   "start": 33.867,
+   "end": 36.133,
+   "f0": 1016,
+   "f1": 1084
+  },
+  {
+   "i": 14,
+   "text": "but you choose what pleases Allah.",
+   "keys": [
+    "Allah"
+   ],
+   "start": 36.133,
+   "end": 39.4,
+   "f0": 1084,
+   "f1": 1182
+  },
+  {
+   "i": 15,
+   "text": "You choose modesty",
+   "keys": [],
+   "start": 39.4,
+   "end": 40.733,
+   "f0": 1182,
+   "f1": 1222
+  },
+  {
+   "i": 16,
+   "text": "when the world tells you\nto reveal more",
+   "keys": [],
+   "start": 40.733,
+   "end": 44.567,
+   "f0": 1222,
+   "f1": 1337
+  },
+  {
+   "i": 17,
+   "text": "You cover what Allah commanded\nyou to cover",
+   "keys": [
+    "Allah"
+   ],
+   "start": 44.567,
+   "end": 47.6,
+   "f0": 1337,
+   "f1": 1428
+  },
+  {
+   "i": 18,
+   "text": "even when it feels difficult.",
+   "keys": [],
+   "start": 47.6,
+   "end": 50.833,
+   "f0": 1428,
+   "f1": 1525
+  },
+  {
+   "i": 19,
+   "text": "And this is the struggle",
+   "keys": [],
+   "start": 50.833,
+   "end": 53.533,
+   "f0": 1525,
+   "f1": 1606
+  },
+  {
+   "i": 20,
+   "text": "The dunya tells you:",
+   "keys": [],
+   "start": 53.533,
+   "end": 55.233,
+   "f0": 1606,
+   "f1": 1657
+  },
+  {
+   "i": 21,
+   "text": "“Follow what you desire.”",
+   "keys": [],
+   "start": 55.233,
+   "end": 57.4,
+   "f0": 1657,
+   "f1": 1722
+  },
+  {
+   "i": 22,
+   "text": "But your iman tells you:",
+   "keys": [
+    "iman"
+   ],
+   "start": 57.4,
+   "end": 59.867,
+   "f0": 1722,
+   "f1": 1796
+  },
+  {
+   "i": 23,
+   "text": "“Follow what Allah loves.”",
+   "keys": [
+    "Allah"
+   ],
+   "start": 59.867,
+   "end": 62.833,
+   "f0": 1796,
+   "f1": 1885
+  },
+  {
+   "i": 24,
+   "text": "Every desire you resist for His sake",
+   "keys": [],
+   "start": 62.833,
+   "end": 66.233,
+   "f0": 1885,
+   "f1": 1987
+  },
+  {
+   "i": 25,
+   "text": "every temptation you leave behind",
+   "keys": [],
+   "start": 66.233,
+   "end": 69.867,
+   "f0": 1987,
+   "f1": 2096
+  },
+  {
+   "i": 26,
+   "text": "is another step closer to Jannah.",
+   "keys": [
+    "Jannah"
+   ],
+   "start": 69.867,
+   "end": 73.233,
+   "f0": 2096,
+   "f1": 2197
+  },
+  {
+   "i": 27,
+   "text": "Because one day you will enter",
+   "keys": [],
+   "start": 73.233,
+   "end": 75.333,
+   "f0": 2197,
+   "f1": 2260
+  },
+  {
+   "i": 28,
+   "text": "a place where nothing you desire will\never be forbidden again",
+   "keys": [
+    "forbidden"
+   ],
+   "start": 75.333,
+   "end": 80.833,
+   "f0": 2260,
+   "f1": 2425
+  }
+ ]
+}

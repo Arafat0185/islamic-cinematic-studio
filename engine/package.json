@@ -59,12 +59,17 @@
     "lesson-timing": ".venv-tts\\Scripts\\python tools/build_lesson_timing.py",
     "lesson-mix": ".venv-tts\\Scripts\\python tools/mix_lesson.py",
     "lesson": "bash tools/render_lesson.sh",
-    "lesson-qa": ".venv-tts\\Scripts\\python tools/qa_lesson.py out/The_Lesson.mp4 out/The_Lesson_PREVIEW.mp4 out/qa_lesson"
+    "lesson-qa": ".venv-tts\\Scripts\\python tools/qa_lesson.py out/The_Lesson.mp4 out/The_Lesson_PREVIEW.mp4 out/qa_lesson",
+    "prison-timing": ".venv-tts\\Scripts\\python tools/build_prison_timing.py",
+    "prison-mix": ".venv-tts\\Scripts\\python tools/mix_prison.py",
+    "prison": "bash tools/render_prison.sh",
+    "prison-qa": ".venv-tts\\Scripts\\python tools/qa_prison.py out/The_Prison.mp4 out/The_Prison_PREVIEW.mp4 out/qa_prison"
   },
   "dependencies": {
     "@fontsource/amiri": "5.3.0",
     "@fontsource/cormorant-garamond": "5.3.0",
     "@fontsource/inter": "5.3.0",
+    "@fontsource/poppins": "5.3.0",
     "@react-three/fiber": "9.1.2",
     "@react-three/postprocessing": "3.0.4",
     "@remotion/cli": "4.0.290",

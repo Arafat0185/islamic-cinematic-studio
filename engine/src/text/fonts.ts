@@ -2,6 +2,7 @@
 //   Inter               captions and small labels
 //   Cormorant Garamond  titles
 //   Amiri               Arabic
+//   Poppins             video 008 captions (SemiBold, as in the reference)
 // useFonts() holds the render until the fonts have really loaded, so no frame is ever drawn in a fallback font.
 import { useEffect, useState } from "react";
 import { continueRender, delayRender } from "remotion";
@@ -12,11 +13,13 @@ import "@fontsource/cormorant-garamond/600.css";
 import "@fontsource/cormorant-garamond/700.css";
 import "@fontsource/amiri/400.css";
 import "@fontsource/amiri/700.css";
+import "@fontsource/poppins/600.css";
 
 export const FONT = {
   caption: "'Inter', 'Helvetica Neue', Arial, sans-serif",
   title: "'Cormorant Garamond', Georgia, serif",
   arabic: "'Amiri', 'Times New Roman', serif",
+  poppins: "'Poppins', 'Inter', Arial, sans-serif",
 } as const;
 
 let loaded: Promise<unknown> | null = null;
@@ -26,6 +29,7 @@ const loadAll = () => (loaded ??= Promise.all([
   document.fonts.load("400 60px Amiri", "ال"), document.fonts.load("700 60px Amiri", "ال"),
   // the salawat sign (U+FDFA) is drawn from Amiri inside English captions: load the face that has it
   document.fonts.load("400 60px Amiri", "ﷺ"),
+  document.fonts.load("600 60px Poppins"),
 ]));
 
 /** call in any component that draws text; resolves once (cached) */

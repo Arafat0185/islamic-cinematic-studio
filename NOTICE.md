@@ -93,3 +93,11 @@ in TikTok, and its pictures are never used. None of these files is ever committe
 @serverofdeen) is used only for timing and the local check file `The_Lesson_PREVIEW.mp4`: its Arabic talk is a TikTok
 sound the channel owner adds in TikTok, and its pictures are never used. Our sound track is our own sound design (no
 recitation, no music). The guide is never committed (engine/public/audio/ is git-ignored).
+
+## Narration (video 008, "The Prison")
+
+`engine/public/audio/guide/prison_guide.mp4` (a TikTok video supplied by the channel owner, 2026-11-28; watermark
+@ahmed_50s) is used only for timing, for its caption wording, and for the local check file `The_Prison_PREVIEW.mp4`:
+its Arabic narration is a TikTok sound the channel owner adds in TikTok, and its pictures are never used. Our sound track
+is our own sound design (no music). The guide is never committed (engine/public/audio/ is git-ignored).
+The caption font Poppins (SIL Open Font License 1.1) is installed from npm (@fontsource/poppins).

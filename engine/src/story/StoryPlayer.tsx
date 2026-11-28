@@ -38,6 +38,7 @@ import { buildLibrary } from "../sets/library";
 import { buildBookWorlds } from "../sets/bookworlds";
 import { buildNature } from "../sets/nature";
 import { buildLesson } from "../sets/lesson";
+import { buildCity } from "../sets/city";
 import { MonoGoldEffect } from "../render/monogold";
 import type { SetLook, StorySet } from "../sets/common";
 import { SET_OFFSET, SetId, StoryFilm, FrameFx, Shatter } from "./story";
@@ -77,7 +78,7 @@ const buildWorld = (traffic: Vehicle[], ids: SetId[] = DEFAULT_SETS) => {
   if (has("office")) { office = buildOffice(SET_OFFSET.office); sets.office = office.set; }
   const simple: [SetId, (o: [number, number, number]) => StorySet][] = [
     ["bedroom", buildBedroom], ["gym", buildGym], ["feed", buildFeed], ["void", buildVoid], ["deadlines", buildDeadlines],
-    ["airport", buildAirport], ["car", buildCar], ["sofa", buildSofa], ["hospital", buildHospital], ["abyss", buildAbyss], ["library", buildLibrary], ["bookworlds", buildBookWorlds], ["nature", buildNature], ["lesson", buildLesson],
+    ["airport", buildAirport], ["car", buildCar], ["sofa", buildSofa], ["hospital", buildHospital], ["abyss", buildAbyss], ["library", buildLibrary], ["bookworlds", buildBookWorlds], ["nature", buildNature], ["lesson", buildLesson], ["city", buildCity],
   ];
   for (const [id, b] of simple) if (has(id)) sets[id] = b(SET_OFFSET[id]);
   let cemetery: ReturnType<typeof buildCemetery> | null = null;
