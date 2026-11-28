@@ -1,0 +1,287 @@
+{
+ "fps": 30,
+ "speechEnd": 67.15,
+ "clipEnd": 67.2,
+ "cardFrom": 67.3,
+ "length": 70.3,
+ "closing": "The dunya is lowly. The Hereafter is the foundation.",
+ "talk": [
+  {
+   "i": 0,
+   "ar": "أنا دائمًا أقول",
+   "en": "I always say,",
+   "keys": [],
+   "start": 0.0,
+   "end": 0.7
+  },
+  {
+   "i": 1,
+   "ar": "من أعظم الدروس",
+   "en": "one of the greatest lessons",
+   "keys": [
+    "greatest lessons"
+   ],
+   "start": 0.78,
+   "end": 2.02
+  },
+  {
+   "i": 2,
+   "ar": "اللي تلقيتها وشربتها في مرضي",
+   "en": "I took in and absorbed during my illness:",
+   "keys": [
+    "my illness"
+   ],
+   "start": 2.1,
+   "end": 6.82
+  },
+  {
+   "i": 3,
+   "ar": "استحقرت الدنيا!",
+   "en": "I came to see the dunya as worthless.",
+   "keys": [
+    "worthless"
+   ],
+   "start": 6.9,
+   "end": 9.77
+  },
+  {
+   "i": 4,
+   "ar": "صح أبغى أمتلك سيارة جميلة",
+   "en": "Sure, I want to own a nice car,",
+   "keys": [
+    "nice car"
+   ],
+   "start": 9.85,
+   "end": 11.82
+  },
+  {
+   "i": 5,
+   "ar": "بيت وأمور دنيوية هذي، أبغاها",
+   "en": "a house, these worldly things - I want them,",
+   "keys": [
+    "a house",
+    "worldly things"
+   ],
+   "start": 11.9,
+   "end": 15.12
+  },
+  {
+   "i": 6,
+   "ar": "بس ما كان لها قيمة كبيرة في قلبي، ليش؟",
+   "en": "but they didn't mean much in my heart. Why?",
+   "keys": [
+    "in my heart"
+   ],
+   "start": 15.2,
+   "end": 19.52
+  },
+  {
+   "i": 7,
+   "ar": "لأني لما أكون في المستشفى",
+   "en": "Because when I'm in hospital,",
+   "keys": [
+    "hospital"
+   ],
+   "start": 19.6,
+   "end": 21.22
+  },
+  {
+   "i": 8,
+   "ar": "خاصة لما أكون في أسوأ",
+   "en": "especially at my worst,",
+   "keys": [
+    "at my worst"
+   ],
+   "start": 21.3,
+   "end": 23.77
+  },
+  {
+   "i": 9,
+   "ar": "وأصعب مراحلي الصحية",
+   "en": "in the hardest stages of my health,",
+   "keys": [
+    "hardest stages"
+   ],
+   "start": 23.85,
+   "end": 27.42
+  },
+  {
+   "i": 10,
+   "ar": "تحس حتى لو عندك قصور",
+   "en": "you feel that even if you had palaces,",
+   "keys": [
+    "palaces"
+   ],
+   "start": 27.5,
+   "end": 29.02
+  },
+  {
+   "i": 11,
+   "ar": "إيش بتسوي ذاك القصر؟",
+   "en": "what would that palace do for you?",
+   "keys": [
+    "that palace"
+   ],
+   "start": 29.1,
+   "end": 30.77
+  },
+  {
+   "i": 12,
+   "ar": "أنت مريض! على فراش الموت",
+   "en": "You're ill - on your deathbed.",
+   "keys": [
+    "on your deathbed"
+   ],
+   "start": 30.85,
+   "end": 32.67
+  },
+  {
+   "i": 13,
+   "ar": "لو عندك من الخدم والحشم",
+   "en": "If you had servants and attendants,",
+   "keys": [
+    "servants and attendants"
+   ],
+   "start": 32.75,
+   "end": 34.87
+  },
+  {
+   "i": 14,
+   "ar": "والسيارات والقصور",
+   "en": "cars and palaces,",
+   "keys": [
+    "cars and palaces"
+   ],
+   "start": 34.95,
+   "end": 36.52
+  },
+  {
+   "i": 15,
+   "ar": "وأنت مريض",
+   "en": "and you're ill,",
+   "keys": [
+    "ill"
+   ],
+   "start": 36.6,
+   "end": 37.32
+  },
+  {
+   "i": 16,
+   "ar": "إيش الفايدة؟ إيش الفايدة؟",
+   "en": "what's the use? What's the use?",
+   "keys": [
+    "what's the use? What's the use?"
+   ],
+   "start": 37.4,
+   "end": 39.92
+  },
+  {
+   "i": 17,
+   "ar": "إيش بتسوي فيهم؟ إيش بيسووا لك؟",
+   "en": "What would you do with them? What would they do for you?",
+   "keys": [
+    "What would they do for you?"
+   ],
+   "start": 40.0,
+   "end": 42.32
+  },
+  {
+   "i": 18,
+   "ar": "هنا أدركت أن القيمة... الدنيا ما فيها",
+   "en": "That's when I realised - the dunya has no value.",
+   "keys": [
+    "no value"
+   ],
+   "start": 42.4,
+   "end": 46.67
+  },
+  {
+   "i": 19,
+   "ar": "إيش اسم الدنيا؟ من الدناءة!",
+   "en": "What does \"dunya\" mean? It comes from \"lowliness\"!",
+   "keys": [
+    "\"lowliness\""
+   ],
+   "start": 46.75,
+   "end": 49.02
+  },
+  {
+   "i": 20,
+   "ar": "هي دنيئة جدًا",
+   "en": "It's truly lowly.",
+   "keys": [
+    "truly lowly"
+   ],
+   "start": 49.1,
+   "end": 50.02
+  },
+  {
+   "i": 21,
+   "ar": "هذا الشي أدركته ووعيت فيه وأنا على فراش الموت",
+   "en": "This is something I realised and took to heart on my deathbed.",
+   "keys": [
+    "on my deathbed"
+   ],
+   "start": 50.1,
+   "end": 54.82
+  },
+  {
+   "i": 22,
+   "ar": "أدركت أن الدنيا ما لها قيمة",
+   "en": "I realised the dunya has no value,",
+   "keys": [
+    "no value"
+   ],
+   "start": 54.9,
+   "end": 56.52
+  },
+  {
+   "i": 23,
+   "ar": "فصرت مؤمن بربي إيمان قوي",
+   "en": "so I came to believe in my Lord with strong faith.",
+   "keys": [
+    "strong faith"
+   ],
+   "start": 56.6,
+   "end": 58.67
+  },
+  {
+   "i": 24,
+   "ar": "صرت أريد الآخرة، وأسعى لها وأعد لها",
+   "en": "I began to want the Hereafter, to strive for it and prepare for it,",
+   "keys": [
+    "the Hereafter"
+   ],
+   "start": 58.75,
+   "end": 60.97
+  },
+  {
+   "i": 25,
+   "ar": "مع طبعاً أمور الدنيا",
+   "en": "along with worldly matters, of course,",
+   "keys": [],
+   "start": 61.05,
+   "end": 62.87
+  },
+  {
+   "i": 26,
+   "ar": "ولكن الآخرة هي الأساس",
+   "en": "but the Hereafter is the foundation,",
+   "keys": [
+    "the foundation"
+   ],
+   "start": 62.95,
+   "end": 65.22
+  },
+  {
+   "i": 27,
+   "ar": "وماخذة معظم قلبي",
+   "en": "and it has taken most of my heart.",
+   "keys": [
+    "most of my heart"
+   ],
+   "start": 65.3,
+   "end": 67.25
+  }
+ ]
+}

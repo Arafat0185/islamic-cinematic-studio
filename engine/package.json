@@ -55,7 +55,11 @@
     "hold-timing": ".venv-tts\\Scripts\\python tools/build_hold_timing.py",
     "hold-mix": ".venv-tts\\Scripts\\python tools/mix_hold.py",
     "hold": "node tools/render-chunks.mjs HoldOnToThis out/Hold_On_To_This.mp4 --chunk 300 --dir out/chunks/Hold_300 --audio public/audio/hold_mix.wav --keep",
-    "hold-qa": ".venv-tts\\Scripts\\python tools/qa_hold.py out/Hold_On_To_This.mp4 out/Hold_On_To_This_PREVIEW.mp4 out/qa_hold"
+    "hold-qa": ".venv-tts\\Scripts\\python tools/qa_hold.py out/Hold_On_To_This.mp4 out/Hold_On_To_This_PREVIEW.mp4 out/qa_hold",
+    "lesson-timing": ".venv-tts\\Scripts\\python tools/build_lesson_timing.py",
+    "lesson-mix": ".venv-tts\\Scripts\\python tools/mix_lesson.py",
+    "lesson": "bash tools/render_lesson.sh",
+    "lesson-qa": ".venv-tts\\Scripts\\python tools/qa_lesson.py out/The_Lesson.mp4 out/The_Lesson_PREVIEW.mp4 out/qa_lesson"
   },
   "dependencies": {
     "@fontsource/amiri": "5.3.0",

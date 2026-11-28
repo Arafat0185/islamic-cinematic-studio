@@ -86,3 +86,10 @@ our video's sound track: joined with a 0.3 s gap, level only (-14 LUFS), the las
 `engine/public/audio/guide/deen_guide.mp4` (a TikTok video supplied by the channel owner, 2026-11-26) is used only for
 timing and the local check file `Hold_On_To_This_PREVIEW.mp4`: its Arabic talk is a TikTok sound the channel owner adds
 in TikTok, and its pictures are never used. None of these files is ever committed (engine/public/audio/ is git-ignored).
+
+## Talk (video 007, "The Lesson")
+
+`engine/public/audio/guide/lesson_guide.mp4` (a TikTok video supplied by the channel owner, 2026-11-27; watermark
+@serverofdeen) is used only for timing and the local check file `The_Lesson_PREVIEW.mp4`: its Arabic talk is a TikTok
+sound the channel owner adds in TikTok, and its pictures are never used. Our sound track is our own sound design (no
+recitation, no music). The guide is never committed (engine/public/audio/ is git-ignored).
